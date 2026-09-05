@@ -85,9 +85,10 @@ export default function Footer() {
               Publication
             </h4>
             <ul className="space-y-3 text-sm text-gray-200 font-normal">
-              <li><a href="#sectors" className="hover:text-white transition-colors">Articles</a></li>
-              <li><a href="#sectors" className="hover:text-white transition-colors">News</a></li>
-              <li><a href="#sectors" className="hover:text-white transition-colors">All entries</a></li>
+              <li><a href="/publication" className="hover:text-white transition-colors">Articles</a></li>
+              <li><a href="/publication" className="hover:text-white transition-colors">Case Studies</a></li>
+              <li><a href="/publication" className="hover:text-white transition-colors">Whitepapers</a></li>
+              <li><a href="/publication" className="hover:text-white transition-colors">All Publications</a></li>
             </ul>
           </div>
 

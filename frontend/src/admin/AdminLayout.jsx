@@ -17,7 +17,8 @@ import {
   Sparkles,
   Layers,
   Award,
-  GraduationCap
+  GraduationCap,
+  BookOpen
 } from 'lucide-react'
 import AddHomeBanner from './AddHomeBanner.jsx'
 import AllBanners from './AllBanners.jsx'
@@ -39,6 +40,8 @@ import AddPillarFootprint from './AddPillarFootprint.jsx'
 import AllPillarFootprints from './AllPillarFootprints.jsx'
 import AddCampusEvent from './AddCampusEvent.jsx'
 import AllCampusEvents from './AllCampusEvents.jsx'
+import AddPublication from './AddPublication.jsx'
+import AllPublications from './AllPublications.jsx'
 import AdminDashboard from './AdminDashboard.jsx'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 
@@ -55,6 +58,7 @@ export default function AdminLayout({ onExitAdmin }) {
       if (['add-event', 'all-events'].includes(urlTab)) setEventMenuOpen(true)
       if (['add-initiative', 'all-initiatives'].includes(urlTab)) setInitiativeMenuOpen(true)
       if (['add-campus-event', 'all-campus-events', 'add-pillar-footprint', 'all-pillar-footprints'].includes(urlTab)) setCampusConnectMenuOpen(true)
+      if (['add-publication', 'all-publications'].includes(urlTab)) setPublicationMenuOpen(true)
     } else {
       setCurrentTab('dashboard')
     }
@@ -65,6 +69,7 @@ export default function AdminLayout({ onExitAdmin }) {
   const [eventMenuOpen, setEventMenuOpen] = useState(true)
   const [initiativeMenuOpen, setInitiativeMenuOpen] = useState(true)
   const [campusConnectMenuOpen, setCampusConnectMenuOpen] = useState(true)
+  const [publicationMenuOpen, setPublicationMenuOpen] = useState(true)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
@@ -460,6 +465,52 @@ export default function AdminLayout({ onExitAdmin }) {
               )}
             </div>
 
+            {/* 7. Publications Submenu */}
+            <div>
+              <button
+                onClick={() => setPublicationMenuOpen(!publicationMenuOpen)}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition ${
+                  ['add-publication', 'all-publications'].includes(currentTab)
+                    ? 'text-[#FF6B55] bg-white/5'
+                    : 'text-gray-300 hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <BookOpen className="w-4 h-4 shrink-0 text-[#FF6B55]" />
+                  {!sidebarCollapsed && <span>Publications</span>}
+                </div>
+                {!sidebarCollapsed && (
+                  publicationMenuOpen ? <ChevronUp className="w-3.5 h-3.5 text-gray-400" /> : <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                )}
+              </button>
+
+              {publicationMenuOpen && !sidebarCollapsed && (
+                <div className="pl-9 pr-2 py-1 space-y-1 border-l border-white/10 ml-5 my-1">
+                  
+                  {/* Sub-option 1: Add publication */}
+                  <button
+                    onClick={() => handleNavigate('add-publication')}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${
+                      currentTab === 'add-publication' ? 'text-[#FF6B55] font-bold bg-white/10' : 'text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    Add Publication
+                  </button>
+
+                  {/* Sub-option 2: Show all publications */}
+                  <button
+                    onClick={() => handleNavigate('all-publications')}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${
+                      currentTab === 'all-publications' ? 'text-[#FF6B55] font-bold bg-white/10' : 'text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    Show All Publications
+                  </button>
+
+                </div>
+              )}
+            </div>
+
           </div>
         </div>
 
@@ -545,6 +596,10 @@ export default function AdminLayout({ onExitAdmin }) {
             {currentTab === 'all-campus-events' && <AllCampusEvents onNavigate={handleNavigate} />}
             {currentTab === 'add-pillar-footprint' && <AddPillarFootprint onNavigate={handleNavigate} />}
             {currentTab === 'all-pillar-footprints' && <AllPillarFootprints onNavigate={handleNavigate} />}
+
+            {/* Publications CMS Subsections */}
+            {currentTab === 'add-publication' && <AddPublication onNavigate={handleNavigate} />}
+            {currentTab === 'all-publications' && <AllPublications onNavigate={handleNavigate} />}
           </div>
         </main>
 

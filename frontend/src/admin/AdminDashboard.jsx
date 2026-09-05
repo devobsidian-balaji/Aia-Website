@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Image as ImageIcon, Briefcase, Calendar, Sparkles, Layers, ArrowUpRight, Database, GraduationCap, FileText } from 'lucide-react'
+import { Image as ImageIcon, Briefcase, Calendar, Sparkles, Layers, ArrowUpRight, Database, GraduationCap, FileText, BookOpen } from 'lucide-react'
 import { getStats } from '../services/api'
 
 export default function AdminDashboard({ onNavigate }) {
@@ -10,6 +10,7 @@ export default function AdminDashboard({ onNavigate }) {
     initiatives: 3,
     footprints: 3,
     campusEvents: 3,
+    publications: 6,
     about: 1
   })
 
@@ -33,22 +34,23 @@ export default function AdminDashboard({ onNavigate }) {
             AIA Dynamic CMS Portal
           </h1>
           <p className="text-sm text-blue-100 max-w-xl leading-relaxed">
-            Manage your frontend Hero Banners, Services, Events, Initiatives, and Campus Connect in real-time.
+            Manage your frontend Hero Banners, Services, Events, Initiatives, Campus Connect, and Publications in real-time.
           </p>
         </div>
 
         <div className="flex flex-wrap gap-3">
           <button 
-            onClick={() => onNavigate('add-event')}
-            className="px-5 py-2.5 rounded-xl bg-[#E25238] hover:bg-[#c9452e] text-white font-bold text-xs shadow-md transition active:scale-95"
+            onClick={() => onNavigate('add-publication')}
+            className="px-5 py-2.5 rounded-xl bg-[#E25238] hover:bg-[#c9452e] text-white font-bold text-xs shadow-md transition active:scale-95 flex items-center gap-1.5"
           >
-            + Add Event
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>+ Add Publication</span>
           </button>
           <button 
-            onClick={() => onNavigate('add-banner')}
+            onClick={() => onNavigate('add-event')}
             className="px-5 py-2.5 rounded-xl bg-white text-[#1E3A8A] font-bold text-xs shadow-md hover:bg-blue-50 transition active:scale-95"
           >
-            + Add Banner
+            + Add Event
           </button>
           <button 
             onClick={() => onNavigate('add-pillar-footprint')}
@@ -152,7 +154,22 @@ export default function AdminDashboard({ onNavigate }) {
           <div className="text-xs font-semibold text-gray-500 mt-1">Campus Connect Events</div>
         </div>
 
-        {/* Metric 7: About AIA Information */}
+        {/* Metric 7: Publications */}
+        <div 
+          onClick={() => onNavigate('all-publications')}
+          className="bg-white rounded-2xl p-6 border border-gray-200 shadow-xs hover:shadow-xl transition cursor-pointer group"
+        >
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 rounded-xl bg-orange-50 text-[#E25238] flex items-center justify-center group-hover:scale-110 transition">
+              <BookOpen className="w-6 h-6" />
+            </div>
+            <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-[#E25238] transition" />
+          </div>
+          <div className="text-3xl font-black text-[#1E293B]">{stats.publications || 6}</div>
+          <div className="text-xs font-semibold text-gray-500 mt-1">Technical Publications</div>
+        </div>
+
+        {/* Metric 8: About AIA Information */}
         <div 
           onClick={() => onNavigate('all-about')}
           className="bg-white rounded-2xl p-6 border border-gray-200 shadow-xs hover:shadow-xl transition cursor-pointer group"

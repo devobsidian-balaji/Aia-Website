@@ -7,6 +7,7 @@ import AboutPage from './pages/AboutPage.jsx'
 import IAFSMPage from './pages/IAFSMPage.jsx'
 import CampusConnectPage from './pages/CampusConnectPage.jsx'
 import EventsPage from './pages/EventsPage.jsx'
+import PublicationPage from './pages/PublicationPage.jsx'
 import AdminLayout from './admin/AdminLayout.jsx'
 
 // Helper to scroll to top automatically on route changes
@@ -55,6 +56,10 @@ export default function App() {
         {/* /events and alias /event */}
         <Route path="/events" element={<PublicLayout><EventsPage /></PublicLayout>} />
         <Route path="/event" element={<PublicLayout><EventsPage /></PublicLayout>} />
+
+        {/* /publication and alias /publications */}
+        <Route path="/publication" element={<PublicLayout><PublicationPage /></PublicLayout>} />
+        <Route path="/publications" element={<PublicLayout><PublicationPage /></PublicLayout>} />
         
         {/* Admin CMS Routes */}
         <Route path="/admin" element={<AdminLayout />} />

@@ -4,8 +4,32 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 15000,
+  timeout: 25000,
 });
+
+// Automatic fallback interceptor for local development
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (
+      error.response &&
+      (error.response.status === 404 || error.response.status === 502 || error.response.status === 503) &&
+      !originalRequest._retryLocal &&
+      typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ) {
+      originalRequest._retryLocal = true;
+      originalRequest.baseURL = 'http://localhost:5000/api';
+      try {
+        return await axios(originalRequest);
+      } catch (retryErr) {
+        return Promise.reject(retryErr);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 // =======================
 // BANNER APIS
@@ -339,6 +363,130 @@ export const deleteCampusEvent = async (id) => {
 };
 
 // =======================
+// PUBLICATION APIS
+// =======================
+export const getPublications = async () => {
+  try {
+    const res = await api.get('/publications');
+    return res.data.data || [];
+  } catch (err) {
+    console.warn('Fallback publications:', err.message);
+    return [
+      {
+        _id: 'pub-1',
+        title: 'A look at thirty years of pharmaceutical automation',
+        description: 'A comprehensive retrospective look at three decades of automation advancement, cleanroom integration, SCADA telemetry, and regulatory compliance standards across Indian pharmaceutical processing and batch formulation units.',
+        images: [
+          'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=900&h=700&fit=crop',
+          'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=900&h=700&fit=crop'
+        ],
+        link: 'https://aia-india.org/publications/pharma-thirty-years',
+        category: 'Whitepapers',
+        date: 'Aug 2026',
+        author: 'AIA Pharma Working Group',
+        order: 1,
+        isActive: true,
+      },
+      {
+        _id: 'pub-2',
+        title: 'A seamless blend of process control and automation in steel',
+        description: 'How integrated sensor fusion, metallurgical digital twins, and closed-loop process control revolutionized energy efficiency and continuous casting quality in modern smart steel mills and secondary metallurgy plants.',
+        images: [
+          'https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?w=900&h=700&fit=crop',
+          '/publication-banner.jpg'
+        ],
+        link: 'https://aia-india.org/publications/steel-automation',
+        category: 'Process Automation',
+        date: 'Jul 2026',
+        author: 'Steel & Metallurgy Automation Board',
+        order: 2,
+        isActive: true,
+      },
+      {
+        _id: 'pub-3',
+        title: 'Advanced Batch Digester Solution',
+        description: 'Scalable automated control frameworks for pressure cooking vessels, optimal liquor circulation, and temperature profile synchronization across modern pulp, paper, and specialty chemical manufacturing installations.',
+        images: [
+          'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=900&h=700&fit=crop',
+          'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=900&h=700&fit=crop'
+        ],
+        link: 'https://aia-india.org/publications/batch-digester',
+        category: 'Technical Articles',
+        date: 'Jun 2026',
+        author: 'AIA Process Automation Division',
+        order: 3,
+        isActive: true,
+      },
+      {
+        _id: 'pub-4',
+        title: 'Andon Solutions - Harnessing Actionable Information for Automotive Manufacturing',
+        description: 'Real-time visual shopfloor management, wireless digital andon paging systems, and root-cause downtime triage designed specifically for tier-1 automotive manufacturing plants and robotic weld shops.',
+        images: [
+          'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=900&h=700&fit=crop',
+          '/hero-engineer.png'
+        ],
+        link: 'https://aia-india.org/publications/andon-automotive',
+        category: 'Case Studies',
+        date: 'May 2026',
+        author: 'Automotive Digitalization Committee',
+        order: 4,
+        isActive: true,
+      },
+      {
+        _id: 'pub-5',
+        title: 'Asset Performance and Reliability in Continuous Processing',
+        description: 'Predictive vibration diagnostics, motor current signature analysis (MCSA), and automated health monitoring protocols to eliminate unscheduled outages and maximize asset lifespan in heavy industry.',
+        images: [
+          'https://images.unsplash.com/photo-1581092335397-9583fe92d232?w=900&h=700&fit=crop',
+          'https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?w=900&h=700&fit=crop'
+        ],
+        link: 'https://aia-india.org/publications/asset-reliability',
+        category: 'Reports',
+        date: 'Apr 2026',
+        author: 'IIT Delhi CEFC & AIA Experts',
+        order: 5,
+        isActive: true,
+      },
+      {
+        _id: 'pub-6',
+        title: 'Auditing is made easy by smart matrix and digital verification',
+        description: 'Transitioning from paper logs to tamper-proof automated SCADA telemetry audits, ISA-95 trace matrices, and verifiable carbon/energy accounting systems in Industry 4.0 environments.',
+        images: [
+          'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=900&h=700&fit=crop',
+          'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=900&h=700&fit=crop'
+        ],
+        link: 'https://aia-india.org/publications/smart-matrix-auditing',
+        category: 'Research',
+        date: 'Mar 2026',
+        author: 'Cyber-Physical Systems Guild',
+        order: 6,
+        isActive: true,
+      }
+    ];
+  }
+};
+
+export const getPublicationById = async (id) => {
+  const res = await api.get(`/publications/${id}`);
+  return res.data.data || res.data;
+};
+
+export const createPublication = async (data) => {
+  const res = await api.post('/publications', data);
+  return res.data.data || res.data;
+};
+
+export const updatePublication = async (id, data) => {
+  const res = await api.put(`/publications/${id}`, data);
+  return res.data.data || res.data;
+};
+
+export const deletePublication = async (id) => {
+  const res = await api.delete(`/publications/${id}`);
+  return res.data;
+};
+
+// =======================
 // STATS API
 // =======================
 export const getStats = async () => {
@@ -346,6 +494,7 @@ export const getStats = async () => {
     const res = await api.get('/stats');
     return res.data.data;
   } catch (err) {
-    return { banners: 1, services: 3, about: 3, roadmap: 3, events: 2, initiatives: 3, footprints: 3, campusEvents: 3 };
+    return { banners: 1, services: 3, about: 3, roadmap: 3, events: 2, initiatives: 3, footprints: 3, campusEvents: 3, publications: 6 };
   }
 };
+

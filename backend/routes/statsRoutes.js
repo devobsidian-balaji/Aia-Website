@@ -7,6 +7,7 @@ import { Event } from '../models/Event.js';
 import { Initiative } from '../models/Initiative.js';
 import { PillarFootprint } from '../models/PillarFootprint.js';
 import { CampusEvent } from '../models/CampusEvent.js';
+import { Publication } from '../models/Publication.js';
 
 export const statsRouter = express.Router();
 
@@ -20,7 +21,8 @@ statsRouter.get('/', async (req, res) => {
       eventCount,
       initiativeCount,
       footprintCount,
-      campusEventCount
+      campusEventCount,
+      publicationCount
     ] = await Promise.all([
       Banner.countDocuments(),
       Service.countDocuments(),
@@ -30,6 +32,7 @@ statsRouter.get('/', async (req, res) => {
       Initiative.countDocuments(),
       PillarFootprint.countDocuments(),
       CampusEvent.countDocuments(),
+      Publication.countDocuments(),
     ]);
 
     res.json({
@@ -43,6 +46,7 @@ statsRouter.get('/', async (req, res) => {
         initiatives: initiativeCount,
         footprints: footprintCount,
         campusEvents: campusEventCount,
+        publications: publicationCount,
         queries: 18,
       }
     });

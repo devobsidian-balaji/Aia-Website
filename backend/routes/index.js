@@ -9,6 +9,7 @@ import { eventRouter } from './eventRoutes.js';
 import { initiativeRouter } from './initiativeRoutes.js';
 import { pillarFootprintRouter } from './pillarFootprintRoutes.js';
 import { campusEventRouter } from './campusEventRoutes.js';
+import { publicationRouter } from './publicationRoutes.js';
 import { statsRouter } from './statsRoutes.js';
 
 const apiRouter = Router();
@@ -24,6 +25,7 @@ apiRouter.use('/events', eventRouter);
 apiRouter.use('/initiatives', initiativeRouter);
 apiRouter.use('/pillar-footprints', pillarFootprintRouter);
 apiRouter.use('/campus-events', campusEventRouter);
+apiRouter.use('/publications', publicationRouter);
 apiRouter.use('/stats', statsRouter);
 
 export default apiRouter;

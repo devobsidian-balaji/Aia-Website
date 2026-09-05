@@ -12,6 +12,7 @@ export default function Navbar() {
   const isIafsmActive = path.startsWith('/iafsm') || path.startsWith('/ifsm')
   const isCampusActive = path.startsWith('/campus-connect')
   const isEventsActive = path.startsWith('/events') || path.startsWith('/event')
+  const isPublicationActive = path.startsWith('/publication')
 
   const closeMobile = () => setMobileMenuOpen(false)
 
@@ -164,12 +165,23 @@ export default function Navbar() {
             )}
           </div>
 
+          {/* Publication Link (/publication or /publications) */}
+          <div className="relative flex flex-col items-center">
+            <Link 
+              to="/publication"
+              className={`py-1 transition-colors ${
+                isPublicationActive ? 'text-white font-semibold' : 'hover:text-white'
+              }`}
+            >
+              Publication
+            </Link>
+            {isPublicationActive && (
+              <span className="w-3.5 h-[3px] bg-white rounded-full mt-0.5"></span>
+            )}
+          </div>
+
           <a href="/#services" className="hover:text-white transition-colors py-1">
             Services
-          </a>
-          
-          <a href="/#dashboard" className="hover:text-white transition-colors py-1">
-            Publication
           </a>
           
           <a href="/#footer" className="hover:text-white transition-colors py-1">
@@ -253,6 +265,15 @@ export default function Navbar() {
             }`}
           >
             Events
+          </Link>
+          <Link 
+            to="/publication" 
+            onClick={closeMobile}
+            className={`block w-full text-left px-3 py-2 rounded-lg text-sm ${
+              isPublicationActive ? 'font-semibold text-white bg-white/10' : 'text-gray-300 hover:text-white'
+            }`}
+          >
+            Publication
           </Link>
           <Link 
             to="/admin" 
