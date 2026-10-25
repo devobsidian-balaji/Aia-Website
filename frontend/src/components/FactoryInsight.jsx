@@ -101,13 +101,15 @@ export default function FactoryInsight() {
 
           {/* Right Column: Heading, Subtext & CTA Button */}
           <div className="lg:col-span-5 space-y-6">
-            <h2 className="text-4xl sm:text-5xl lg:text-[54px] font-black text-[#1F2937] leading-[1.08] tracking-tight">
-              Factory <br />
-              Insight
+            <h2 className="text-2xl sm:text-3xl lg:text-[32px] font-black text-[#1F2937] leading-[1.08] tracking-tight">
+             Resource 
+              Center
             </h2>
 
             <p className="text-base sm:text-lg text-black/70 leading-relaxed max-w-md font-normal">
-              Your selected profile suggests that the biggest opportunity is hidden production losses.
+              The self-assessment is part of AlA's Resource
+Center funding guidance and automation on-ramps
+live there too.
             </p>
 
             <div className="pt-2">
@@ -115,7 +117,7 @@ export default function FactoryInsight() {
                 href="#build-factory"
                 className="inline-flex items-center justify-center px-7 py-3 rounded-xl border border-[#1F2937] bg-white text-[#1F2937] hover:bg-[#1F2937] hover:text-white font-bold text-sm transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 active:scale-95"
               >
-                Book Live Demo
+                Explore the Resource Center
               </a>
             </div>
           </div>
@@ -123,7 +125,7 @@ export default function FactoryInsight() {
         </div>
 
         {/* Bottom 4 Feature Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           {insightCards.map((card) => {
             const isActive = activeCard === card.id
             return (
@@ -136,12 +138,12 @@ export default function FactoryInsight() {
                     : 'border border-gray-200/80 hover:border-gray-300 hover:shadow-md'
                 }`}
               >
-                {/* Icon */}
+              
                 <div className="mb-4">
                   {renderIcon(card.iconType, isActive)}
                 </div>
 
-                {/* Card Title */}
+            
                 <div>
                   <h3 className="text-lg sm:text-xl font-extrabold text-[#1F2937] leading-snug">
                     {card.title} <br />
@@ -149,14 +151,14 @@ export default function FactoryInsight() {
                   </h3>
                 </div>
 
-                {/* Active Red/Coral Underline Bar (Figma: #F2713E) */}
+           
                 {isActive && (
                   <div className="absolute -bottom-1.5 left-4 right-4 h-1.5 bg-[#F2713E] rounded-full shadow-sm"></div>
                 )}
               </div>
             )
           })}
-        </div>
+        </div> */}
 
       </div>
     </section>

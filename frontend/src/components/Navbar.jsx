@@ -9,10 +9,13 @@ export default function Navbar() {
 
   const isHomeActive = path === '/' || path === '/home'
   const isAboutActive = path.startsWith('/about')
+  const isMembershipActive = path.startsWith('/membership')
   const isIafsmActive = path.startsWith('/iafsm') || path.startsWith('/ifsm')
   const isCampusActive = path.startsWith('/campus-connect')
   const isEventsActive = path.startsWith('/events') || path.startsWith('/event')
   const isPublicationActive = path.startsWith('/publication')
+  const isIndustryInsight = path.startsWith('/industry-insight')
+  const isTalentConnect = path.startsWith('/talent-connect')
 
   const closeMobile = () => setMobileMenuOpen(false)
 
@@ -120,8 +123,54 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* IAFSM Link (/iafsm) */}
+          {/* Membership Link (/) */}
           <div className="relative flex flex-col items-center">
+            {/* <Link to="/membership" >MemberShip</Link> */}
+           <Link 
+              to="/membership"
+              className={`py-1 transition-colors ${
+                isMembershipActive ? 'text-white font-semibold' : 'hover:text-white'
+              }`}
+            >
+              Membership
+            </Link>
+            {isMembershipActive && (
+              <span className="w-3.5 h-[3px] bg-white rounded-full mt-0.5"></span>
+            )}
+          </div>
+          {/* Industry Insight Link (/) */}
+          <div className="relative flex flex-col items-center">
+            {/* <Link to="/industry-insight" >Industry Insight</Link> */}
+           <Link 
+              to="/industry-insight"
+              className={`py-1 transition-colors ${
+                isIndustryInsight ? 'text-white font-semibold' : 'hover:text-white'
+              }`}
+            >
+              Industry Insight
+            </Link>
+            {isIndustryInsight && (
+              <span className="w-3.5 h-[3px] bg-white rounded-full mt-0.5"></span>
+            )}
+          </div>
+          {/* Talent Connect Link (/) */}
+          <div className="relative flex flex-col items-center">
+            {/* <Link to="/talent-connect" >Talent Connect</Link> */}
+           <Link 
+              to="/talent-connect"
+              className={`py-1 transition-colors ${
+                isTalentConnect ? 'text-white font-semibold' : 'hover:text-white'
+              }`}
+            >
+              Talent Connect
+            </Link>
+            {isTalentConnect && (
+              <span className="w-3.5 h-[3px] bg-white rounded-full mt-0.5"></span>
+            )}
+          </div>
+
+          {/* IAFSM Link (/iafsm) */}
+          {/* <div className="relative flex flex-col items-center">
             <Link 
               to="/iafsm"
               className={`py-1 transition-colors ${
@@ -133,10 +182,10 @@ export default function Navbar() {
             {isIafsmActive && (
               <span className="w-3.5 h-[3px] bg-white rounded-full mt-0.5"></span>
             )}
-          </div>
+          </div> */}
 
           {/* Campus Connect Link (/campus-connect) */}
-          <div className="relative flex flex-col items-center">
+          {/* <div className="relative flex flex-col items-center">
             <Link 
               to="/campus-connect"
               className={`py-1 transition-colors ${
@@ -148,7 +197,7 @@ export default function Navbar() {
             {isCampusActive && (
               <span className="w-3.5 h-[3px] bg-white rounded-full mt-0.5"></span>
             )}
-          </div>
+          </div> */}
 
           {/* Events Link (/events or /event) */}
           <div className="relative flex flex-col items-center">
@@ -166,7 +215,7 @@ export default function Navbar() {
           </div>
 
           {/* Publication Link (/publication or /publications) */}
-          <div className="relative flex flex-col items-center">
+          {/* <div className="relative flex flex-col items-center">
             <Link 
               to="/publication"
               className={`py-1 transition-colors ${
@@ -178,11 +227,11 @@ export default function Navbar() {
             {isPublicationActive && (
               <span className="w-3.5 h-[3px] bg-white rounded-full mt-0.5"></span>
             )}
-          </div>
+          </div> */}
 
-          <a href="/#services" className="hover:text-white transition-colors py-1">
+          {/* <a href="/#services" className="hover:text-white transition-colors py-1">
             Services
-          </a>
+          </a> */}
           
           <a href="/#footer" className="hover:text-white transition-colors py-1">
             Contact Us

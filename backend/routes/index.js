@@ -11,6 +11,13 @@ import { pillarFootprintRouter } from './pillarFootprintRoutes.js';
 import { campusEventRouter } from './campusEventRoutes.js';
 import { publicationRouter } from './publicationRoutes.js';
 import { statsRouter } from './statsRoutes.js';
+import { whatAiaRouter } from './whatAiaRoutes.js';
+import sliderRouter from './sliderRoutes.js';
+import whyJoinRouter from "./whyJoinRoutes.js";
+import homeFeatureRoutes from "./homeFeatureRoutes.js";
+import stickyStackRoutes from "./stickyStackRoutes.js";
+
+
 
 const apiRouter = Router();
 
@@ -27,5 +34,10 @@ apiRouter.use('/pillar-footprints', pillarFootprintRouter);
 apiRouter.use('/campus-events', campusEventRouter);
 apiRouter.use('/publications', publicationRouter);
 apiRouter.use('/stats', statsRouter);
+apiRouter.use("/what-aia", whatAiaRouter);
+apiRouter.use("/sliders", sliderRouter);
+apiRouter.use("/why-join", whyJoinRouter);
+apiRouter.use("/home-features", homeFeatureRoutes);
+apiRouter.use("/sticky-stack", stickyStackRoutes);
 
 export default apiRouter;

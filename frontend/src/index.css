@@ -45,3 +45,17 @@
 .animate-pulse-slow {
   animation: pulse-slow 5s infinite ease-in-out;
 }
+@keyframes members-marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-members-marquee {
+  animation: members-marquee var(--members-speed, 28s) linear infinite;
+  will-change: transform;
+}

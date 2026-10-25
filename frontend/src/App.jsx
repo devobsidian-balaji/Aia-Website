@@ -9,6 +9,9 @@ import CampusConnectPage from './pages/CampusConnectPage.jsx'
 import EventsPage from './pages/EventsPage.jsx'
 import PublicationPage from './pages/PublicationPage.jsx'
 import AdminLayout from './admin/AdminLayout.jsx'
+import MemberShipPage from './pages/MemberShipPage.jsx'
+import IndustryInsightPage from './pages/IndustryInsightsPage.jsx'
+import TalentConnectPage from './pages/TalentConnectPage.jsx'
 
 // Helper to scroll to top automatically on route changes
 function ScrollToTop() {
@@ -46,6 +49,10 @@ export default function App() {
         <Route path="/about" element={<PublicLayout><AboutPage /></PublicLayout>} />
         <Route path="/about-us" element={<PublicLayout><AboutPage /></PublicLayout>} />
         
+        <Route path="/membership" element={<PublicLayout><MemberShipPage /></PublicLayout>} />
+        <Route path="/industry-insight" element={<PublicLayout><IndustryInsightPage /></PublicLayout>} />
+        <Route path="/talent-connect" element={<PublicLayout><TalentConnectPage /></PublicLayout>} />
+
         {/* /iafsm and alias /ifsm */}
         <Route path="/iafsm" element={<PublicLayout><IAFSMPage /></PublicLayout>} />
         <Route path="/ifsm" element={<PublicLayout><IAFSMPage /></PublicLayout>} />

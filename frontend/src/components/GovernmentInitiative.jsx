@@ -11,7 +11,7 @@ export default function GovernmentInitiative() {
         
         {/* Main Section Heading */}
         <h2 className="text-4xl sm:text-5xl font-black text-[#1F2937] tracking-tight mb-16">
-          Government Initiative
+          National Priority 
         </h2>
 
         {/* 2-Column Content Grid */}
@@ -21,7 +21,7 @@ export default function GovernmentInitiative() {
           <div className="lg:col-span-7">
             <div className="rounded-xl overflow-hidden shadow-2xl border border-gray-200/80 bg-white group transition-all duration-300 hover:shadow-[0_20px_50px_rgba(0,0,0,0.12)]">
               <img 
-                src="/samarth-udyog.png" 
+                src="/national-party.png" 
                 alt="SAMARTH Udyog Bharat 4.0 - A Industry 4.0 Initiative of Ministry of HI & PE, Government of India" 
                 className="w-full h-auto object-contain block"
               />
@@ -32,11 +32,14 @@ export default function GovernmentInitiative() {
           <div className="lg:col-span-5 text-left space-y-6">
             <h3 className="text-2xl sm:text-3xl font-extrabold text-[#1F2937] leading-snug tracking-tight">
               Driving India’s Smart <br />
-              Manufacturing Mission
+Manufacturing Mission
             </h3>
 
             <p className="text-sm sm:text-base text-black/70 leading-relaxed max-w-md font-normal">
-              Proud contributor to the Samarth Udyog Bharat 4.0 Initiative, enabling industries to adopt advanced manufacturing technologies and accelerate digital transformation.
+              Proud contributor to the Samarth Udyog Bharat
+ 4.0 Initiative, enabling industries to adopt
+advanced manufacturing technologies and
+accelerate digital transformation. 
             </p>
 
             <div className="pt-2">
