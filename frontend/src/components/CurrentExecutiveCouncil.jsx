@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react'
 import { getCouncilMembers } from '../services/api'
 
@@ -63,89 +64,116 @@ export default function CurrentExecutiveCouncil() {
 
   useEffect(() => {
     let isMounted = true
-    getCouncilMembers().then((data) => {
-      if (isMounted && data && data.length > 0) {
-        setMembers(data.filter(m => m.isActive !== false))
-      }
-    }).catch(console.error)
 
-    return () => { isMounted = false }
+    getCouncilMembers()
+      .then((data) => {
+        if (isMounted && data && data.length > 0) {
+          setMembers(data.filter(m => m.isActive !== false))
+        }
+      })
+      .catch(console.error)
+
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   return (
-    <section id="executive-council" className="py-24 bg-white font-sans relative overflow-hidden text-left">
-      
-      {/* Background Micro-Grid Texture */}
-      <div 
-        className="absolute inset-0 opacity-40 pointer-events-none bg-repeat bg-[length:360px_360px]"
-        style={{ backgroundImage: `url('/grid-bg.png')` }}
-      ></div>
+    <section
+      id="executive-council"
+      className="relative bg-white py-24 font-sans text-left"
+    >
 
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
-        
-        {/* Layout matching Image 2: Left Title + Right 3-Column Profile Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          
-          {/* Left Title Column matching Image 2 */}
-          <div className="lg:col-span-3 lg:sticky lg:top-28">
-            <h2 className="text-4xl sm:text-5xl lg:text-[46px] font-black text-[#1F2937] leading-[1.15] tracking-tight">
-              Current<br />Executive<br />Council
-            </h2>
-            <p className="text-xs sm:text-sm text-gray-500 mt-4 leading-relaxed font-normal">
-              Eminent industry leaders driving innovation, digital workforce skilling, and policy advocacy across Indian automation sectors.
-            </p>
-          </div>
+      {/* Background Micro-Grid */}
+      <div
+        className="pointer-events-none absolute inset-0 bg-repeat opacity-40"
+        style={{
+          backgroundImage: "url('/grid-bg.png')",
+          backgroundSize: '360px 360px'
+        }}
+      />
 
-          {/* Right Members Grid matching Image 2 */}
+      <div className="relative z-10 mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
+
+        {/* Main Layout */}
+       <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-12">
+
+          {/* LEFT STICKY CONTENT */}
+<div className="lg:col-span-3 lg:self-stretch">
+  <div className="lg:sticky lg:top-28 lg:h-fit">
+    <h2 className="text-4xl font-black leading-[1.15] tracking-tight text-[#1F2937] sm:text-5xl lg:text-[46px]">
+      Current<br />
+      Executive<br />
+      Council
+    </h2>
+
+    <p className="mt-4 text-xs font-normal leading-relaxed text-gray-500 sm:text-sm">
+      Eminent industry leaders driving innovation, digital workforce
+      skilling, and policy advocacy across Indian automation sectors.
+    </p>
+  </div>
+</div>
+
+          {/* RIGHT SCROLLING MEMBERS */}
           <div className="lg:col-span-9">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
+
+            <div className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+
               {members.map((member, idx) => (
-                <div 
+                <div
                   key={member._id || idx}
-                  className="flex flex-col space-y-3 group"
+                  className="group flex flex-col space-y-3"
                 >
-                  {/* Photo Frame with Coral border matching Image 2 */}
-                  <div className="relative aspect-[4/5] rounded-2xl p-1.5 border border-[#E37263]/70 overflow-hidden bg-white shadow-sm group-hover:shadow-xl transition-all duration-300">
-                    <div className="w-full h-full rounded-xl overflow-hidden bg-slate-100">
+
+                  {/* Member Image */}
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-[#E37263]/70 bg-white p-1.5 shadow-sm transition-all duration-300 group-hover:shadow-xl">
+
+                    <div className="h-full w-full overflow-hidden rounded-xl bg-slate-100">
+
                       <img
                         src={member.imageUrl}
                         alt={member.name}
-                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500 select-none"
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full select-none object-cover object-top transition-transform duration-500 group-hover:scale-105"
                       />
+
                     </div>
                   </div>
 
-                  {/* Name & Details matching Image 2 */}
+                  {/* Member Details */}
                   <div className="space-y-1 pt-1">
-                    <h3 className="text-base sm:text-lg font-black text-[#1F2937] tracking-tight group-hover:text-[#E37263] transition-colors">
+
+                    <h3 className="text-base font-black tracking-tight text-[#1F2937] transition-colors duration-300 group-hover:text-[#E37263] sm:text-lg">
                       {member.name}
                     </h3>
 
-                    {/* Role in coral/red text */}
                     <div className="text-xs font-bold text-[#E37263]">
                       {member.role}
                     </div>
 
-                    {/* Corporate title and company name */}
-                    <div className="text-[11px] sm:text-xs text-gray-600 space-y-0.5 leading-snug pt-0.5">
+                    <div className="space-y-0.5 pt-0.5 text-[11px] leading-snug text-gray-600 sm:text-xs">
+
                       {member.fullRole && (
                         <p className="font-normal text-gray-700">
                           {member.fullRole}
                         </p>
                       )}
+
                       <p className="font-normal text-gray-500">
                         {member.companyName}
                       </p>
+
                     </div>
                   </div>
 
                 </div>
               ))}
+
             </div>
           </div>
 
         </div>
-
       </div>
     </section>
   )

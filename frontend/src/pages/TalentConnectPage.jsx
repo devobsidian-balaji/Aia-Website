@@ -37,7 +37,7 @@ export default function TalentConnectPage() {
         // showReadMore={true}
         // onReadMore={handleReadMore}
       /> */}
-      <AIASection />
+      {/* <AIASection /> */}
      <ReusableCardGrid
       title="Talent Programs"
       cards={talentprograms}

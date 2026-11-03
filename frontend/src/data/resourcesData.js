@@ -1,0 +1,63 @@
+
+export const resourcesData = [
+    {
+        id: 1,
+        slug: "pharmaceutical-automation",
+        image: "/articles/article-resource-img-1.png",
+        title: "A Look at thirty years of change in pharmaceutical automation",
+        category: "Pharmaceuticals",
+        categoryLink: "#",
+        link: "#",
+    },
+    {
+        id: 2,
+        slug: "steel-process-automation",
+        image: "/articles/article-resource-img-2.png",
+        title: "A seamless blend of process control and automation in steel",
+        link: "#",
+    },
+    {
+        id: 3,
+        slug: "advanced-batch-digester-solution",
+        image: "/articles/article-resource-img-3.png",
+        title: "Advanced Batch Digester Solution",
+        link: "#",
+    },
+    {
+        id: 4,
+        slug: "andon-automotive-solutions",
+        image: "/articles/article-resource-img-4.png",
+        title: "Andon Solutions - Harnessing Actionable Information for Automotive Manufacturing",
+        link: "#",
+    },
+    {
+        id: 5,
+        slug: "",
+        image: "/articles/article-resource-img-5.png",
+        title: "Auditing is made easy by going digital",
+        link: "#",
+    },
+    {
+        id: 6,
+        slug: "",
+        image: "/articles/article-resource-img-6.png",
+        title: "Automation in Petroleum Retailing",
+        link: "#",
+    },
+    {
+        id: 7,
+        slug: "",
+        image: "/articles/article-resource-img-7.png",
+        title: "Authentic Inspection - User Case Studies",
+        link: "#",
+    },
+    {
+        id: 8,
+        slug: "",
+        image: "/articles/article-resource-img-8.png",
+        title: "Convergence in the Control Room : Integrating transmission, distribution and outage management systems",
+        category: "Gas and Alternate Energy",
+        categoryLink: "#",
+        link: "#",
+    },
+];

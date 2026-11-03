@@ -170,7 +170,8 @@ export default function EventsCatalogue() {
                 {/* View Event Button matching Image 1 */}
                 <div className="pt-2">
                   <a
-                    href={item.eventLink || '#'}
+                    // href={item.eventLink || '#'}
+                   href={`/event/EventDetailsPage`}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center justify-center px-6 py-2 rounded-xl border border-gray-300 bg-white text-[#1F2937] hover:border-[#E25238] hover:text-[#E25238] font-bold text-xs tracking-wide shadow-xs hover:shadow transition-all duration-200 active:scale-95"

@@ -1942,6 +1942,7 @@ export default function AdminLayout({ onExitAdmin }) {
           "all-council",
           "add-past-president",
           "all-past-presidents",
+          "aims-objectives-slider-cms",
         ].includes(urlTab)
       )
         setAboutMenuOpen(true);
@@ -2015,7 +2016,7 @@ export default function AdminLayout({ onExitAdmin }) {
               {!sidebarCollapsed && (
                 <div className="truncate">
                   <h1 className="text-sm font-black text-white tracking-tight leading-tight flex items-center gap-1.5">
-                    <span>AIA Command</span>
+                    <span className="text-black">AIA Command</span>
                     <span className="text-[10px] bg-red-500/20 text-[#FF6B55] px-1.5 py-0.5 rounded font-bold border border-red-500/30">
                       CMS
                     </span>
@@ -2227,14 +2228,12 @@ export default function AdminLayout({ onExitAdmin }) {
                 <div className="pl-9 pr-2 py-1 space-y-1 border-l border-white/10 ml-5 my-1">
                   <button
                     onClick={() => handleNavigate("membership-why-join-cms")}
-                      className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${currentTab === "membership-slider-cms" ? "text-[#FF6B55] font-bold bg-white/10" : "text-gray-400 hover:text-[#FF6B55]"}`}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${currentTab === "membership-slider-cms" ? "text-[#FF6B55] font-bold bg-white/10" : "text-gray-400 hover:text-[#FF6B55]"}`}
                   >
-                   Why Join CMS
+                    Why Join CMS
                   </button>
                 </div>
               )}
-
-             
             </div>
 
             {/* 4. Industry Insight page CMS submenu */}
@@ -2272,13 +2271,15 @@ export default function AdminLayout({ onExitAdmin }) {
                   </button>
                 </div>
               )}
+              {industryInsightMenuOpen && !sidebarCollapsed && (
               <button
-              type="button"
-              onClick={() => handleNavigate("sticky-stack-industry-cms")}
-              className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${currentTab === "sticky-stack-industry-cms" ? "text-[#FF6B55] font-bold bg-white/10" : "text-gray-400 hover:text-[#FF6B55]"}`}
+                type="button"
+                onClick={() => handleNavigate("sticky-stack-industry-cms")}
+                className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${currentTab === "sticky-stack-industry-cms" ? "text-[#FF6B55] font-bold bg-white/10" : "text-gray-400 hover:text-[#FF6B55]"}`}
               >
-              <span>Industry Insight Sticky Stack CMS</span>
-            </button>
+                <span>Industry Insight Sticky Stack CMS</span>
+              </button>
+              )}
             </div>
 
             {/* 5. Talent Connect page CMS submenu */}
@@ -2412,23 +2413,36 @@ export default function AdminLayout({ onExitAdmin }) {
                     All Milestones
                   </button>
 
-                   <button
-                      onClick={() => handleNavigate("about-aia-why-join-cms")}
-                      className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${currentTab === "membership-slider-cms" ? "text-[#FF6B55] font-bold bg-white/10" : "text-gray-400 hover:text-[#FF6B55]"}`}
-                    >
+                  <button
+                    onClick={() => handleNavigate("about-aia-why-join-cms")}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${currentTab === "membership-slider-cms" ? "text-[#FF6B55] font-bold bg-white/10" : "text-gray-400 hover:text-[#FF6B55]"}`}
+                  >
                     Why Join CMS
                   </button>
 
-    
                   <button
-                   type="button"
-                       onClick={() => handleNavigate("sticky-stack-about-cms")}
-                       
-                        className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${currentTab === "sticky-stack-about-cms" ? "text-[#FF6B55] font-bold bg-white/10" : "text-gray-400 hover:text-[#FF6B55]"}`}
-                                        >
-                      
-                                   <span>About Sticky Stack CMS</span>
-                                      </button>
+                    type="button"
+                    onClick={() => handleNavigate("sticky-stack-about-cms")}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${currentTab === "sticky-stack-about-cms" ? "text-[#FF6B55] font-bold bg-white/10" : "text-gray-400 hover:text-[#FF6B55]"}`}
+                  >
+                    <span>About Sticky Stack CMS</span>
+                  </button>
+
+                  <div className="pt-1.5 pb-1 border-t border-white/10">
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider pl-1">
+                      Aims & Objectives
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => handleNavigate("aims-objectives-slider-cms")}
+                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition ${
+                      currentTab === "aims-objectives-slider-cms"
+                        ? "bg-[#E25238] text-white"
+                        : "text-slate-600 hover:bg-slate-100"
+                    }`}
+                  >
+                    <span>Aims & Objectives Slider</span>
+                  </button>
 
                   <div className="pt-1.5 pb-1 border-t border-white/10">
                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider pl-1">
@@ -2487,9 +2501,6 @@ export default function AdminLayout({ onExitAdmin }) {
                   </button>
                 </div>
               )}
-           
-
-
             </div>
 
             {/* 4. Events Submenu */}
@@ -2847,55 +2858,62 @@ export default function AdminLayout({ onExitAdmin }) {
             )}
 
             {currentTab === "home-why-join-cms" && (
-            <ManageWhyJoin
-              key="home-why-join-cms"
-              defaultPageKey="home"
-              defaultSectionKey="why-join"
+              <ManageWhyJoin
+                key="home-why-join-cms"
+                defaultPageKey="home"
+                defaultSectionKey="why-join"
               />
             )}
             {currentTab === "membership-why-join-cms" && (
-  <ManageWhyJoin
-    key="membership-why-join-cms"
-    defaultPageKey="membership"
-    defaultSectionKey="why-join"
-  />
-)}
-{currentTab === "about-aia-why-join-cms" && (
-  <ManageWhyJoin
-    key="about-aia-why-join-cms"
-    defaultPageKey="about-aia"
-    defaultSectionKey="why-join"
-  />
-)}
-{currentTab === "about-aia-slider-cms" && (
-  <ManageSliderCMS
-    key="about-aia-slider-cms"
-    defaultPageKey="about-aia"
-    defaultSectionKey="about-slider"
-  />
-)}
-{currentTab === "about-aia-slider-2-cms" && (
-  <ManageSliderCMS
-    key="about-aia-slider-2-cms"
-    defaultPageKey="about-aia"
-    defaultSectionKey="about-slider-2"
-  />
-)}
-{currentTab === "sticky-stack-about-cms" && (
-  <ManageStickyStackCMS
-    key="sticky-stack-about-cms"
-    defaultPageKey="about-aia"
-    defaultSectionKey="our-journey"
-  />
-)}
+              <ManageWhyJoin
+                key="membership-why-join-cms"
+                defaultPageKey="membership"
+                defaultSectionKey="why-join"
+              />
+            )}
+            {currentTab === "about-aia-why-join-cms" && (
+              <ManageWhyJoin
+                key="about-aia-why-join-cms"
+                defaultPageKey="about-aia"
+                defaultSectionKey="why-join"
+              />
+            )}
+            {currentTab === "about-aia-slider-cms" && (
+              <ManageSliderCMS
+                key="about-aia-slider-cms"
+                defaultPageKey="about-aia"
+                defaultSectionKey="about-slider"
+              />
+            )}
+            {currentTab === "aims-objectives-slider-cms" && (
+              <ManageSliderCMS
+                key="aims-objectives-slider-cms"
+                defaultPageKey="aims-objectives"
+                defaultSectionKey="aims-slider"
+              />
+            )}
+            {currentTab === "about-aia-slider-2-cms" && (
+              <ManageSliderCMS
+                key="about-aia-slider-2-cms"
+                defaultPageKey="about-aia"
+                defaultSectionKey="about-slider-2"
+              />
+            )}
+            {currentTab === "sticky-stack-about-cms" && (
+              <ManageStickyStackCMS
+                key="sticky-stack-about-cms"
+                defaultPageKey="about-aia"
+                defaultSectionKey="our-journey"
+              />
+            )}
 
-{currentTab === "sticky-stack-industry-cms" && (
-  <ManageStickyStackCMS
-    key="sticky-stack-industry-cms"
-    defaultPageKey="industry-insight"
-    defaultSectionKey="articles-perspectives"
-  />
-)}
+            {currentTab === "sticky-stack-industry-cms" && (
+              <ManageStickyStackCMS
+                key="sticky-stack-industry-cms"
+                defaultPageKey="industry-insight"
+                defaultSectionKey="articles-perspectives"
+              />
+            )}
 
             {currentTab === "home-features-cms" && <ManageHomeFeatures />}
 

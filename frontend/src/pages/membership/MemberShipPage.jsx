@@ -1,19 +1,16 @@
-import React from 'react'
-import MemberShipHero from '../components/membership/MemberShipHero'
+import React from "react";
+import MemberShipHero from "../../components/membership/MemberShipHero";
 // import MemberShipAIAOverview from '../components/membership/MemberShipAIAOverview'
-import MemberShipObjectives from '../components/membership/MemberShipObjectives'
+import MemberShipObjectives from "../../components/membership/MemberShipObjectives";
 // import MemberShipPara from '../components/membership/MemberShipPara'
 // import WhyJoinSlider from '../components/membership/WhyJoinSlider'
-import MemberDirectory from '../components/membership/MemberDirectory'
-import FAQSections from '../components/membership/FAQSections'
-import ContentIntroSection from '../components/ContentIntroSection'
+// import MemberDirectory from '../../components/membership/MemberDirectory'
+import FAQSections from "../../components/membership/FAQSections";
+import ContentIntroSection from "../../components/ContentIntroSection";
 // import ReusableCardSlider from '../components/ReusableCardSlider'
-import { memberShipSlides } from '../data/membersData'
-import CmsSliderSection from '../components/sliders/CmsSliderSection'
-import WhyJoinCmsSection from '../components/why-join/WhyJoinCmsSection'
-
-
-
+import { memberShipSlides } from "../../data/membersData";
+import CmsSliderSection from "../../components/sliders/CmsSliderSection";
+import WhyJoinCmsSection from "../../components/why-join/WhyJoinCmsSection";
 
 // import AboutHero from '../components/AboutHero.jsx'
 // import AboutAIAOverview from '../components/AboutAIAOverview.jsx'
@@ -34,19 +31,12 @@ export default function MemberShipPage() {
       {/* <ReusableCardSlider  slides={memberShipSlides}
         visibleSlides={3}
         introColor="bg-[#E52B18]" /> */}
-        
-        <CmsSliderSection
-        pageKey="membership"
-        sectionKey="member-benefits"
-      />
-      <WhyJoinCmsSection
-       pageKey="membership"
-  sectionKey="why-join"
-        />
-      
+
+      <CmsSliderSection pageKey="membership" sectionKey="member-benefits" />
+      <WhyJoinCmsSection pageKey="membership" sectionKey="why-join" />
 
       {/* <MemberShipObjectives /> */}
-      <MemberDirectory />
+      {/* <MemberDirectory /> */}
       <FAQSections />
 
       {/* 3. Dynamic Vision, Mission, Objectives with Dotted Curves */}
@@ -61,5 +51,5 @@ export default function MemberShipPage() {
       {/* 6. Automation Ecosystem */}
       {/* <AutomationEcosystem /> */}
     </div>
-  )
+  );
 }

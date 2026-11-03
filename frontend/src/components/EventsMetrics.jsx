@@ -44,6 +44,15 @@ export default function EventsMetrics() {
   return (
     <section className="py-16 bg-white font-sans relative z-20">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+         <div className="bg-white px-5 py-5 text-center sm:py-6 mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-12">
+          <h2 className="mb-8 text-4xl font-black leading-[1.05] tracking-[-0.035em] text-[#1F2937] sm:mb-12 sm:text-5xl lg:mb-6 lg:text-[54px]">
+            Events
+          </h2>
+            <p className="text-sm font-normal leading-[1.7] text-gray-600 sm:text-base sm:leading-[1.7] lg:text-lg lg:leading-[1.75] mb-5">
+              doesn't run a separate events calendar of its own we show up through joint events, panel discussions, and dedicated pavilions at the expos that matter to this industry, plus a growing program of campus events connecting students to real careers in automation.
+            </p>
+          
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {metrics.map((item) => {
             const Icon = item.icon

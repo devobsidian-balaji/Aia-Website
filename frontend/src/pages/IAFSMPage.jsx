@@ -4,6 +4,7 @@ import IAFSMPillars from '../components/IAFSMPillars.jsx'
 import WhatIsIAFSM from '../components/WhatIsIAFSM.jsx'
 import EventsSection from '../components/EventsSection.jsx'
 import OurInitiatives from '../components/OurInitiatives.jsx'
+import HomeFeatureSection from '../components/home/HomeFeatureSection.jsx'
 
 export default function IAFSMPage() {
   return (
@@ -11,6 +12,8 @@ export default function IAFSMPage() {
       {/* 1. Hero Section matching Image 1 & 2 */}
       <IAFSMHero />
 
+            <HomeFeatureSection />
+            
       {/* 2. Pillars Section matching Image 1 staggered alignment */}
       <IAFSMPillars />
 

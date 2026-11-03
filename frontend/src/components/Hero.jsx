@@ -231,260 +231,465 @@
 // }
 
 
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react'
-import { getBanners } from '../services/api'
+// import React, { useCallback, useEffect, useRef, useState } from 'react'
+// import { Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react'
+// import { getBanners } from '../services/api'
 
-const FALLBACK_BANNERS = [
-  {
-    _id: 'default',
-    name: "Building the automation backbone of India's factories.",
-    title: "Building the automation backbone of India's factories.",
-    description:
-      'Empowering manufacturers to build and sustain solutions based on Industrial Automation, Robotics, Industry 4.0, AI and Collaborative Innovation.',
-    imageUrl: '/hero-engineer.png',
-    isActive: true,
-    ctaPrimaryText: 'Become a Member',
-    ctaPrimaryUrl: '#membership',
-    ctaSecondaryText: 'Explore Smart Factory',
-    ctaSecondaryUrl: '#build-factory',
-  },
-]
+// const FALLBACK_BANNERS = [
+//   {
+//     _id: 'default',
+//     name: "Building the automation backbone of India's factories.",
+//     title: "Building the automation backbone of India's factories.",
+//     description:
+//       'Empowering manufacturers to build and sustain solutions based on Industrial Automation, Robotics, Industry 4.0, AI and Collaborative Innovation.',
+//     imageUrl: '/hero-engineer.png',
+//     isActive: true,
+//     ctaPrimaryText: 'Become a Member',
+//     ctaPrimaryUrl: '#membership',
+//     ctaSecondaryText: 'Explore Smart Factory',
+//     ctaSecondaryUrl: '#build-factory',
+//   },
+// ]
 
-const getMediaUrl = (banner) =>
-  banner?.videoUrl || banner?.mediaUrl || banner?.imageUrl || banner?.image || ''
+// const getMediaUrl = (banner) =>
+//   banner?.videoUrl || banner?.mediaUrl || banner?.imageUrl || banner?.image || ''
 
-const isVideoBanner = (banner) => {
-  const url = getMediaUrl(banner)
-  const type = String(banner?.mediaType || banner?.type || '').toLowerCase()
-  return (
-    type === 'video' ||
-    type === 'mp4' ||
-    Boolean(banner?.videoUrl) ||
-    /\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(url)
-  )
-}
+// const isVideoBanner = (banner) => {
+//   const url = getMediaUrl(banner)
+//   const type = String(banner?.mediaType || banner?.type || '').toLowerCase()
+//   return (
+//     type === 'video' ||
+//     type === 'mp4' ||
+//     Boolean(banner?.videoUrl) ||
+//     /\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(url)
+//   )
+// }
 
-export default function Hero() {
-  const [banners, setBanners] = useState(FALLBACK_BANNERS)
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isVideoPlaying, setIsVideoPlaying] = useState(true)
-  const videoRef = useRef(null)
-  const currentBanner = banners[currentIndex] || FALLBACK_BANNERS[0]
-  const mediaUrl = getMediaUrl(currentBanner)
-  const hasVideo = isVideoBanner(currentBanner)
+// export default function Hero() {
+//   const [banners, setBanners] = useState(FALLBACK_BANNERS)
+//   const [currentIndex, setCurrentIndex] = useState(0)
+//   const [isVideoPlaying, setIsVideoPlaying] = useState(true)
+//   const videoRef = useRef(null)
+//   const currentBanner = banners[currentIndex] || FALLBACK_BANNERS[0]
+//   const mediaUrl = getMediaUrl(currentBanner)
+//   const hasVideo = isVideoBanner(currentBanner)
+
+//   useEffect(() => {
+//     let isMounted = true
+
+//     getBanners()
+//       .then((data) => {
+//         if (!isMounted || !Array.isArray(data)) return
+//         const activeBanners = data.filter((banner) => banner?.isActive)
+//         if (activeBanners.length) {
+//           setBanners(activeBanners)
+//           setCurrentIndex(0)
+//           // Preload image banners. Video playback is handled by the video element.
+//           activeBanners.forEach((banner) => {
+//             if (!isVideoBanner(banner)) {
+//               const url = getMediaUrl(banner)
+//               if (url) {
+//                 const img = new Image()
+//                 img.src = url
+//               }
+//             }
+//           })
+//         }
+//       })
+//       .catch((error) => console.error('Failed to load hero banners:', error))
+
+//     return () => {
+//       isMounted = false
+//     }
+//   }, [])
+
+//   // Auto-advance when there are multiple banners. A video banner remains playable
+//   // and its own controls are shown only while that video is the active media.
+//   useEffect(() => {
+//     if (banners.length < 2) return undefined
+//     const timer = window.setInterval(() => {
+//       setCurrentIndex((index) => (index + 1) % banners.length)
+//     }, 6000)
+//     return () => window.clearInterval(timer)
+//   }, [banners.length])
+
+//   useEffect(() => {
+//     setIsVideoPlaying(true)
+//     if (hasVideo && videoRef.current) {
+//       const video = videoRef.current
+//       video.currentTime = 0
+//       const playPromise = video.play()
+//       if (playPromise?.catch) playPromise.catch(() => setIsVideoPlaying(false))
+//     }
+//   }, [currentIndex, hasVideo, mediaUrl])
+
+//   const goTo = useCallback(
+//     (index) => setCurrentIndex((index + banners.length) % banners.length),
+//     [banners.length],
+//   )
+
+//   const toggleVideoPlayback = async () => {
+//     const video = videoRef.current
+//     if (!video) return
+
+//     if (video.paused) {
+//       try {
+//         await video.play()
+//         setIsVideoPlaying(true)
+//       } catch (error) {
+//         console.error('Video playback could not start:', error)
+//         setIsVideoPlaying(false)
+//       }
+//     } else {
+//       video.pause()
+//       setIsVideoPlaying(false)
+//     }
+//   }
+
+//   const title =
+//     currentBanner?.title || currentBanner?.heading || currentBanner?.name ||
+//     "Building the automation backbone of India's factories."
+//   const description =
+//     currentBanner?.description || currentBanner?.subtitle ||
+//     'Empowering manufacturers to build and sustain solutions based on Industrial Automation, Robotics, Industry 4.0, AI and Collaborative Innovation.'
+//   const primaryText = currentBanner?.ctaPrimaryText || currentBanner?.buttonText || 'Become a Member'
+//   const primaryUrl = currentBanner?.ctaPrimaryUrl || currentBanner?.buttonUrl || '#membership'
+//   const secondaryText = currentBanner?.ctaSecondaryText || 'Explore Smart Factory'
+//   const secondaryUrl = currentBanner?.ctaSecondaryUrl || '#build-factory'
+
+//   return (
+//     <section
+//       id="home"
+//       className="relative isolate flex min-h-[390px] w-full items-center overflow-hidden bg-[#101311] font-sans text-white sm:min-h-[460px] lg:min-h-[540px]"
+//     >
+//       {/* Background media: image banners render an image; video banners render a video. */}
+//       <div className="absolute inset-0 -z-20 overflow-hidden bg-[#101311]">
+//         {hasVideo ? (
+//           <video
+//             key={mediaUrl}
+//             ref={videoRef}
+//             className="h-full w-full object-cover object-center"
+//             src={mediaUrl}
+//             autoPlay
+//             muted
+//             loop
+//             playsInline
+//             preload="auto"
+//             onPlay={() => setIsVideoPlaying(true)}
+//             onPause={() => setIsVideoPlaying(false)}
+//             aria-label={title}
+//           />
+//         ) : mediaUrl ? (
+//           <img
+//             key={mediaUrl}
+//             src={mediaUrl}
+//             alt={currentBanner?.name || title}
+//             className="h-full w-full object-cover object-center"
+//             loading={currentIndex === 0 ? 'eager' : 'lazy'}
+//           />
+//         ) : null}
+//       </div>
+
+//       {/* Dark overlay closely matching the supplied reference screenshot. */}
+//       <div className="absolute inset-0 -z-10 bg-black/65" />
+//       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/65 via-black/35 to-black/20" />
+
+//       <div className="mx-auto flex w-full max-w-[1440px] items-center px-5 py-14 sm:px-8 sm:py-16 lg:px-[8.5%] lg:py-20">
+//         <div className="max-w-[660px] animate-[heroFadeIn_.65s_ease-out]">
+//           <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/75 sm:text-xs">
+//             {currentBanner?.eyebrow || currentBanner?.tagline || ''}
+//           </p>
+
+//           <h1 className="max-w-[650px] whitespace-pre-line text-[30px] font-semibold leading-[1.12] tracking-[-0.035em] drop-shadow-md sm:text-[38px] lg:text-[48px]">
+//             {title}
+//           </h1>
+
+//           <p className="mt-4 max-w-[490px] text-[12px] leading-[1.6] text-white/85 drop-shadow sm:mt-5 sm:text-sm">
+//             {description}
+//           </p>
+
+//           <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-6 sm:gap-3">
+//             <a
+//               href={primaryUrl}
+//               className="inline-flex min-h-[34px] items-center justify-center rounded-[4px] bg-[#f15d4e] px-3.5 py-2 text-[10px] font-semibold text-white transition-colors hover:bg-[#dc493b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:text-[11px]"
+//             >
+//               {primaryText}
+//             </a>
+//             {secondaryText && (
+//               <a
+//                 href={secondaryUrl}
+//                 className="inline-flex min-h-[34px] items-center justify-center rounded-[4px] border border-white/75 bg-black/10 px-3.5 py-2 text-[10px] font-medium text-white transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:text-[11px]"
+//               >
+//                 {secondaryText}
+//               </a>
+//             )}
+//           </div>
+//         </div>
+//       </div>
+
+//       {/* Playback control is deliberately rendered only for video media. */}
+//       {hasVideo && (
+//         <button
+//           type="button"
+//           onClick={toggleVideoPlayback}
+//           className="absolute bottom-5 right-5 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-white/30 bg-[#e86b5e] text-white shadow-lg transition hover:scale-105 hover:bg-[#d95649] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:bottom-7 sm:right-7 sm:h-9 sm:w-9"
+//           aria-label={isVideoPlaying ? 'Pause background video' : 'Play background video'}
+//           title={isVideoPlaying ? 'Pause video' : 'Play video'}
+//         >
+//           {isVideoPlaying ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" className="translate-x-[1px]" />}
+//         </button>
+//       )}
+
+//       {/* Carousel controls are independent from the media playback control. */}
+//       {banners.length > 1 && (
+//         <div className="absolute bottom-5 left-5 z-20 flex items-center gap-3 sm:bottom-7 sm:left-8 lg:left-[8.5%]">
+//           <button
+//             type="button"
+//             onClick={() => goTo(currentIndex - 1)}
+//             className="flex h-7 w-7 items-center justify-center rounded-full border border-white/35 bg-black/25 text-white transition hover:bg-white/20"
+//             aria-label="Previous banner"
+//           >
+//             <ChevronLeft size={15} />
+//           </button>
+//           <div className="flex items-center gap-1.5" aria-label="Choose banner">
+//             {banners.map((banner, index) => (
+//               <button
+//                 key={banner._id || banner.id || index}
+//                 type="button"
+//                 onClick={() => goTo(index)}
+//                 aria-label={`Go to banner ${index + 1}`}
+//                 aria-current={index === currentIndex ? 'true' : undefined}
+//                 className={`h-1.5 rounded-full transition-all ${
+//                   index === currentIndex ? 'w-5 bg-[#f15d4e]' : 'w-1.5 bg-white/60 hover:bg-white'
+//                 }`}
+//               />
+//             ))}
+//           </div>
+//           <button
+//             type="button"
+//             onClick={() => goTo(currentIndex + 1)}
+//             className="flex h-7 w-7 items-center justify-center rounded-full border border-white/35 bg-black/25 text-white transition hover:bg-white/20"
+//             aria-label="Next banner"
+//           >
+//             <ChevronRight size={15} />
+//           </button>
+//         </div>
+//       )}
+
+//       <style>{`
+//         @keyframes heroFadeIn {
+//           from { opacity: 0; transform: translateY(8px); }
+//           to { opacity: 1; transform: translateY(0); }
+//         }
+//         @media (prefers-reduced-motion: reduce) {
+//           section * { animation: none !important; transition: none !important; }
+//         }
+//       `}</style>
+//     </section>
+//   )
+// }
+
+
+
+import React, { useEffect, useRef, useState } from "react";
+import { Play, Pause } from "lucide-react";
+
+const API_URL = (
+  import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+).replace(/\/$/, "");
+
+const FALLBACK_HERO = {
+  title: "Building the automation backbone of India's factories.",
+  description:
+    "Empowering manufacturers to build and sustain solutions based on Industrial Automation, Robotics, Industry 4.0, AI and Collaborative Innovation.",
+  videoUrl: "",
+  ctaPrimaryText: "Become a Member",
+  ctaPrimaryUrl: "#membership",
+  ctaSecondaryText: "Explore Smart Factory",
+  ctaSecondaryUrl: "#build-factory",
+};
+
+export default function Hero({onBecomeMemberClick}) {
+  const videoRef = useRef(null);
+
+  const [hero, setHero] = useState(FALLBACK_HERO);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   useEffect(() => {
-    let isMounted = true
+    let mounted = true;
 
-    getBanners()
-      .then((data) => {
-        if (!isMounted || !Array.isArray(data)) return
-        const activeBanners = data.filter((banner) => banner?.isActive)
-        if (activeBanners.length) {
-          setBanners(activeBanners)
-          setCurrentIndex(0)
-          // Preload image banners. Video playback is handled by the video element.
-          activeBanners.forEach((banner) => {
-            if (!isVideoBanner(banner)) {
-              const url = getMediaUrl(banner)
-              if (url) {
-                const img = new Image()
-                img.src = url
-              }
-            }
-          })
+    const fetchHero = async () => {
+      try {
+        const response = await fetch(`${API_URL}/banners`);
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.message || "Unable to load hero.");
         }
-      })
-      .catch((error) => console.error('Failed to load hero banners:', error))
+
+        const activeHero = result.data?.find(
+          (item) => item.isActive && item.videoUrl
+        );
+
+        if (mounted && activeHero) {
+          setHero(activeHero);
+          setIsPlaying(false);
+          setVideoFailed(false);
+          setVideoLoaded(false);
+        }
+      } catch (error) {
+        console.error("Home hero API error:", error);
+      }
+    };
+
+    fetchHero();
 
     return () => {
-      isMounted = false
-    }
-  }, [])
+      mounted = false;
+    };
+  }, []);
 
-  // Auto-advance when there are multiple banners. A video banner remains playable
-  // and its own controls are shown only while that video is the active media.
+  // Ensure video remains initially paused.
   useEffect(() => {
-    if (banners.length < 2) return undefined
-    const timer = window.setInterval(() => {
-      setCurrentIndex((index) => (index + 1) % banners.length)
-    }, 6000)
-    return () => window.clearInterval(timer)
-  }, [banners.length])
+    const video = videoRef.current;
 
-  useEffect(() => {
-    setIsVideoPlaying(true)
-    if (hasVideo && videoRef.current) {
-      const video = videoRef.current
-      video.currentTime = 0
-      const playPromise = video.play()
-      if (playPromise?.catch) playPromise.catch(() => setIsVideoPlaying(false))
-    }
-  }, [currentIndex, hasVideo, mediaUrl])
+    if (!video) return;
 
-  const goTo = useCallback(
-    (index) => setCurrentIndex((index + banners.length) % banners.length),
-    [banners.length],
-  )
+    video.pause();
+    setIsPlaying(false);
+  }, [hero.videoUrl]);
 
-  const toggleVideoPlayback = async () => {
-    const video = videoRef.current
-    if (!video) return
+  const togglePlayback = async () => {
+    const video = videoRef.current;
+
+    if (!video || !hero.videoUrl || videoFailed) return;
 
     if (video.paused) {
       try {
-        await video.play()
-        setIsVideoPlaying(true)
+        await video.play();
+        setIsPlaying(true);
       } catch (error) {
-        console.error('Video playback could not start:', error)
-        setIsVideoPlaying(false)
+        console.error("Unable to play hero video:", error);
+        setIsPlaying(false);
       }
     } else {
-      video.pause()
-      setIsVideoPlaying(false)
+      video.pause();
+      setIsPlaying(false);
     }
-  }
+  };
 
-  const title =
-    currentBanner?.title || currentBanner?.heading || currentBanner?.name ||
-    "Building the automation backbone of India's factories."
-  const description =
-    currentBanner?.description || currentBanner?.subtitle ||
-    'Empowering manufacturers to build and sustain solutions based on Industrial Automation, Robotics, Industry 4.0, AI and Collaborative Innovation.'
-  const primaryText = currentBanner?.ctaPrimaryText || currentBanner?.buttonText || 'Become a Member'
-  const primaryUrl = currentBanner?.ctaPrimaryUrl || currentBanner?.buttonUrl || '#membership'
-  const secondaryText = currentBanner?.ctaSecondaryText || 'Explore Smart Factory'
-  const secondaryUrl = currentBanner?.ctaSecondaryUrl || '#build-factory'
+  const handleVideoLoaded = () => {
+    const video = videoRef.current;
+
+    if (!video) return;
+
+    video.pause();
+    video.currentTime = 0;
+
+    setVideoLoaded(true);
+    setIsPlaying(false);
+  };
+
+  const handleVideoError = () => {
+    setVideoFailed(true);
+    setVideoLoaded(false);
+    setIsPlaying(false);
+
+    console.error("Hero video could not be loaded:", hero.videoUrl);
+  };
 
   return (
     <section
       id="home"
-      className="relative isolate flex min-h-[390px] w-full items-center overflow-hidden bg-[#101311] font-sans text-white sm:min-h-[460px] lg:min-h-[540px]"
+      className="relative isolate flex min-h-[390px] w-full items-center overflow-hidden bg-[#111] font-sans text-white sm:min-h-[460px] lg:min-h-[540px]"
     >
-      {/* Background media: image banners render an image; video banners render a video. */}
-      <div className="absolute inset-0 -z-20 overflow-hidden bg-[#101311]">
-        {hasVideo ? (
-          <video
-            key={mediaUrl}
-            ref={videoRef}
-            className="h-full w-full object-cover object-center"
-            src={mediaUrl}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            onPlay={() => setIsVideoPlaying(true)}
-            onPause={() => setIsVideoPlaying(false)}
-            aria-label={title}
-          />
-        ) : mediaUrl ? (
-          <img
-            key={mediaUrl}
-            src={mediaUrl}
-            alt={currentBanner?.name || title}
-            className="h-full w-full object-cover object-center"
-            loading={currentIndex === 0 ? 'eager' : 'lazy'}
-          />
-        ) : null}
-      </div>
+      {/* Background video */}
+      {hero.videoUrl && !videoFailed && (
+       <video
+  ref={videoRef}
+  key={hero.videoUrl}
+  src={hero.videoUrl}
+  muted
+  loop
+  playsInline
+  autoPlay={false}
+  preload="auto"
+  controls={false}
+  onLoadedMetadata={() => {
+    const video = videoRef.current;
 
-      {/* Dark overlay closely matching the supplied reference screenshot. */}
-      <div className="absolute inset-0 -z-10 bg-black/65" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-black/65 via-black/35 to-black/20" />
+    if (video) {
+      video.pause();
+      setIsPlaying(false);
+    }
+  }}
+  onLoadedData={() => {
+    setVideoLoaded(true);
+    setIsPlaying(false);
+  }}
+  onPlay={() => setIsPlaying(true)}
+  onPause={() => setIsPlaying(false)}
+  onError={handleVideoError}
+  className="absolute inset-0 z-0 block h-full w-full object-cover"
+/>
+      )}
 
-      <div className="mx-auto flex w-full max-w-[1440px] items-center px-5 py-14 sm:px-8 sm:py-16 lg:px-[8.5%] lg:py-20">
-        <div className="max-w-[660px] animate-[heroFadeIn_.65s_ease-out]">
-          <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.22em] text-white/75 sm:text-xs">
-            {currentBanner?.eyebrow || currentBanner?.tagline || ''}
-          </p>
+      {/* Dark overlay */}
+      <div className="pointer-events-none absolute inset-0 z-10 bg-black/60" />
 
+      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-r from-black/70 via-black/35 to-black/20" />
+
+      {/* Hero content */}
+      <div className="relative z-20 mx-auto flex w-full max-w-[1440px] items-center px-5 py-14 sm:px-8 sm:py-16 lg:px-[8.5%] lg:py-20">
+        <div className="max-w-[660px]">
           <h1 className="max-w-[650px] whitespace-pre-line text-[30px] font-semibold leading-[1.12] tracking-[-0.035em] drop-shadow-md sm:text-[38px] lg:text-[48px]">
-            {title}
+            {hero.title || FALLBACK_HERO.title}
           </h1>
 
-          <p className="mt-4 max-w-[490px] text-[12px] leading-[1.6] text-white/85 drop-shadow sm:mt-5 sm:text-sm">
-            {description}
+          <p className="mt-4 max-w-[490px] text-[12px] leading-[1.6] text-white/85 sm:mt-5 sm:text-sm">
+            {hero.description || FALLBACK_HERO.description}
           </p>
 
           <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-6 sm:gap-3">
-            <a
-              href={primaryUrl}
-              className="inline-flex min-h-[34px] items-center justify-center rounded-[4px] bg-[#f15d4e] px-3.5 py-2 text-[10px] font-semibold text-white transition-colors hover:bg-[#dc493b] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:text-[11px]"
-            >
-              {primaryText}
-            </a>
-            {secondaryText && (
-              <a
-                href={secondaryUrl}
-                className="inline-flex min-h-[34px] items-center justify-center rounded-[4px] border border-white/75 bg-black/10 px-3.5 py-2 text-[10px] font-medium text-white transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:text-[11px]"
+            {hero.ctaPrimaryText && (
+              <button
+                href={hero.ctaPrimaryUrl || "#membership"}
+                className="inline-flex min-h-[34px] items-center justify-center rounded-[4px] bg-[#f15d4e] px-3.5 py-2 text-[10px] font-semibold text-white transition hover:bg-[#dc493b] sm:text-[11px]"
+                onClick={onBecomeMemberClick}
               >
-                {secondaryText}
-              </a>
+                {hero.ctaPrimaryText}
+              </button>
+            )}
+
+            {hero.ctaSecondaryText && (
+              <button
+                href={hero.ctaSecondaryUrl || "#build-factory"}
+                className="inline-flex min-h-[34px] items-center justify-center rounded-[4px] border border-white/75 bg-black/10 px-3.5 py-2 text-[10px] font-medium text-white transition hover:bg-white/15 sm:text-[11px]"
+              >
+                {hero.ctaSecondaryText}
+              </button>
             )}
           </div>
         </div>
       </div>
 
-      {/* Playback control is deliberately rendered only for video media. */}
-      {hasVideo && (
-        <button
-          type="button"
-          onClick={toggleVideoPlayback}
-          className="absolute bottom-5 right-5 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-white/30 bg-[#e86b5e] text-white shadow-lg transition hover:scale-105 hover:bg-[#d95649] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:bottom-7 sm:right-7 sm:h-9 sm:w-9"
-          aria-label={isVideoPlaying ? 'Pause background video' : 'Play background video'}
-          title={isVideoPlaying ? 'Pause video' : 'Play video'}
-        >
-          {isVideoPlaying ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" className="translate-x-[1px]" />}
-        </button>
-      )}
-
-      {/* Carousel controls are independent from the media playback control. */}
-      {banners.length > 1 && (
-        <div className="absolute bottom-5 left-5 z-20 flex items-center gap-3 sm:bottom-7 sm:left-8 lg:left-[8.5%]">
-          <button
-            type="button"
-            onClick={() => goTo(currentIndex - 1)}
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-white/35 bg-black/25 text-white transition hover:bg-white/20"
-            aria-label="Previous banner"
-          >
-            <ChevronLeft size={15} />
-          </button>
-          <div className="flex items-center gap-1.5" aria-label="Choose banner">
-            {banners.map((banner, index) => (
-              <button
-                key={banner._id || banner.id || index}
-                type="button"
-                onClick={() => goTo(index)}
-                aria-label={`Go to banner ${index + 1}`}
-                aria-current={index === currentIndex ? 'true' : undefined}
-                className={`h-1.5 rounded-full transition-all ${
-                  index === currentIndex ? 'w-5 bg-[#f15d4e]' : 'w-1.5 bg-white/60 hover:bg-white'
-                }`}
-              />
-            ))}
-          </div>
-          <button
-            type="button"
-            onClick={() => goTo(currentIndex + 1)}
-            className="flex h-7 w-7 items-center justify-center rounded-full border border-white/35 bg-black/25 text-white transition hover:bg-white/20"
-            aria-label="Next banner"
-          >
-            <ChevronRight size={15} />
-          </button>
-        </div>
-      )}
-
-      <style>{`
-        @keyframes heroFadeIn {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          section * { animation: none !important; transition: none !important; }
-        }
-      `}</style>
+      {/* Video play/pause button */}
+      <button
+        type="button"
+        onClick={togglePlayback}
+        disabled={!hero.videoUrl || videoFailed}
+        className="absolute bottom-5 right-5 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-white/50 bg-[#e86b5e] text-white shadow-lg transition hover:scale-110 hover:bg-[#d95649] disabled:cursor-not-allowed disabled:opacity-50 sm:bottom-7 sm:right-7"
+        aria-label={isPlaying ? "Pause background video" : "Play background video"}
+        title={isPlaying ? "Pause video" : "Play video"}
+      >
+        {isPlaying ? (
+          <Pause size={17} fill="currentColor" />
+        ) : (
+          <Play size={17} fill="currentColor" className="translate-x-[1px]" />
+        )}
+      </button>
     </section>
-  )
+  );
 }

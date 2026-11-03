@@ -17,7 +17,7 @@ import {
   Sparkles,
   MousePointer
 } from 'lucide-react'
-import { getPublications } from '../services/api'
+import { getPublications } from '../../services/api'
 
 export default function PublicationPage() {
   const [publications, setPublications] = useState([])

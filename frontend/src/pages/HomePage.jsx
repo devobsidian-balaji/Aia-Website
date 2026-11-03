@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Hero from "../components/Hero.jsx";
 import GovernmentInitiative from "../components/GovernmentInitiative.jsx";
 import WhoAreYou from "../components/WhoAreYou.jsx";
@@ -13,10 +13,12 @@ import CmsSliderSection from "../components/sliders/CmsSliderSection.jsx";
 import WhyJoinCmsSection from "../components/why-join/WhyJoinCmsSection.jsx";
 import HomeFeatureSection from "../components/home/HomeFeatureSection.jsx";
 import ResourceCenter from "../components/FactoryInsight.jsx";
+import RequestModal from "../components/RequestForms/RequestModal.jsx";
 
 // import ReusableCardSlider from "../components/ReusableCardSlider.jsx";
 
 export default function HomePage() {
+  const [isRequestOpen, setIsRequestOpen] = useState(false);
   const homeSlides = [
     {
       id: 1,
@@ -73,7 +75,7 @@ export default function HomePage() {
   ];
   return (
     <main>
-      <Hero />
+      <Hero onBecomeMemberClick={() => setIsRequestOpen(true)}/>
       <AIASection />
       <GovernmentInitiative />
       {/* <ReusableCardSlider
@@ -97,6 +99,10 @@ export default function HomePage() {
       <WhoAreYou />
       <ImpactDashboard />
       <BuildYourFactory /> */}
+      <RequestModal
+        isOpen={isRequestOpen}
+        onClose={() => setIsRequestOpen(false)}
+      />
     </main>
   );
 }
