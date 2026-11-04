@@ -491,6 +491,7 @@
 
 
 
+
 import React, { useEffect, useRef, useState } from "react";
 import { Play, Pause } from "lucide-react";
 
@@ -509,7 +510,7 @@ const FALLBACK_HERO = {
   ctaSecondaryUrl: "#build-factory",
 };
 
-export default function Hero({onBecomeMemberClick}) {
+export default function Hero({ onBecomeMemberClick }) {
   const videoRef = useRef(null);
 
   const [hero, setHero] = useState(FALLBACK_HERO);
@@ -517,6 +518,7 @@ export default function Hero({onBecomeMemberClick}) {
   const [videoFailed, setVideoFailed] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
 
+  // Fetch home hero data
   useEffect(() => {
     let mounted = true;
 
@@ -535,7 +537,6 @@ export default function Hero({onBecomeMemberClick}) {
 
         if (mounted && activeHero) {
           setHero(activeHero);
-          setIsPlaying(false);
           setVideoFailed(false);
           setVideoLoaded(false);
         }
@@ -551,16 +552,44 @@ export default function Hero({onBecomeMemberClick}) {
     };
   }, []);
 
-  // Ensure video remains initially paused.
+  // Automatically play video when it becomes available
   useEffect(() => {
     const video = videoRef.current;
 
-    if (!video) return;
+    if (!video || !hero.videoUrl || videoFailed) return;
 
-    video.pause();
-    setIsPlaying(false);
-  }, [hero.videoUrl]);
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
 
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+
+    const playVideo = async () => {
+      try {
+        await video.play();
+      } catch (error) {
+        console.warn(
+          "Browser blocked automatic hero video playback:",
+          error
+        );
+        setIsPlaying(false);
+      }
+    };
+
+    if (video.readyState >= 2) {
+      playVideo();
+    } else {
+      video.addEventListener("loadeddata", playVideo, { once: true });
+    }
+
+    return () => {
+      video.removeEventListener("loadeddata", playVideo);
+    };
+  }, [hero.videoUrl, videoFailed]);
+
+  // Play / Pause button
   const togglePlayback = async () => {
     const video = videoRef.current;
 
@@ -568,28 +597,20 @@ export default function Hero({onBecomeMemberClick}) {
 
     if (video.paused) {
       try {
+        video.muted = true;
         await video.play();
-        setIsPlaying(true);
       } catch (error) {
         console.error("Unable to play hero video:", error);
         setIsPlaying(false);
       }
     } else {
       video.pause();
-      setIsPlaying(false);
     }
   };
 
+  // Video events
   const handleVideoLoaded = () => {
-    const video = videoRef.current;
-
-    if (!video) return;
-
-    video.pause();
-    video.currentTime = 0;
-
     setVideoLoaded(true);
-    setIsPlaying(false);
   };
 
   const handleVideoError = () => {
@@ -607,33 +628,27 @@ export default function Hero({onBecomeMemberClick}) {
     >
       {/* Background video */}
       {hero.videoUrl && !videoFailed && (
-       <video
-  ref={videoRef}
-  key={hero.videoUrl}
-  src={hero.videoUrl}
-  muted
-  loop
-  playsInline
-  autoPlay={false}
-  preload="auto"
-  controls={false}
-  onLoadedMetadata={() => {
-    const video = videoRef.current;
+        <video
+          ref={videoRef}
+          key={hero.videoUrl}
+          src={hero.videoUrl}
+          muted
+          loop
+          playsInline
+          autoPlay
+          preload="auto"
+          controls={false}
+          onLoadedData={handleVideoLoaded}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onError={handleVideoError}
+          className="absolute inset-0 z-0 block h-full w-full object-cover"
+        />
+      )}
 
-    if (video) {
-      video.pause();
-      setIsPlaying(false);
-    }
-  }}
-  onLoadedData={() => {
-    setVideoLoaded(true);
-    setIsPlaying(false);
-  }}
-  onPlay={() => setIsPlaying(true)}
-  onPause={() => setIsPlaying(false)}
-  onError={handleVideoError}
-  className="absolute inset-0 z-0 block h-full w-full object-cover"
-/>
+      {/* Video loading fallback */}
+      {hero.videoUrl && !videoLoaded && !videoFailed && (
+        <div className="absolute inset-0 z-0 bg-[#111]" />
       )}
 
       {/* Dark overlay */}
@@ -655,41 +670,55 @@ export default function Hero({onBecomeMemberClick}) {
           <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-6 sm:gap-3">
             {hero.ctaPrimaryText && (
               <button
-                href={hero.ctaPrimaryUrl || "#membership"}
+                type="button"
+                onClick={
+                  onBecomeMemberClick ||
+                  (() => {
+                    window.location.hash =
+                      hero.ctaPrimaryUrl || "#membership";
+                  })
+                }
                 className="inline-flex min-h-[34px] items-center justify-center rounded-[4px] bg-[#f15d4e] px-3.5 py-2 text-[10px] font-semibold text-white transition hover:bg-[#dc493b] sm:text-[11px]"
-                onClick={onBecomeMemberClick}
               >
                 {hero.ctaPrimaryText}
               </button>
             )}
 
             {hero.ctaSecondaryText && (
-              <button
+              <a
                 href={hero.ctaSecondaryUrl || "#build-factory"}
                 className="inline-flex min-h-[34px] items-center justify-center rounded-[4px] border border-white/75 bg-black/10 px-3.5 py-2 text-[10px] font-medium text-white transition hover:bg-white/15 sm:text-[11px]"
               >
                 {hero.ctaSecondaryText}
-              </button>
+              </a>
             )}
           </div>
         </div>
       </div>
 
-      {/* Video play/pause button */}
-      <button
-        type="button"
-        onClick={togglePlayback}
-        disabled={!hero.videoUrl || videoFailed}
-        className="absolute bottom-5 right-5 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-white/50 bg-[#e86b5e] text-white shadow-lg transition hover:scale-110 hover:bg-[#d95649] disabled:cursor-not-allowed disabled:opacity-50 sm:bottom-7 sm:right-7"
-        aria-label={isPlaying ? "Pause background video" : "Play background video"}
-        title={isPlaying ? "Pause video" : "Play video"}
-      >
-        {isPlaying ? (
-          <Pause size={17} fill="currentColor" />
-        ) : (
-          <Play size={17} fill="currentColor" className="translate-x-[1px]" />
-        )}
-      </button>
+      {/* Video play / pause button */}
+      {hero.videoUrl && (
+        <button
+          type="button"
+          onClick={togglePlayback}
+          disabled={videoFailed}
+          className="absolute bottom-5 right-5 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-white/50 bg-[#e86b5e] text-white shadow-lg transition hover:scale-110 hover:bg-[#d95649] disabled:cursor-not-allowed disabled:opacity-50 sm:bottom-7 sm:right-7"
+          aria-label={
+            isPlaying ? "Pause background video" : "Play background video"
+          }
+          title={isPlaying ? "Pause video" : "Play video"}
+        >
+          {isPlaying ? (
+            <Pause size={17} fill="currentColor" />
+          ) : (
+            <Play
+              size={17}
+              fill="currentColor"
+              className="translate-x-[1px]"
+            />
+          )}
+        </button>
+      )}
     </section>
   );
 }
