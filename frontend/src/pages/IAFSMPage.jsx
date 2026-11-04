@@ -15,7 +15,7 @@ export default function IAFSMPage() {
       <DynamicPageHero
   pageKey="iafsm"
   fallbackImage="'/iafsm-hero.jpg"
-  fallbackHeading="IAFSM"
+  fallbackHeading="Driving India’s smart manufacturing revolution"
   scrollTarget="#iafsm-content"
 />
       
