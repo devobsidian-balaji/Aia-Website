@@ -34,6 +34,7 @@ import ArticleDetailsPage from "./pages/publication/ArticleDetailsPage.jsx";
 import NewsDetailsPage from "./pages/publication/news/NewsDetailsPage.jsx";
 import ArticlesPage from "./pages/publication/ArticlesPage.jsx";
 import NewsPage from "./pages/publication/news/NewsPage.jsx";
+import GeneralInquiryPopup from "./components/GeneralInquiryPopup.jsx";
 
 // Helper to scroll to top automatically on route changes
 function ScrollToTop() {
@@ -44,6 +45,52 @@ function ScrollToTop() {
   return null;
 }
 
+const handleInquirySubmit = async (formData) => {
+  const API_URL = (
+    import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+  ).replace(/\/$/, "");
+
+  const endpoint = `${API_URL}/enquiries`;
+
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    // Read response as text first
+    const responseText = await response.text();
+
+    let result;
+
+    try {
+      result = JSON.parse(responseText);
+    } catch {
+      console.error("Non-JSON API Response:", responseText);
+      console.error("API Endpoint:", endpoint);
+
+      throw new Error(
+        `Server returned HTML instead of JSON. Check API endpoint: ${endpoint}`
+      );
+    }
+
+    if (!response.ok || result.success === false) {
+      throw new Error(
+        result.message || "Inquiry submission failed."
+      );
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Inquiry API Error:", error);
+    throw error;
+  }
+};
+
 // Public Layout Wrapper with Header & Footer
 function PublicLayout({ children }) {
   return (
@@ -51,6 +98,8 @@ function PublicLayout({ children }) {
       <Navbar />
       <div className="flex-1">{children}</div>
       <Footer />
+       {/* General Inquiry Popup */}
+      <GeneralInquiryPopup onSubmit={handleInquirySubmit} />
     </div>
   );
 }
@@ -332,5 +381,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
+    
   );
 }

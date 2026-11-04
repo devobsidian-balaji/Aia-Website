@@ -1,8 +1,7 @@
-
-import React, { useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 
-import { articlesData } from "../../data/articlesData";
+import { getArticleBySlug, getArticles } from "../../services/api";
 import ArticleBody from "../../components/publication/ArticleBody";
 import ArticleNavigation from "../../components/publication/ArticleNavigation";
 import SplitFeatureCard from "../../components/learn-more/SplitFeatureCard";
@@ -10,63 +9,101 @@ import SplitFeatureCard from "../../components/learn-more/SplitFeatureCard";
 export default function ArticleDetailsPage() {
   const { slug } = useParams();
 
-  const currentIndex = useMemo(
-    () => articlesData.findIndex((article) => article.slug === slug),
-    [slug]
-  );
+  const [article, setArticle] = useState(null);
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  const article = currentIndex >= 0
-    ? articlesData[currentIndex]
-    : null;
+  useEffect(() => {
+    let mounted = true;
 
-  if (!article) {
-    return <Navigate to="/publication" replace />;
+    const loadArticle = async () => {
+      setLoading(true);
+      setNotFound(false);
+
+      try {
+        const [articleData, allArticles] = await Promise.all([
+          getArticleBySlug(slug),
+          getArticles(),
+        ]);
+
+        if (!mounted) return;
+
+        setArticle(articleData);
+        setArticles(allArticles);
+        setNotFound(!articleData);
+      } catch (error) {
+        if (mounted) {
+          console.error(error);
+          setNotFound(true);
+        }
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    loadArticle();
+
+    return () => {
+      mounted = false;
+    };
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading article...
+      </div>
+    );
   }
 
+  if (notFound || !article) {
+    return <Navigate to="/publication/articles" replace />;
+  }
+
+  const currentIndex = articles.findIndex(
+    (item) => item.slug === article.slug
+  );
+
   const previousArticle =
-    currentIndex > 0
-      ? articlesData[currentIndex - 1]
-      : null;
+    currentIndex > 0 ? articles[currentIndex - 1] : null;
 
   const nextArticle =
-    currentIndex < articlesData.length - 1
-      ? articlesData[currentIndex + 1]
+    currentIndex >= 0 && currentIndex < articles.length - 1
+      ? articles[currentIndex + 1]
       : null;
 
   return (
     <main className="min-h-screen bg-white font-sans">
-          <SplitFeatureCard
-                eyebrow=""
-                title="Driving India's Smart Manufacturing Mission"
-                description=""
-                image="/national-party.png"
-                imageAlt="Smart manufacturing and industrial automation"
-                imagePosition="right"
-                background="dark"
-              />
+      <SplitFeatureCard
+        eyebrow=""
+        title="Driving India's Smart Manufacturing Mission"
+        description=""
+        image="/national-party.png"
+        imageAlt="Smart manufacturing and industrial automation"
+        imagePosition="right"
+        background="dark"
+      />
 
       <article className="mx-auto w-full max-w-[1100px] px-5 py-8 sm:px-8 sm:py-12 lg:px-12">
-
-        {/* Article Header */}
         <header className="mb-7 text-center">
           <h1 className="mx-auto max-w-[850px] text-base font-bold leading-[1.4] text-[#263247] sm:text-[32px]">
             {article.title}
           </h1>
 
           {article.introduction && (
-            <p className="mx-auto mt-4 max-w-[850px] text-[16px] leading-[1.7] text-[#263247] sm:text-[16px]">
+            <p className="mx-auto mt-4 max-w-[850px] text-base leading-[1.7] text-[#263247]">
               {article.introduction}
             </p>
           )}
 
           {article.category && (
-            <p className="mt-3 text-[14px] text-gray-500">
+            <p className="mt-3 text-sm text-gray-500">
               {article.category}
             </p>
           )}
         </header>
 
-        {/* Article Cover Image - Optional */}
         {article.detailCoverImage && (
           <figure className="mb-7">
             <img
@@ -78,25 +115,24 @@ export default function ArticleDetailsPage() {
           </figure>
         )}
 
-        {/* Article Content */}
-        <ArticleBody sections={article.sections} author={article.author} />
+        <ArticleBody
+          sections={article.sections || []}
+          author={article.author}
+        />
 
-        {/* Previous / Next */}
         <ArticleNavigation
           previousArticle={previousArticle}
           nextArticle={nextArticle}
         />
 
-        {/* Back to Articles */}
         <div className="mt-7 text-center">
           <Link
             to="/publication/articles"
-            className="text-[16px] font-medium text-[#315778] underline underline-offset-4 hover:text-[#E87565]"
+            className="text-base font-medium text-[#315778] underline underline-offset-4 hover:text-[#E87565]"
           >
             Back to all articles
           </Link>
         </div>
-
       </article>
     </main>
   );

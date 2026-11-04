@@ -1910,11 +1910,18 @@ import ManageSliderCMS from "./ManageSliderCMS.jsx";
 import ManageWhyJoin from "./ManageWhyJoin.jsx";
 import ManageHomeFeatures from "./ManageHomeFeatures.jsx";
 import ManageStickyStackCMS from "./ManageStickyStackCMS.jsx";
+import AllArticles from "./AllArticles.jsx";
+import AddNews from "./AddNews.jsx";
+import AllNews from "./AllNews.jsx";
+import AddArticle from "./AddArticle.jsx";
+import ManagePageHero from "./ManagePageHero.jsx";
 
 export default function AdminLayout({ onExitAdmin }) {
   const navigate = useNavigate();
   const { tab: urlTab } = useParams();
   const [currentTab, setCurrentTab] = useState(urlTab || "dashboard");
+  const [editingArticle, setEditingArticle] = useState(null);
+  const [selectedNews, setSelectedNews] = useState(null);
 
   useEffect(() => {
     if (urlTab) {
@@ -1958,7 +1965,16 @@ export default function AdminLayout({ onExitAdmin }) {
         ].includes(urlTab)
       )
         setCampusConnectMenuOpen(true);
-      if (["add-publication", "all-publications"].includes(urlTab))
+      if (
+        [
+          "add-publication",
+          "all-publications",
+          "add-article",
+          "all-articles",
+          "add-news",
+          "all-news",
+        ].includes(urlTab)
+      )
         setPublicationMenuOpen(true);
       if (urlTab === "membership-slider-cms") setMembershipMenuOpen(true);
       if (urlTab === "industry-insight-slider-cms")
@@ -1982,8 +1998,29 @@ export default function AdminLayout({ onExitAdmin }) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  const handleNavigate = (tab) => {
+  // const handleNavigate = (tab) => {
+  //   setCurrentTab(tab);
+  //   navigate(`/admin/${tab}`);
+  //   setMobileSidebarOpen(false);
+  // };
+
+  const handleNavigate = (tab, item = null) => {
     setCurrentTab(tab);
+
+    // Article edit
+    if (tab === "add-article") {
+      setEditingArticle(item);
+    } else {
+      setEditingArticle(null);
+    }
+
+    // News edit
+    if (tab === "add-news") {
+      setSelectedNews(item);
+    } else {
+      setSelectedNews(null);
+    }
+
     navigate(`/admin/${tab}`);
     setMobileSidebarOpen(false);
   };
@@ -2062,6 +2099,17 @@ export default function AdminLayout({ onExitAdmin }) {
               <LayoutDashboard className="w-4 h-4 shrink-0" />
               {!sidebarCollapsed && <span>Dashboard</span>}
             </button>
+            <button
+  onClick={() => handleNavigate("page-hero-cms")}
+  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+    currentTab === "page-hero-cms"
+      ? "bg-blue-600 text-white"
+      : "text-gray-600 hover:bg-gray-100"
+  }`}
+>
+  <ImageIcon size={20} />
+  <span>Page Hero CMS</span>
+</button>
 
             {/* 2. Home Submenu */}
             <div>
@@ -2272,13 +2320,13 @@ export default function AdminLayout({ onExitAdmin }) {
                 </div>
               )}
               {industryInsightMenuOpen && !sidebarCollapsed && (
-              <button
-                type="button"
-                onClick={() => handleNavigate("sticky-stack-industry-cms")}
-                className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${currentTab === "sticky-stack-industry-cms" ? "text-[#FF6B55] font-bold bg-white/10" : "text-gray-400 hover:text-[#FF6B55]"}`}
-              >
-                <span>Industry Insight Sticky Stack CMS</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => handleNavigate("sticky-stack-industry-cms")}
+                  className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${currentTab === "sticky-stack-industry-cms" ? "text-[#FF6B55] font-bold bg-white/10" : "text-gray-400 hover:text-[#FF6B55]"}`}
+                >
+                  <span>Industry Insight Sticky Stack CMS</span>
+                </button>
               )}
             </div>
 
@@ -2734,6 +2782,64 @@ export default function AdminLayout({ onExitAdmin }) {
                   >
                     Show All Publications
                   </button>
+
+                  {/* Articles CMS */}
+                  <div className="pt-2 mt-2 border-t border-white/10">
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider pl-1">
+                      Articles CMS
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handleNavigate("add-article")}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${
+                      currentTab === "add-article"
+                        ? "text-[#FF6B55] font-bold bg-white/10"
+                        : "text-gray-400 hover:text-[#FF6B55]"
+                    }`}
+                  >
+                    Add Article
+                  </button>
+
+                  <button
+                    onClick={() => handleNavigate("all-articles")}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${
+                      currentTab === "all-articles"
+                        ? "text-[#FF6B55] font-bold bg-white/10"
+                        : "text-gray-400 hover:text-[#FF6B55]"
+                    }`}
+                  >
+                    All Articles
+                  </button>
+
+                  {/* News CMS */}
+                  <div className="pt-2 mt-2 border-t border-white/10">
+                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider pl-1">
+                      News CMS
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handleNavigate("add-news")}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${
+                      currentTab === "add-news"
+                        ? "text-[#FF6B55] font-bold bg-white/10"
+                        : "text-gray-400 hover:text-[#FF6B55]"
+                    }`}
+                  >
+                    Add News
+                  </button>
+
+                  <button
+                    onClick={() => handleNavigate("all-news")}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${
+                      currentTab === "all-news"
+                        ? "text-[#FF6B55] font-bold bg-white/10"
+                        : "text-gray-400 hover:text-[#FF6B55]"
+                    }`}
+                  >
+                    All News
+                  </button>
                 </div>
               )}
             </div>
@@ -2804,6 +2910,7 @@ export default function AdminLayout({ onExitAdmin }) {
             {currentTab === "dashboard" && (
               <AdminDashboard onNavigate={handleNavigate} />
             )}
+            {currentTab === "page-hero-cms" && <ManagePageHero />}
             {currentTab === "add-banner" && (
               <AddHomeBanner onNavigate={handleNavigate} />
             )}
@@ -2974,6 +3081,29 @@ export default function AdminLayout({ onExitAdmin }) {
             )}
             {currentTab === "all-publications" && (
               <AllPublications onNavigate={handleNavigate} />
+            )}
+            {currentTab === "add-article" && (
+              <AddArticle
+                onNavigate={handleNavigate}
+                initialData={editingArticle}
+                onArticleAdded={() => setEditingArticle(null)}
+              />
+            )}
+
+            {currentTab === "all-articles" && (
+              <AllArticles onNavigate={handleNavigate} />
+            )}
+
+            {currentTab === "add-news" && (
+  <AddNews
+    onNavigate={handleNavigate}
+    initialData={selectedNews}
+    onNewsAdded={() => setSelectedNews(null)}
+  />
+)}
+
+            {currentTab === "all-news" && (
+              <AllNews onNavigate={handleNavigate} />
             )}
           </div>
         </main>

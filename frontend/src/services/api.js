@@ -498,3 +498,72 @@ export const getStats = async () => {
   }
 };
 
+
+
+// =======================
+// ARTICLE CMS APIS
+// =======================
+
+export const getArticles = async (admin = false) => {
+  const res = await api.get("/articles", {
+    params: admin ? { admin: "true" } : {},
+  });
+  return res.data.data || [];
+};
+
+export const getArticleBySlug = async (slug) => {
+  const res = await api.get(
+    `/articles/slug/${encodeURIComponent(slug)}`
+  );
+  return res.data.data || null;
+};
+
+export const createArticle = async (data) => {
+  const res = await api.post("/articles", data);
+  return res.data.data || res.data;
+};
+
+export const updateArticle = async (id, data) => {
+  const res = await api.put(`/articles/${id}`, data);
+  return res.data.data || res.data;
+};
+
+export const deleteArticle = async (id) => {
+  const res = await api.delete(`/articles/${id}`);
+  return res.data;
+};
+
+
+// =======================
+// NEWS CMS APIS
+// =======================
+
+export const getNews = async (admin = false) => {
+  const res = await api.get("/news", {
+    params: admin ? { admin: "true" } : {},
+  });
+  return res.data.data || [];
+};
+
+export const getNewsBySlug = async (slug) => {
+  const res = await api.get(
+    `/news/slug/${encodeURIComponent(slug)}`
+  );
+  return res.data.data || null;
+};
+
+export const createNews = async (data) => {
+  const res = await api.post("/news", data);
+  return res.data.data || res.data;
+};
+
+export const updateNews = async (id, data) => {
+  const res = await api.put(`/news/${id}`, data);
+  return res.data.data || res.data;
+};
+
+export const deleteNews = async (id) => {
+  const res = await api.delete(`/news/${id}`);
+  return res.data;
+};
+

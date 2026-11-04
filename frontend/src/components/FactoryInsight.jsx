@@ -92,7 +92,7 @@ export default function FactoryInsight() {
           <div className="lg:col-span-7">
             <div className="rounded-2xl overflow-hidden shadow-2xl border border-gray-200/80 bg-white group">
               <img 
-                src="/factory-conveyor.png" 
+                src="/home-images/resource-center-image.png" 
                 alt="Smart Factory Conveyor and Production Insight" 
                 className="w-full h-auto object-cover select-none block rounded-2xl group-hover:scale-[1.02] transition-transform duration-500"
               />

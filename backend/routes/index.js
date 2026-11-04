@@ -16,7 +16,10 @@ import sliderRouter from './sliderRoutes.js';
 import whyJoinRouter from "./whyJoinRoutes.js";
 import homeFeatureRoutes from "./homeFeatureRoutes.js";
 import stickyStackRoutes from "./stickyStackRoutes.js";
-
+import articleRoutes from "./articleRoutes.js";
+import newsRoutes from "./newsRoutes.js";
+import { pageHeroRouter } from './pageHeroRoutes.js';
+import { enquiryRouter } from './enquiryRoutes.js';
 
 
 const apiRouter = Router();
@@ -39,5 +42,9 @@ apiRouter.use("/sliders", sliderRouter);
 apiRouter.use("/why-join", whyJoinRouter);
 apiRouter.use("/home-features", homeFeatureRoutes);
 apiRouter.use("/sticky-stack", stickyStackRoutes);
+apiRouter.use("/articles", articleRoutes);
+apiRouter.use("/news", newsRoutes);
+apiRouter.use("/page-heroes", pageHeroRouter);
+apiRouter.use("/enquiries", enquiryRouter);
 
 export default apiRouter;

@@ -10,6 +10,7 @@ export default function ArticleCard({
   categoryLink,
   slug,
   link,
+  detailBasePath = "/publication/articles",
   className = "",
 }) {
   const content = (
@@ -55,16 +56,21 @@ export default function ArticleCard({
     </article>
   );
 
-  const destination = link || (slug ? `/publication/${slug}` : "");
+ const destination =
+    link && link !== "#"
+      ? link
+      : slug
+        ? `${detailBasePath}/${slug}`
+        : "";
 
   return destination ? (
-   <Link
-    to={`/publication/${slug}`}
-    className="block h-full"
-    aria-label={`Read ${title}`}
-  >
-    {content}
-  </Link>
+    <Link
+      to={destination}
+      className="block h-full"
+      aria-label={`Read ${title}`}
+    >
+      {content}
+    </Link>
   ) : (
     content
   );

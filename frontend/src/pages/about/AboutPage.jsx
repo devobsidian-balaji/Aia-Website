@@ -12,6 +12,7 @@ import { membersData } from "../../data/membersData.js";
 import StickyStackCards from "../../components/industry-insight/StickyStackCards.jsx";
 import { editorialItems } from "../../data/editorialData.js";
 import StickyStackCmsSection from "../../components/StickyStackCmsSection.jsx";
+import DynamicPageHero from "../../components/common/DynamicPageHero.jsx";
 
 
 export default function AboutPage() {
@@ -60,7 +61,13 @@ export default function AboutPage() {
   return (
     <div className="w-full font-sans bg-white">
       {/* 1. Full-Bleed About Hero */}
-      <AboutHero />
+      {/* <AboutHero /> */}
+       <DynamicPageHero
+        pageKey="about-aia"
+        fallbackImage=""
+        fallbackHeading={"Shaping the Future of India's\nManufacturing Industry"}
+        scrollTarget="#about-overview"
+      />
 
       <CmsSliderSection pageKey="about-aia" sectionKey="about-slider" />
 

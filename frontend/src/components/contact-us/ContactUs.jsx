@@ -1,11 +1,18 @@
 import React from "react";
 import ContactHero from "./ContactHero";
 import ContactSection from "./ContactSection";
+import DynamicPageHero from "../common/DynamicPageHero";
 
 const ContactUs = () => {
   return (
     <div>
-      <ContactHero />
+      {/* <ContactHero /> */}
+      <DynamicPageHero
+  pageKey="contact-us"
+  fallbackImage="/about-hero-team.png"
+  fallbackHeading="Contact Us"
+  scrollTarget="#contact-content"
+/>
       <ContactSection
         onSubmit={async (formData) => {
           const response = await fetch(

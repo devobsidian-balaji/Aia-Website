@@ -7,7 +7,7 @@ export default function EventsHero() {
       {/* 1. Exhibition Hall Background matching Image 1 */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('/events-hero-banner.jpg')` }}
+        style={{ backgroundImage: `url('/eventsassets/eventHero-img.png')` }}
       ></div>
 
       {/* 2. Dark Vignette Gradient for High Contrast Typography */}

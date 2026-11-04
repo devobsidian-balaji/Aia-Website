@@ -25,13 +25,14 @@ export default function NewsCardGrid({
       >
         {items.map((item, index) => (
           <ArticleCard
-            key={item.id || index}
+            key={item._id || index}
             image={item.image}
             imageAlt={item.imageAlt}
             title={item.title}
             category={item.category}
             categoryLink={item.categoryLink}
             slug={item.slug}
+            detailBasePath="/publication/news"
           />
         ))}
       </div>

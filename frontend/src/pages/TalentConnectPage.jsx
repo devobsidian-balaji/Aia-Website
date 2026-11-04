@@ -12,6 +12,7 @@ import ReusableCardGrid from "../components/ReusableCardGrid";
 import { talentprograms } from "../data/talentData";
 import CmsSliderSection from "../components/sliders/CmsSliderSection";
 import AIASection from "../components/sections/AIASection";
+import DynamicPageHero from "../components/common/DynamicPageHero";
 
 
 
@@ -19,7 +20,13 @@ export default function TalentConnectPage() {
   return (
     <div className="w-full font-sans bg-white">
       {/* 1. Full-Bleed Membership Hero */}
-      <IndustryInsightHero />
+      {/* <IndustryInsightHero /> */}
+      <DynamicPageHero
+  pageKey="talent-connect"
+  fallbackImage="/Talentconnectassets/talentConnectHero-img.png"
+  fallbackHeading="India's automation talent knows the products."
+  scrollTarget="#talent-content"
+/>
       {/* <ContentIntroSection
         id="talent-connect?"
         title="What is Talent Connect?"

@@ -75,10 +75,17 @@ export default function AddInitiative({ onInitiativeAdded, onNavigate }) {
       setPreviewUrl('')
 
       if (onInitiativeAdded) onInitiativeAdded()
-    } catch (err) {
-      console.error(err)
-      setErrorMsg(err.response?.data?.message || 'Failed to save initiative.')
-    } finally {
+    }  catch (err) {
+  console.error("Initiative API Error:", err);
+
+  const message =
+    err.response?.data?.message ||
+    err.response?.data?.error ||
+    err.message ||
+    "Failed to save initiative.";
+
+  setErrorMsg(message);
+} finally {
       setLoading(false)
     }
   }

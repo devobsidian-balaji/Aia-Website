@@ -9,6 +9,7 @@ import { membersData } from "../data/membersData";
 import { insightSlides } from "../data/industryInsightData";
 import CmsSliderSection from "../components/sliders/CmsSliderSection";
 import StickyStackCmsSection from "../components/StickyStackCmsSection";
+import DynamicPageHero from "../components/common/DynamicPageHero";
 
 
 
@@ -16,7 +17,13 @@ export default function IndustryInsightPage() {
   return (
     <div className="w-full font-sans bg-white">
       {/* 1. Full-Bleed Membership Hero */}
-      <IndustryInsightHero />
+      {/* <IndustryInsightHero /> */}
+      <DynamicPageHero
+  pageKey="industry-insight"
+  fallbackImage="/industry-insightassets/industry-hero.png"
+  fallbackHeading="Industry Insights"
+  scrollTarget="#industry-content"
+/>
        <CmsSliderSection
   pageKey="industry-insight"
   sectionKey="industry-insight"

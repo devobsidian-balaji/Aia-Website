@@ -7,7 +7,7 @@ export default function IndustryInsightHero() {
       <div
         className="absolute inset-0 bg-cover bg-center select-none"
         style={{
-          backgroundImage: `url('/industry-insightassets/industry-hero.png')`,
+          backgroundImage: `url('/Talentconnectassets/talentConnectHero-img.png')`,
         }}
       ></div>
 

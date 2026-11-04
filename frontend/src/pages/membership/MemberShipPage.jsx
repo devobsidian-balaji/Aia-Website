@@ -11,6 +11,7 @@ import ContentIntroSection from "../../components/ContentIntroSection";
 import { memberShipSlides } from "../../data/membersData";
 import CmsSliderSection from "../../components/sliders/CmsSliderSection";
 import WhyJoinCmsSection from "../../components/why-join/WhyJoinCmsSection";
+import DynamicPageHero from "../../components/common/DynamicPageHero";
 
 // import AboutHero from '../components/AboutHero.jsx'
 // import AboutAIAOverview from '../components/AboutAIAOverview.jsx'
@@ -23,7 +24,13 @@ export default function MemberShipPage() {
   return (
     <div className="w-full font-sans bg-white">
       {/* 1. Full-Bleed Membership Hero */}
-      <MemberShipHero />
+      {/* <MemberShipHero /> */}
+      <DynamicPageHero
+  pageKey="membership"
+  fallbackImage="/membershipassets/membership-hero-team.png"
+  fallbackHeading="Membership"
+  scrollTarget="#membership-content"
+/>
 
       {/* 2. Dynamic 3-Card Membership Overview */}
       {/* <MemberShipPara /> */}
