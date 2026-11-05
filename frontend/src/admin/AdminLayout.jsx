@@ -2100,16 +2100,16 @@ export default function AdminLayout({ onExitAdmin }) {
               {!sidebarCollapsed && <span>Dashboard</span>}
             </button>
             <button
-  onClick={() => handleNavigate("page-hero-cms")}
-  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-    currentTab === "page-hero-cms"
-      ? "bg-blue-600 text-white"
-      : "text-gray-600 hover:bg-gray-100"
-  }`}
->
-  <ImageIcon size={20} />
-  <span>Page Hero CMS</span>
-</button>
+              onClick={() => handleNavigate("page-hero-cms")}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                currentTab === "page-hero-cms"
+                  ? "bg-blue-600 text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              <ImageIcon size={20} />
+              <span>Page Hero CMS</span>
+            </button>
 
             {/* 2. Home Submenu */}
             <div>
@@ -2236,6 +2236,17 @@ export default function AdminLayout({ onExitAdmin }) {
                     }`}
                   >
                     Home Features CMS
+                  </button>
+
+                  <button
+                    onClick={() => handleNavigate("iafsm-features-cms")}
+                    className={`w-full rounded-lg px-3 py-2 text-left text-xs transition ${
+                      currentTab === "iafsm-features-cms"
+                        ? "bg-white/10 font-bold text-[#FF6B55]"
+                        : "text-gray-400 hover:text-[#FF6B55]"
+                    }`}
+                  >
+                    IAFSM Features CMS
                   </button>
                 </div>
               )}
@@ -3022,7 +3033,13 @@ export default function AdminLayout({ onExitAdmin }) {
               />
             )}
 
-            {currentTab === "home-features-cms" && <ManageHomeFeatures />}
+            {currentTab === "home-features-cms" && (
+              <ManageHomeFeatures key="home-features" pageKey="home" />
+            )}
+
+            {currentTab === "iafsm-features-cms" && (
+              <ManageHomeFeatures key="iafsm-features" pageKey="iafsm" />
+            )}
 
             {currentTab === "add-about" && (
               <AddAboutContent onNavigate={handleNavigate} />
@@ -3095,12 +3112,12 @@ export default function AdminLayout({ onExitAdmin }) {
             )}
 
             {currentTab === "add-news" && (
-  <AddNews
-    onNavigate={handleNavigate}
-    initialData={selectedNews}
-    onNewsAdded={() => setSelectedNews(null)}
-  />
-)}
+              <AddNews
+                onNavigate={handleNavigate}
+                initialData={selectedNews}
+                onNewsAdded={() => setSelectedNews(null)}
+              />
+            )}
 
             {currentTab === "all-news" && (
               <AllNews onNavigate={handleNavigate} />

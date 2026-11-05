@@ -358,6 +358,7 @@ import MembershipFeeTable from "./MembershipFeeTable";
 import MembershipRegistrationForm from "./MembershipRegistrationForm";
 import MembershipPartners from "./MembershipPartners";
 import MembershipFAQ from "./MembershipFAQ";
+import { Link } from "react-router-dom";
 
 export default function MembershipAudiencePage({ data }) {
   if (!data) return null;
@@ -372,7 +373,7 @@ export default function MembershipAudiencePage({ data }) {
 
           {/* Left Content */}
           <div className="min-w-0 lg:col-span-7">
-            <h1 className="max-w-2xl text-3xl font-black leading-tight text-[#263247] sm:text-4xl">
+            <h1 className="max-w-2xl text-3xl font-black leading-tight text-[#263247] sm:text-4xl font-semibold">
               {data.title}
             </h1>
 
@@ -392,7 +393,18 @@ export default function MembershipAudiencePage({ data }) {
 
           {/* Right Sidebar */}
           <aside className="space-y-5 lg:col-span-5">
-            <MembershipRegistrationForm />
+            {/* <MembershipRegistrationForm /> */}
+            <div className="flex flex-col">
+
+            <h1 className="capitalize">Join Our {data.slug}</h1>
+             <Link
+          to="/request-form/membership"
+          className="mt-3 w-fit rounded-lg bg-gradient-to-r from-[#D92716] via-[#E83D2B] to-[#F17C6D] py-3 px-4 text-sm font-semibold text-white transition hover:brightness-95"
+        >
+          Explore Membership
+        </Link>
+            </div>
+            
             <MembershipPartners partners={data.partners} />
           </aside>
 

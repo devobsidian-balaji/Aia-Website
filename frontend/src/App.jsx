@@ -24,8 +24,8 @@ import SystemIntegratorsPage from "./pages/membership/SystemIntegratorsPage.jsx"
 import MemberDirectory from "./pages/membership/member-directory/MemberDirectory.jsx";
 import RequestFormPage from "./pages/RequestForms/RequestFormPage.jsx";
 import LearnMorePage from "./pages/LearnMorePage.jsx";
-import EventsPage from "./pages/events/EventsPage.jsx";
-import EventDetailsPage from "./pages/events/EventDetailsPage.jsx";
+import EventsPage from "./pages/event/EventsPage.jsx";
+import EventDetailsPage from "./pages/event/EventDetailsPage.jsx";
 import ExecutiveCouncilPage from "./pages/about/executive-council/ExecutiveCouncilPage.jsx";
 import PastPresidentsPage from "./pages/about/past-presidents/PastPresidentsPage.jsx";
 import AimsObjectivesPage from "./pages/about/aims-objectives/AimsObjectivesPage.jsx";
@@ -93,11 +93,18 @@ const handleInquirySubmit = async (formData) => {
 
 // Public Layout Wrapper with Header & Footer
 function PublicLayout({ children }) {
+
+  const location = useLocation();
+
+  const hideHeaderFooter =
+    location.pathname.replace(/\/+$/, "") ===
+    "/request-form/membership";
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex flex-col font-sans selection:bg-[#0B1B2B] selection:text-white">
-      <Navbar />
+      {!hideHeaderFooter && <Navbar />}
       <div className="flex-1">{children}</div>
-      <Footer />
+      {!hideHeaderFooter && <Footer />}
        {/* General Inquiry Popup */}
       <GeneralInquiryPopup onSubmit={handleInquirySubmit} />
     </div>
@@ -246,22 +253,22 @@ export default function App() {
         />
 
         {/* /publication and alias /publications */}
-        <Route
+        {/* <Route
           path="/publication"
           element={
             <PublicLayout>
               <PublicationPage />
             </PublicLayout>
           }
-        />
-        <Route
+        /> */}
+        {/* <Route
           path="/publications"
           element={
             <PublicLayout>
               <PublicationPage />
             </PublicLayout>
           }
-        />
+        /> */}
 
         <Route
           path="/publication/articles"

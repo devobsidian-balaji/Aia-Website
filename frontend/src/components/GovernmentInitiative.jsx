@@ -11,7 +11,7 @@ export default function GovernmentInitiative() {
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
         
         {/* Main Section Heading */}
-        <h2 className="text-4xl sm:text-5xl font-black text-[#1F2937] tracking-tight mb-16">
+        <h2 className="text-4xl sm:text-5xl font-black text-[#1F2937] tracking-tight mb-16 font-semibold">
           National Priority 
         </h2>
 

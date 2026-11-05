@@ -117,7 +117,7 @@ export default function GeneralInquiryForm({
   };
 
   return (
-    <section className="relative overflow-hidden bg-[#244665] px-4 py-10 sm:px-8 sm:py-16 lg:px-12">
+    <section id="enquiry-form" className="relative overflow-hidden bg-[#244665] px-4 py-10 sm:px-8 sm:py-16 lg:px-12">
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#244665] via-transparent to-[#3B6389]" />
 
       <div className="relative mx-auto max-w-[1200px]">

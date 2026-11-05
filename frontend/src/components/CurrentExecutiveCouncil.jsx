@@ -73,7 +73,7 @@ export default function CurrentExecutiveCouncil() {
           {/* LEFT STICKY CONTENT */}
           <div className="lg:col-span-3 lg:self-stretch">
             <div className="lg:sticky lg:top-28 lg:h-fit">
-              <h2 className="text-4xl font-black leading-[1.15] tracking-tight text-[#1F2937] sm:text-5xl lg:text-[46px]">
+              <h2 className="text-4xl font-black leading-[1.15] tracking-tight text-[#1F2937] sm:text-5xl lg:text-[46px] font-semibold">
                 Current
                 <br />
                 Executive

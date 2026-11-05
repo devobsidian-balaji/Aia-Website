@@ -1,5 +1,6 @@
 
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function MemberDirectoryHero({ members = [] }) {
   const featuredMembers = members.slice(0, 2);
@@ -23,7 +24,7 @@ export default function MemberDirectoryHero({ members = [] }) {
             Membership
           </p>
 
-          <h1 className="max-w-md text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
+          <h1 className="max-w-md text-3xl font-semibold leading-tight sm:text-4xl lg:text-5xl">
             Our Member
             <br />
             Directory
@@ -32,9 +33,9 @@ export default function MemberDirectoryHero({ members = [] }) {
 
         <div className="flex items-center gap-3 sm:gap-5">
           {featuredMembers.map((member) => (
-            <a
+            <Link
               key={member.id}
-              href={`/membership/member-directory/${member.slug}`}
+              to={`/membership/member-directory/${member.slug}`}
               className="flex h-[130px] w-[130px] items-center justify-center border border-[#E87565] bg-white transition-transform duration-300 hover:-translate-y-1 sm:h-[130px] sm:w-[130px]"
             >
               <img
@@ -43,7 +44,7 @@ export default function MemberDirectoryHero({ members = [] }) {
                 loading="lazy"
                 className="max-h-full max-w-full w-full h-full object-contain"
               />
-            </a>
+            </Link>
           ))}
         </div>
       </div>

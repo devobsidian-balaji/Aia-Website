@@ -33,7 +33,7 @@ export default function MemberDirectory() {
         {/* Search and Count */}
         <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <h2 className="text-xl font-bold text-[#202A3A] sm:text-2xl">
+            <h2 className="text-xl font-semibold text-[#202A3A] sm:text-2xl">
               Explore Our Members
             </h2>
 

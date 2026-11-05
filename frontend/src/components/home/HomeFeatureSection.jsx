@@ -6,7 +6,7 @@ const API_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 ).replace(/\/$/, "");
 
-export default function HomeFeatureSection() {
+export default function HomeFeatureSection({ page = "home" }) {
   const [section, setSection] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -14,33 +14,43 @@ export default function HomeFeatureSection() {
     const controller = new AbortController();
 
     async function load() {
+      setLoading(true);
+      setSection(null);
+
       try {
         const response = await fetch(
-          `${API_URL}/home-features/home`,
+          `${API_URL}/home-features/${page}`,
           { signal: controller.signal }
         );
 
         const result = await response.json();
 
         if (!response.ok || !result.success) {
-          throw new Error(result.message || "Unable to load Home Features");
+          throw new Error(
+            result.message || `Unable to load ${page} Features`
+          );
         }
 
         setSection(result.data);
       } catch (error) {
         if (error.name !== "AbortError") {
-          console.error("Home Features:", error);
+          console.error(`${page} Features:`, error);
         }
       } finally {
-        if (!controller.signal.aborted) setLoading(false);
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
       }
     }
 
     load();
-    return () => controller.abort();
-  }, []);
 
-  if (loading || !section || section.isActive === false) return null;
+    return () => controller.abort();
+  }, [page]);
+
+  if (loading || !section || section.isActive === false) {
+    return null;
+  }
 
   const items = [...(section.items || [])]
     .filter((item) => item.isActive !== false)

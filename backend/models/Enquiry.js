@@ -3,16 +3,35 @@ import mongoose from "mongoose";
 
 const enquirySchema = new mongoose.Schema(
   {
-    ecosystem: {
+    // New dropdown fields
+    category: {
+      type: String,
+      required: true,
+      enum: [
+        "Manufacturing Sector",
+        "Technology Stream",
+        "Service Stream",
+      ],
+      trim: true,
+    },
+
+    selectedOption: {
       type: String,
       required: true,
       trim: true,
     },
 
+    // Legacy fields: existing admin compatibility
+    ecosystem: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
     manufacturingSector: {
       type: String,
-      required: true,
       trim: true,
+      default: "",
     },
 
     fullName: {

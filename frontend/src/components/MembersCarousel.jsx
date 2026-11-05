@@ -164,6 +164,7 @@ export default function MembersCarousel({
 
             lg:mb-12
             lg:text-[38px]
+            font-semibold
           "
         >
           {title}
@@ -362,28 +363,17 @@ function MemberLogo({ member }) {
         xl:w-[220px]
       "
     >
-      <div
+      <img
+        src={member.logo}
+        alt={member.alt || member.name || "Member logo"}
+        loading="lazy"
         className="
-          relative
+          block
           h-full
           w-full
+          object-contain
         "
-      >
-        <img
-          src={member.logo}
-          alt={member.alt || member.name}
-          fill
-          sizes="
-            (max-width: 640px) 145px,
-            (max-width: 768px) 165px,
-            (max-width: 1024px) 185px,
-            220px
-          "
-          className="
-            object-contain
-          "
-        />
-      </div>
+      />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import SplitFeatureCard from "../components/learn-more/SplitFeatureCard";
 import TextContentSection from "../components/learn-more/TextContentSection";
@@ -8,8 +8,22 @@ import CurrentExecutiveCouncil from "../components/CurrentExecutiveCouncil";
 import PastPresidents from "../components/PastPresidents";
 import MembersCarousel from "../components/MembersCarousel";
 import { membersData } from "../data/membersData";
+import { useLocation } from "react-router-dom";
 
 export default function LearnMorePage() {
+ const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash === "#enquiry-form") {
+      setTimeout(() => {
+        document.getElementById("enquiry-form")?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 500);
+    }
+  }, [location]);
+
   return (
     <main className="min-h-screen bg-white font-sans">
       {/* HERO */}
@@ -45,7 +59,7 @@ export default function LearnMorePage() {
         ]}
         name="PV Sivaram, Past President,
             AIA (2016-2018)"
-        image="/images/learn-more/president.jpg"
+        image="/message-from-pre.png"
         imageAlt="AIA President"
         imagePosition="right"
         background="dark"
@@ -53,7 +67,9 @@ export default function LearnMorePage() {
         buttonLink="/publication"
       />
       {/* General Inquiry Form */}
-      <GeneralInquiryForm />
+      <div id="enquiry-form" className="scroll-mt-24">
+  <GeneralInquiryForm />
+</div>
 
       {/* What We Do + Our Objectives */}
       <AboutObjectivesSection />

@@ -124,7 +124,7 @@ export default function PastPresidents() {
           {/* Spacer for centered heading on About page */}
           <div className="hidden w-28 sm:block" />
 
-          <h2 className="text-3xl font-black tracking-tight text-[#1F2937] sm:text-4xl lg:text-[54px]">
+          <h2 className="text-3xl font-black tracking-tight text-[#1F2937] sm:text-4xl lg:text-[54px] font-semibold">
             AIA Past Presidents
           </h2>
 
@@ -235,7 +235,7 @@ export default function PastPresidents() {
 
                 {/* Name and Term */}
                 <div className="space-y-1">
-                  <h3 className="text-xl font-black tracking-tight text-[#1F2937] sm:text-2xl">
+                  <h3 className="text-xl font-black tracking-tight text-[#1F2937] sm:text-2xl font-semibold">
                     {president.name}
                   </h3>
 

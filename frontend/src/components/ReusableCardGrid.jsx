@@ -107,7 +107,7 @@ export default function ReusableCardGrid({
             className="
               mb-10
               text-center
-              font-sans
+              font-semibold
               text-4xl
               font-black
               leading-tight

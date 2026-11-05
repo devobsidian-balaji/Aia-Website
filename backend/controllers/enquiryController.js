@@ -1,12 +1,101 @@
 
 import Enquiry from "../models/Enquiry.js";
 
-// Create new enquiry
+// =====================================================
+// CATEGORY OPTIONS
+// =====================================================
+
+const categoryOptions = {
+  "Manufacturing Sector": [
+    "Apparel",
+    "Automotive",
+    "Cement",
+    "Chemical",
+    "Defence Equipment Production",
+    "Electrical",
+    "Electronics",
+    "Fiber & Textiles",
+    "Food & Beverage",
+    "Household & Personal Care",
+    "Infrastructure Equipment",
+    "Life Sciences",
+    "Material Handling Equipment",
+    "Metals",
+    "Mining",
+    "Oil & Gas",
+    "Packaging Machinery",
+    "Plastics",
+    "Printing Machinery",
+    "Process Equipment",
+    "Production Machinery",
+    "Pulp & Paper",
+    "Railway Equipment",
+    "Rubber",
+    "Solar Energy Equipment",
+    "Textile",
+    "Wind Energy Equipment",
+    "OTHER (Custom)",
+  ],
+
+  "Technology Stream": [
+    "3D Printing",
+    "3D Simulation Software",
+    "Advanced Logic Control",
+    "Advanced Process Control",
+    "Cloud Computing Systems",
+    "Condition Monitoring",
+    "Digital Twin Software",
+    "Edge Computing Systems",
+    "Electrical Sensing and Actuation",
+    "Electro-Hydraulic Actuation",
+    "Electro-Pneumatic Actuation",
+    "Industrial IoT Software",
+    "Industrial Networking Systems",
+    "Intelligent Conveying Systems",
+    "Intelligent Packaging Systems",
+    "Intrusion Detection",
+    "Level, Temp, Pressure, Flow Sensing",
+    "Machine Learning Systems",
+    "Manufacturing Execution Systems",
+    "Material and Presence Sensing",
+    "Position and Safety Sensing",
+    "Precision Motion Control",
+    "Smart HMIs",
+    "Tracking and Tracing",
+    "Vision Sensing and Inspection",
+    "OTHER (Custom)",
+  ],
+
+  "Service Stream": [
+    "Process Reengineering Services",
+    "Automation Consulting Services",
+    "Digital Deployment Services",
+    "Automation Integration Services",
+    "Automation Software Development",
+    "Business Process App Development",
+    "Commissioning Services",
+    "Data Integration Services",
+    "Education & Skilling Services",
+    "Energy Audit Services",
+    "Field Installation Services",
+    "Maturity Assessment Services",
+    "Project Management Services",
+    "Quality Audit Services",
+    "Safety Assessment Services",
+    "Supply Chain Integration",
+    "OTHER (Custom)",
+  ],
+};
+
+// =====================================================
+// CREATE NEW ENQUIRY
+// =====================================================
+
 export const createEnquiry = async (req, res) => {
   try {
     const {
-      ecosystem,
-      manufacturingSector,
+      category,
+      selectedOption,
       fullName,
       email,
       companyName,
@@ -17,11 +106,13 @@ export const createEnquiry = async (req, res) => {
 
     // Required field validation
     if (
-      !ecosystem ||
-      !manufacturingSector ||
-      !fullName ||
-      !email ||
-      !phoneNumber
+      !category ||
+      !selectedOption ||
+      !fullName?.trim() ||
+      !email?.trim() ||
+      !companyName?.trim() ||
+      !website?.trim() ||
+      !phoneNumber?.trim()
     ) {
       return res.status(400).json({
         success: false,
@@ -29,7 +120,31 @@ export const createEnquiry = async (req, res) => {
       });
     }
 
-    // Email validation
+    // Validate category
+    if (!categoryOptions[category]) {
+      return res.status(400).json({
+        success: false,
+        message: "Please select a valid category.",
+      });
+    }
+
+    // Validate selected option against category
+    if (!categoryOptions[category].includes(selectedOption)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please select a valid option for this category.",
+      });
+    }
+
+    // Validate full name
+    if (fullName.trim().length < 2) {
+      return res.status(400).json({
+        success: false,
+        message: "Full name must contain at least 2 characters.",
+      });
+    }
+
+    // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
     if (!emailRegex.test(email.trim())) {
@@ -39,7 +154,7 @@ export const createEnquiry = async (req, res) => {
       });
     }
 
-    // Phone validation
+    // Validate phone
     const normalizedPhone = phoneNumber.replace(/[\s()-]/g, "");
 
     if (!/^\+?[1-9]\d{6,14}$/.test(normalizedPhone)) {
@@ -49,14 +164,42 @@ export const createEnquiry = async (req, res) => {
       });
     }
 
+    // Validate website
+    let normalizedWebsite = website.trim();
+
+    if (!/^https?:\/\//i.test(normalizedWebsite)) {
+      normalizedWebsite = `https://${normalizedWebsite}`;
+    }
+
+    try {
+      const websiteUrl = new URL(normalizedWebsite);
+
+      if (
+        !["http:", "https:"].includes(websiteUrl.protocol) ||
+        !websiteUrl.hostname.includes(".")
+      ) {
+        throw new Error("Invalid website");
+      }
+    } catch {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a valid website URL.",
+      });
+    }
+
     // Save enquiry
     const enquiry = await Enquiry.create({
-      ecosystem: ecosystem.trim(),
-      manufacturingSector: manufacturingSector.trim(),
+      category: category.trim(),
+      selectedOption: selectedOption.trim(),
+
+      // Legacy fields for existing admin UI compatibility
+      ecosystem: category.trim(),
+      manufacturingSector: selectedOption.trim(),
+
       fullName: fullName.trim(),
       email: email.trim().toLowerCase(),
-      companyName: companyName?.trim() || "",
-      website: website?.trim() || "",
+      companyName: companyName.trim(),
+      website: normalizedWebsite,
       phoneNumber: normalizedPhone,
       message: message?.trim() || "",
     });
@@ -77,7 +220,10 @@ export const createEnquiry = async (req, res) => {
   }
 };
 
-// Get all enquiries
+// =====================================================
+// GET ALL ENQUIRIES
+// =====================================================
+
 export const getAllEnquiries = async (req, res) => {
   try {
     const enquiries = await Enquiry.find().sort({
@@ -99,7 +245,10 @@ export const getAllEnquiries = async (req, res) => {
   }
 };
 
-// Get single enquiry
+// =====================================================
+// GET SINGLE ENQUIRY
+// =====================================================
+
 export const getEnquiryById = async (req, res) => {
   try {
     const enquiry = await Enquiry.findById(req.params.id);
@@ -125,7 +274,10 @@ export const getEnquiryById = async (req, res) => {
   }
 };
 
-// Update enquiry status
+// =====================================================
+// UPDATE ENQUIRY STATUS
+// =====================================================
+
 export const updateEnquiryStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -165,7 +317,10 @@ export const updateEnquiryStatus = async (req, res) => {
   }
 };
 
-// Delete enquiry
+// =====================================================
+// DELETE ENQUIRY
+// =====================================================
+
 export const deleteEnquiry = async (req, res) => {
   try {
     const enquiry = await Enquiry.findByIdAndDelete(req.params.id);

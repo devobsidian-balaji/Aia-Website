@@ -22,7 +22,7 @@ export default function IAFSMPage() {
 />
       
 
-            <HomeFeatureSection />
+           <HomeFeatureSection page="iafsm" />
             
       {/* 2. Pillars Section matching Image 1 staggered alignment */}
       {/* <IAFSMPillars /> */}
@@ -41,7 +41,7 @@ export default function IAFSMPage() {
       {/* <EventsSection /> */}
 
       {/* 5. Our Initiatives Section matching Image 2 */}
-      <OurInitiatives />
+      {/* <OurInitiatives /> */}
     </div>
   )
 }

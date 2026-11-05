@@ -57,7 +57,7 @@ export default function StickyStackCards({
 
       {/* Section Heading */}
       {title && (
-        <h2 className="text-4xl sm:text-5xl lg:text-[54px] font-black text-[#1F2937] tracking-tight text-center mb-16">
+        <h2 className="text-4xl sm:text-5xl lg:text-[54px] font-black text-[#1F2937] tracking-tight text-center mb-6 font-semibold">
           {title}
         </h2>
       )}

@@ -80,7 +80,7 @@ export default function SplitFeatureCard({
             </h4>
           )}
 
-          {buttonText && buttonLink && (
+          {/* {buttonText && buttonLink && (
             <Link
               to={buttonLink}
               className="mt-6 inline-flex items-center gap-2 rounded-sm bg-[#E87565] px-5 py-3 text-xs font-semibold text-white transition hover:bg-[#d65d50]"
@@ -88,7 +88,7 @@ export default function SplitFeatureCard({
               {buttonText}
               <ArrowRight size={15} />
             </Link>
-          )}
+          )} */}
         </div>
 
         {/* Image */}
@@ -98,13 +98,13 @@ export default function SplitFeatureCard({
               imagePosition === "left" ? "lg:order-1" : "lg:order-2"
             }`}
           >
-            <div className="overflow-hidden rounded-sm border border-white/20 shadow-xl">
+            <div className="overflow-hidden">
               <img
                 src={image}
                 alt={imageAlt || title}
                 loading="lazy"
                 decoding="async"
-                className="h-[220px] w-full object-cover sm:h-[320px] lg:h-[390px]"
+                className="h-[220px] w-full object-contain sm:h-[320px] lg:h-[390px]"
               />
             </div>
           </div>

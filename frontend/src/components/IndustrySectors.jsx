@@ -39,7 +39,7 @@ export default function IndustrySectors() {
         
         {/* Section Header: Centered Heading with Top-Right Navigation Arrows */}
         <div className="relative flex items-center justify-center mb-14">
-          <h2 className="text-4xl sm:text-5xl font-black text-[#1F2937] tracking-tight text-center">
+          <h2 className="text-4xl sm:text-5xl font-black text-[#1F2937] tracking-tight text-center font-semibold">
             Industry
           </h2>
 

@@ -76,7 +76,7 @@ export default function StickyStackCmsSection({
     <section className="w-full">
       {heading && (
         <div className="bg-white px-5 py-5 text-center sm:py-6 mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-12">
-          <h2 className="mb-8 text-4xl font-black leading-[1.05] tracking-[-0.035em] text-[#1F2937] sm:mb-12 sm:text-5xl lg:mb-6 lg:text-[54px]">
+          <h2 className="mb-8 text-4xl font-black leading-[1.05] tracking-[-0.035em] text-[#1F2937] sm:mb-12 sm:text-5xl lg:mb-6 lg:text-[54px] font-semibold">
             {heading}
           </h2>
           {section?.subtitle && (

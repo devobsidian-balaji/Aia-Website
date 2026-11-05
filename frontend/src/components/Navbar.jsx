@@ -387,7 +387,7 @@ const navigation = [
       { label: "About Us", to: "/about" },
       { label: "Exec Council", to: "/about/executive-council" },
       { label: "Past Presidents", to: "/about/past-presidents" },
-      { label: "Events", to: "/event" },
+      // { label: "Events", to: "/event" },
       { label: "aims-objectives", to: "/about/aims-objectives" },
     ],
   },
@@ -412,31 +412,31 @@ const navigation = [
     label: "Events",
     to: "/events",
   },
-  {
-    label: "Publication",
-    to: "/publication",
-    children: [
-      { label: "Articles", to: "/publication/articles" },
-      { label: "News", to: "/publication/news" },
-    ],
-  },
+  // {
+  //   label: "Publication",
+  //   to: "/publication",
+  //   children: [
+  //     { label: "Articles", to: "/publication/articles" },
+  //     { label: "News", to: "/publication/news" },
+  //   ],
+  // },
   {
     label: "Contact Us",
     to: "/contact-us",
     children: [
       { label: "Get in Touch", to: "/contact-us" },
       { label: "Support", to: "/support" },
-      { label: "General Inquiries", to: "/general-inquiries" },
+      {label: "General Inquiries", to: "/learn-more#enquiry-form",}
     ],
   },
-  {
-    label: "Manufacturers",
-    to: "/manufacturers",
-    children: [
-      { label: "Join Samarth Community", to: "/samarth-community" },
-      { label: "Become a Member", to: "/membership" },
-    ],
-  },
+  // {
+  //   label: "Manufacturers",
+  //   to: "/manufacturers",
+  //   children: [
+  //     { label: "Join Samarth Community", to: "/samarth-community" },
+  //     { label: "Become a Member", to: "/membership" },
+  //   ],
+  // },
 ];
 
 /* =========================================
@@ -568,7 +568,10 @@ const isDropdownActive = (item) => {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden items-center gap-3 text-[11px] font-medium text-gray-300 xl:flex 2xl:gap-5">
+
+        {/* Desktop Actions */}
+        <div className="hidden shrink-0 items-center gap-5 xl:flex">
+        <div className="hidden items-center gap-5 text-[11px] font-medium text-gray-300 xl:flex 2xl:gap-5">
 
           {navigation.map((item) => {
             const active = isDropdownActive(item);
@@ -582,7 +585,7 @@ const isDropdownActive = (item) => {
                 {/* Parent Link */}
                 <Link
                   to={item.to}
-                  className={`relative flex items-center gap-1 whitespace-nowrap py-5 transition-colors duration-200 ${
+                  className={`relative flex items-center gap-1 whitespace-nowrap py-5 transition-colors duration-200 text-[13px] ${
                     active
                       ? "font-semibold text-[#F16B5E]"
                       : "hover:text-white"
@@ -636,15 +639,12 @@ const isDropdownActive = (item) => {
 
         </div>
 
-        {/* Desktop Actions */}
-        <div className="hidden shrink-0 items-center gap-3 xl:flex">
-
-          <Link
+          {/* <Link
             to="/membership"
             className="rounded-md bg-white px-4 py-2 text-[11px] font-bold text-[#E25238] shadow-sm transition hover:scale-105 hover:bg-gray-100"
           >
             Join Now
-          </Link>
+          </Link> */}
 
           <button
             type="button"

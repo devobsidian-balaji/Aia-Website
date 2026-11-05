@@ -175,7 +175,7 @@ const footerLinks = [
       { label: "About Us", href: "/about" },
       { label: "Exec Council", href: "/about/executive-council" },
       { label: "Past Presidents", href: "/about/past-presidents" },
-      { label: "Events", href: "/events" },
+      // { label: "Events", href: "/events" },
       { label: "Aims & Objectives", href: "/about/aims-objectives" },
     ],
   },
@@ -199,7 +199,8 @@ const footerLinks = [
     links: [
       { label: "Get in Touch", href: "/contact-us" },
       { label: "Support", href: "/contact-us#support" },
-      { label: "General Inquiries", href: "/contact-us#inquiries" },
+      // { label: "General Inquiries", href: "/contact-us#inquiries" },
+       {label: "General Inquiries", href: "/learn-more#enquiry-form",}
     ],
   },
 ];
@@ -288,7 +289,7 @@ export default function Footer() {
               </a>
 
               <a
-                href="/membership"
+                href="/request-form/membership"
                 className="text-[14px] font-semibold text-white underline underline-offset-2 transition-opacity hover:opacity-70 lg:ml-6"
               >
                 Become a Member

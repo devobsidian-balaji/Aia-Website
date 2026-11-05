@@ -494,6 +494,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { Play, Pause } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const API_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:5000/api"
@@ -669,19 +670,19 @@ export default function Hero({ onBecomeMemberClick }) {
 
           <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-6 sm:gap-3">
             {hero.ctaPrimaryText && (
-              <button
-                type="button"
-                onClick={
-                  onBecomeMemberClick ||
-                  (() => {
-                    window.location.hash =
-                      hero.ctaPrimaryUrl || "#membership";
-                  })
-                }
+              <Link
+                to="/request-form/membership"
+                // onClick={
+                //   onBecomeMemberClick ||
+                //   (() => {
+                //     window.location.hash =
+                //       hero.ctaPrimaryUrl || "#membership";
+                //   })
+                // }
                 className="inline-flex min-h-[34px] items-center justify-center rounded-[4px] bg-[#f15d4e] px-3.5 py-2 text-[10px] font-semibold text-white transition hover:bg-[#dc493b] sm:text-[11px]"
               >
                 {hero.ctaPrimaryText}
-              </button>
+              </Link>
             )}
 
             {hero.ctaSecondaryText && (

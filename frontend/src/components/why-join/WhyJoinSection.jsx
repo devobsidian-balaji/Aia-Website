@@ -527,7 +527,7 @@ export default function WhyJoinSection({
         {(heading || subtitle) && (
           <header className="mb-10 text-center sm:mb-14">
             {heading && (
-              <h2 className="text-3xl font-black tracking-tight text-[#1F2937] sm:text-4xl lg:text-5xl">
+              <h2 className="text-3xl font-black tracking-tight text-[#1F2937] sm:text-4xl lg:text-5xl font-semibold">
                 {heading}
               </h2>
             )}

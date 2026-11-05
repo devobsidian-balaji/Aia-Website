@@ -1,35 +1,96 @@
 
 import HomeFeatureSection from "../models/HomeFeatureSection.js";
 
-async function getOrCreateHomeSection() {
+// ==========================================
+// VALID PAGE KEYS
+// ==========================================
+
+const validPageKeys = ["home", "iafsm"];
+
+const getPageKey = (req, res) => {
+  const pageKey = req.params.pageKey;
+
+  if (!validPageKeys.includes(pageKey)) {
+    res.status(400).json({
+      success: false,
+      message: "Invalid page key. Allowed: home, iafsm",
+    });
+
+    return null;
+  }
+
+  return pageKey;
+};
+
+// ==========================================
+// GET OR CREATE PAGE SECTION
+// ==========================================
+
+async function getOrCreateSection(pageKey) {
   return HomeFeatureSection.findOneAndUpdate(
-    { pageKey: "home" },
-    { $setOnInsert: { pageKey: "home", items: [] } },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { pageKey },
+    {
+      $setOnInsert: {
+        pageKey,
+        items: [],
+      },
+    },
+    {
+      upsert: true,
+      new: true,
+      setDefaultsOnInsert: true,
+    }
   );
 }
 
+// ==========================================
+// NORMALIZE DATA
+// ==========================================
+
 const normalizeBoolean = (value, fallback = true) => {
   if (value === undefined) return fallback;
+
   return value === true || value === "true";
 };
 
 const normalizeItem = (body, existing = {}) => ({
   title: String(body.title ?? existing.title ?? "").trim(),
-  description: body.description ?? existing.description ?? "",
-  imageAlt: body.imageAlt ?? existing.imageAlt ?? "",
-  link: body.link ?? existing.link ?? "",
-  linkText: body.linkText ?? existing.linkText ?? "Learn More",
+
+  description:
+    body.description ?? existing.description ?? "",
+
+  imageAlt:
+    body.imageAlt ?? existing.imageAlt ?? "",
+
+  link:
+    body.link ?? existing.link ?? "",
+
+  linkText:
+    body.linkText ?? existing.linkText ?? "Learn More",
+
   order: Number.isFinite(Number(body.order))
     ? Number(body.order)
     : existing.order ?? 0,
-  isActive: normalizeBoolean(body.isActive, existing.isActive !== false),
+
+  isActive: normalizeBoolean(
+    body.isActive,
+    existing.isActive !== false
+  ),
 });
 
-export const getHomeFeatures = async (_req, res) => {
+// ==========================================
+// PUBLIC: GET PAGE FEATURES
+// GET /api/home-features/:pageKey
+// ==========================================
+
+export const getHomeFeatures = async (req, res) => {
   try {
+    const pageKey = getPageKey(req, res);
+
+    if (!pageKey) return;
+
     const section = await HomeFeatureSection.findOne({
-      pageKey: "home",
+      pageKey,
       isActive: true,
     }).lean();
 
@@ -37,6 +98,7 @@ export const getHomeFeatures = async (_req, res) => {
       return res.json({
         success: true,
         data: {
+          pageKey,
           heading: "",
           subtitle: "",
           isActive: false,
@@ -47,10 +109,17 @@ export const getHomeFeatures = async (_req, res) => {
 
     section.items = (section.items || [])
       .filter((item) => item.isActive !== false)
-      .sort((a, b) => a.order - b.order);
+      .sort(
+        (a, b) => (a.order ?? 0) - (b.order ?? 0)
+      );
 
-    return res.json({ success: true, data: section });
+    return res.json({
+      success: true,
+      data: section,
+    });
   } catch (error) {
+    console.error("Get Home Features:", error);
+
     return res.status(500).json({
       success: false,
       message: error.message,
@@ -58,22 +127,45 @@ export const getHomeFeatures = async (_req, res) => {
   }
 };
 
-export const getAdminHomeFeatures = async (_req, res) => {
+// ==========================================
+// ADMIN: GET PAGE FEATURES
+// GET /api/home-features/admin/:pageKey
+// ==========================================
+
+export const getAdminHomeFeatures = async (req, res) => {
   try {
-    const section = await getOrCreateHomeSection();
+    const pageKey = getPageKey(req, res);
 
-    return res.json({ success: true, data: section });
+    if (!pageKey) return;
+
+    const section = await getOrCreateSection(pageKey);
+
+    return res.json({
+      success: true,
+      data: section,
+    });
   } catch (error) {
+    console.error("Get Admin Home Features:", error);
+
     return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
+
+// ==========================================
+// ADMIN: SAVE SECTION SETTINGS
+// PUT /api/home-features/admin/:pageKey
+// ==========================================
 
 export const saveHomeFeatureSettings = async (req, res) => {
   try {
-    const section = await getOrCreateHomeSection();
+    const pageKey = getPageKey(req, res);
+
+    if (!pageKey) return;
+
+    const section = await getOrCreateSection(pageKey);
 
     if (typeof req.body.heading === "string") {
       section.heading = req.body.heading;
@@ -91,10 +183,12 @@ export const saveHomeFeatureSettings = async (req, res) => {
 
     return res.json({
       success: true,
-      message: "Section settings saved.",
+      message: "Section settings saved successfully.",
       data: section,
     });
   } catch (error) {
+    console.error("Save Home Feature Settings:", error);
+
     return res.status(500).json({
       success: false,
       message: error.message,
@@ -102,8 +196,17 @@ export const saveHomeFeatureSettings = async (req, res) => {
   }
 };
 
+// ==========================================
+// ADMIN: CREATE CARD
+// POST /api/home-features/admin/:pageKey/items
+// ==========================================
+
 export const createHomeFeature = async (req, res) => {
   try {
+    const pageKey = getPageKey(req, res);
+
+    if (!pageKey) return;
+
     const fields = normalizeItem(req.body);
 
     if (!fields.title) {
@@ -120,7 +223,7 @@ export const createHomeFeature = async (req, res) => {
       });
     }
 
-    const section = await getOrCreateHomeSection();
+    const section = await getOrCreateSection(pageKey);
 
     const created = {
       ...fields,
@@ -128,6 +231,7 @@ export const createHomeFeature = async (req, res) => {
     };
 
     section.items.push(created);
+
     await section.save();
 
     return res.status(201).json({
@@ -136,6 +240,8 @@ export const createHomeFeature = async (req, res) => {
       data: section.items[section.items.length - 1],
     });
   } catch (error) {
+    console.error("Create Home Feature:", error);
+
     return res.status(500).json({
       success: false,
       message: error.message,
@@ -143,9 +249,19 @@ export const createHomeFeature = async (req, res) => {
   }
 };
 
+// ==========================================
+// ADMIN: UPDATE CARD
+// PUT /api/home-features/admin/:pageKey/items/:itemId
+// ==========================================
+
 export const updateHomeFeature = async (req, res) => {
   try {
-    const section = await getOrCreateHomeSection();
+    const pageKey = getPageKey(req, res);
+
+    if (!pageKey) return;
+
+    const section = await getOrCreateSection(pageKey);
+
     const card = section.items.id(req.params.itemId);
 
     if (!card) {
@@ -155,7 +271,10 @@ export const updateHomeFeature = async (req, res) => {
       });
     }
 
-    const fields = normalizeItem(req.body, card.toObject());
+    const fields = normalizeItem(
+      req.body,
+      card.toObject()
+    );
 
     if (!fields.title) {
       return res.status(400).json({
@@ -178,6 +297,8 @@ export const updateHomeFeature = async (req, res) => {
       data: card,
     });
   } catch (error) {
+    console.error("Update Home Feature:", error);
+
     return res.status(500).json({
       success: false,
       message: error.message,
@@ -185,9 +306,19 @@ export const updateHomeFeature = async (req, res) => {
   }
 };
 
+// ==========================================
+// ADMIN: DELETE CARD
+// DELETE /api/home-features/admin/:pageKey/items/:itemId
+// ==========================================
+
 export const deleteHomeFeature = async (req, res) => {
   try {
-    const section = await getOrCreateHomeSection();
+    const pageKey = getPageKey(req, res);
+
+    if (!pageKey) return;
+
+    const section = await getOrCreateSection(pageKey);
+
     const card = section.items.id(req.params.itemId);
 
     if (!card) {
@@ -198,6 +329,7 @@ export const deleteHomeFeature = async (req, res) => {
     }
 
     card.deleteOne();
+
     await section.save();
 
     return res.json({
@@ -205,6 +337,8 @@ export const deleteHomeFeature = async (req, res) => {
       message: "Card deleted successfully.",
     });
   } catch (error) {
+    console.error("Delete Home Feature:", error);
+
     return res.status(500).json({
       success: false,
       message: error.message,

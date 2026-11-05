@@ -85,7 +85,7 @@ export default function DynamicPageHero({
         <div className="my-auto max-w-4xl space-y-4">
 
           {!loading && heading && (
-            <h1 className="text-4xl sm:text-5xl lg:text-[62px] leading-[1.12] text-white tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] whitespace-pre-line">
+            <h1 className="text-4xl sm:text-5xl lg:text-[54px] leading-[1] text-white tracking-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)] whitespace-pre-line">
               {heading}
             </h1>
           )}

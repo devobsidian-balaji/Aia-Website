@@ -13,27 +13,42 @@ import {
 
 const router = express.Router();
 
-// Public Home Page section
-router.get("/home", getHomeFeatures);
+// ==========================================
+// PUBLIC PAGE API
+// ==========================================
 
-// Home Features CMS
-router.get("/admin/home", getAdminHomeFeatures);
-router.put("/admin/home", saveHomeFeatureSettings);
+// Home:  /api/home-features/home
+// IAFSM: /api/home-features/iafsm
 
+router.get("/:pageKey", getHomeFeatures);
+
+// ==========================================
+// ADMIN CMS API
+// ==========================================
+
+// Get section settings and cards
+router.get("/admin/:pageKey", getAdminHomeFeatures);
+
+// Save section settings
+router.put("/admin/:pageKey", saveHomeFeatureSettings);
+
+// Add new card
 router.post(
-  "/admin/home/items",
+  "/admin/:pageKey/items",
   upload.single("image"),
   createHomeFeature
 );
 
+// Update existing card
 router.put(
-  "/admin/home/items/:itemId",
+  "/admin/:pageKey/items/:itemId",
   upload.single("image"),
   updateHomeFeature
 );
 
+// Delete existing card
 router.delete(
-  "/admin/home/items/:itemId",
+  "/admin/:pageKey/items/:itemId",
   deleteHomeFeature
 );
 

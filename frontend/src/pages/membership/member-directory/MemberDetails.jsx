@@ -98,7 +98,7 @@ export default function MemberDetails() {
       {/* About */}
       <section className="bg-white px-5 py-5 text-center sm:py-6 mx-auto w-full max-w-6xl px-5 sm:px-8 lg:px-12">
         <div className="">
-          <h2 className="text-4xl sm:text-5xl lg:text-[54px] font-black text-[#1F2937] tracking-tight text-center mb-16">
+          <h2 className="text-4xl sm:text-5xl lg:text-[54px] font-black text-[#1F2937] tracking-tight text-center mb-5 font-semibold">
             About
           </h2>
 

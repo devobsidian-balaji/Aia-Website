@@ -101,7 +101,7 @@ export default function CmsSliderSection({
             
         <div className="mx-auto max-w-5xl text-center">
           {section.heading && (
-            <h2 className="mb-8 text-4xl font-black leading-[1.05] tracking-[-0.035em] text-[#1F2937] sm:mb-6 sm:text-5xl lg:mb-16 lg:text-[54px]">
+            <h2 className="mb-8 text-4xl font-black leading-[1.05] tracking-[-0.035em] text-[#1F2937] sm:mb-6 sm:text-5xl lg:mb-16 lg:text-[54px] font-semibold">
               {section.heading}
             </h2>
           )}

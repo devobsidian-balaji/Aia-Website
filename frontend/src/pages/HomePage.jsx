@@ -93,7 +93,7 @@ export default function HomePage() {
       <CmsSliderSection pageKey="home" sectionKey="industry-slider" />
       <WhyJoinCmsSection pageKey="home" sectionKey="why-join" />
       <IndustrySectors />
-      <HomeFeatureSection />
+      <HomeFeatureSection page="home" />
       <ResourceCenter />
       {/* <HomeServices />
       <WhoAreYou />
