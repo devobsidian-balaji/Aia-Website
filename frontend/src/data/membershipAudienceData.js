@@ -47,10 +47,10 @@ export const membershipAudienceData = {
     ],
 
     partners: [
-      { name: "INDXO", logo: "/members/indxo.png" },
-      { name: "Yantra247", logo: "/members/yantra247.png" },
-      { name: "Renata", logo: "/members/renata.png" },
-      { name: "JTN", logo: "/members/jtn.png" },
+      { name: "INDXO", logo: "/member-directory-images/indxo.png" },
+      { name: "Yantra247", logo: "/member-directory-images/yantra.png" },
+      { name: "Renata", logo: "/member-directory-images/renata.png" },
+      { name: "JTN", logo: "/member-directory-images/jendamark.png" },
     ],
 
     faqs: [
@@ -132,10 +132,10 @@ export const membershipAudienceData = {
     ],
 
     partners: [
-      { name: "INDXO", logo: "/members/indxo.png" },
-      { name: "Yantra247", logo: "/members/yantra247.png" },
-      { name: "Renata", logo: "/members/renata.png" },
-      { name: "JTN", logo: "/members/jtn.png" },
+      { name: "INDXO", logo: "/member-directory-images/indxo.png" },
+      { name: "Yantra247", logo: "/member-directory-images/yantra.png" },
+      { name: "Renata", logo: "/member-directory-images/renata.png" },
+      { name: "JTN", logo: "/member-directory-images/jendamark.png" },
     ],
 
     faqs: [

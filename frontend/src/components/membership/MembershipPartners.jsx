@@ -14,7 +14,7 @@ export default function MembershipPartners({ partners = [] }) {
         {partners.map((partner) => (
           <div
             key={partner.id || partner.name}
-            className="flex h-14 items-center justify-center rounded border border-gray-100 bg-white p-2"
+            className="flex h-auto w-auto items-center justify-center rounded border border-gray-100 bg-white shadow-lg"
           >
             <img
               src={partner.logo}
