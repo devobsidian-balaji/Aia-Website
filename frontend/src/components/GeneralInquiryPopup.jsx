@@ -273,7 +273,7 @@
 //     }`;
 
 //   const labelClass =
-//     "mb-1 block text-[10px] font-medium text-[#A9A9A9]";
+//     "mb-1 block text-[13px] font-medium text-[#A9A9A9]";
 
 //   const requiredMark = <span className="text-red-500"> *</span>;
 
@@ -340,7 +340,7 @@
 //                   </select>
 
 //                   {errors.ecosystem && (
-//                     <p className="mt-1 text-[10px] text-red-400">
+//                     <p className="mt-1 text-[13px] text-red-400">
 //                       {errors.ecosystem}
 //                     </p>
 //                   )}
@@ -366,7 +366,7 @@
 //                   </select>
 
 //                   {errors.manufacturingSector && (
-//                     <p className="mt-1 text-[10px] text-red-400">
+//                     <p className="mt-1 text-[13px] text-red-400">
 //                       {errors.manufacturingSector}
 //                     </p>
 //                   )}
@@ -390,7 +390,7 @@
 //                   />
 
 //                   {errors.fullName && (
-//                     <p className="mt-1 text-[10px] text-red-400">
+//                     <p className="mt-1 text-[13px] text-red-400">
 //                       {errors.fullName}
 //                     </p>
 //                   )}
@@ -414,7 +414,7 @@
 //                   />
 
 //                   {errors.email && (
-//                     <p className="mt-1 text-[10px] text-red-400">
+//                     <p className="mt-1 text-[13px] text-red-400">
 //                       {errors.email}
 //                     </p>
 //                   )}
@@ -438,7 +438,7 @@
 //                   />
 
 //                   {errors.companyName && (
-//                     <p className="mt-1 text-[10px] text-red-400">
+//                     <p className="mt-1 text-[13px] text-red-400">
 //                       {errors.companyName}
 //                     </p>
 //                   )}
@@ -462,7 +462,7 @@
 //                   />
 
 //                   {errors.website && (
-//                     <p className="mt-1 text-[10px] text-red-400">
+//                     <p className="mt-1 text-[13px] text-red-400">
 //                       {errors.website}
 //                     </p>
 //                   )}
@@ -487,7 +487,7 @@
 //                   />
 
 //                   {errors.phoneNumber && (
-//                     <p className="mt-1 text-[10px] text-red-400">
+//                     <p className="mt-1 text-[13px] text-red-400">
 //                       {errors.phoneNumber}
 //                     </p>
 //                   )}
@@ -514,13 +514,13 @@
 //                   />
 
 //                   <div className="mt-1 flex justify-end">
-//                     <span className="text-[10px] text-white/40">
+//                     <span className="text-[13px] text-white/40">
 //                       {form.message.length}/2000
 //                     </span>
 //                   </div>
 
 //                   {errors.message && (
-//                     <p className="mt-1 text-[10px] text-red-400">
+//                     <p className="mt-1 text-[13px] text-red-400">
 //                       {errors.message}
 //                     </p>
 //                   )}
@@ -797,7 +797,7 @@ function SearchableDropdown({
 
   return (
     <div className="relative min-w-0">
-      <label className="mb-1 block text-[10px] font-medium text-[#A9A9A9]">
+      <label className="mb-1 block text-[13px] font-medium text-[#A9A9A9]">
         {label}
         <span className="text-red-500"> *</span>
       </label>
@@ -917,7 +917,7 @@ function SearchableDropdown({
       )}
 
       {error && (
-        <p className="mt-1 text-[10px] text-red-400">{error}</p>
+        <p className="mt-1 text-[13px] text-red-400">{error}</p>
       )}
     </div>
   );
@@ -1160,7 +1160,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
     }`;
 
   const labelClass =
-    "mb-1 block text-[10px] font-medium text-[#A9A9A9]";
+    "mb-1 block text-[13px] font-medium text-[#A9A9A9]";
 
   const requiredMark = (
     <span className="text-red-500"> *</span>
@@ -1280,7 +1280,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
                   />
 
                   {errors.fullName && (
-                    <p className="mt-1 text-[10px] text-red-400">
+                    <p className="mt-1 text-[13px] text-red-400">
                       {errors.fullName}
                     </p>
                   )}
@@ -1303,7 +1303,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
                   />
 
                   {errors.email && (
-                    <p className="mt-1 text-[10px] text-red-400">
+                    <p className="mt-1 text-[13px] text-red-400">
                       {errors.email}
                     </p>
                   )}
@@ -1332,7 +1332,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
                   />
 
                   {errors.companyName && (
-                    <p className="mt-1 text-[10px] text-red-400">
+                    <p className="mt-1 text-[13px] text-red-400">
                       {errors.companyName}
                     </p>
                   )}
@@ -1355,7 +1355,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
                   />
 
                   {errors.website && (
-                    <p className="mt-1 text-[10px] text-red-400">
+                    <p className="mt-1 text-[13px] text-red-400">
                       {errors.website}
                     </p>
                   )}
@@ -1379,7 +1379,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
                   />
 
                   {errors.phoneNumber && (
-                    <p className="mt-1 text-[10px] text-red-400">
+                    <p className="mt-1 text-[13px] text-red-400">
                       {errors.phoneNumber}
                     </p>
                   )}
@@ -1410,13 +1410,13 @@ export default function GeneralInquiryPopup({ onSubmit }) {
                 />
 
                 <div className="mt-1 flex justify-end">
-                  <span className="text-[10px] text-white/40">
+                  <span className="text-[13px] text-white/40">
                     {form.message.length}/2000
                   </span>
                 </div>
 
                 {errors.message && (
-                  <p className="mt-1 text-[10px] text-red-400">
+                  <p className="mt-1 text-[13px] text-red-400">
                     {errors.message}
                   </p>
                 )}
