@@ -35,13 +35,13 @@ export default function MemberDirectoryHero({ members = [] }) {
             <a
               key={member.id}
               href={`/membership/member-directory/${member.slug}`}
-              className="flex h-[76px] w-[100px] items-center justify-center border border-[#E87565] bg-white p-3 transition-transform duration-300 hover:-translate-y-1 sm:h-[90px] sm:w-[120px]"
+              className="flex h-[130px] w-[130px] items-center justify-center border border-[#E87565] bg-white transition-transform duration-300 hover:-translate-y-1 sm:h-[130px] sm:w-[130px]"
             >
               <img
                 src={member.logo}
                 alt={member.name}
                 loading="lazy"
-                className="max-h-full max-w-full object-contain"
+                className="max-h-full max-w-full w-full h-full object-contain"
               />
             </a>
           ))}

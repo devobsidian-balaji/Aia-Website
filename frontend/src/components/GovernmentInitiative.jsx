@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 
 export default function GovernmentInitiative() {
   return (
@@ -43,12 +44,12 @@ accelerate digital transformation. 
             </p>
 
             <div className="pt-2">
-              <a 
-                href="#build-factory"
+              <Link 
+                to="/learn-more"
                 className="inline-flex items-center justify-center px-7 py-2.5 rounded-xl border border-[#E37263] bg-white text-[#E37263] hover:bg-[#E37263] hover:text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 active:scale-95"
               >
                 Learn More
-              </a>
+              </Link>
             </div>
           </div>
 

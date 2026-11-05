@@ -151,7 +151,6 @@ export default function MembersCarousel({
           className="
             mb-9
             text-center
-            font-sans
             text-[28px]
             font-bold
             leading-none

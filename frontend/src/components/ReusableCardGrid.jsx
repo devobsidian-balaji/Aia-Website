@@ -10,6 +10,7 @@ export default function ReusableCardGrid({
   showBackground = true,
   readMoreText = "Read More",
   onCardClick,
+  link
 }) {
   const [selectedCard, setSelectedCard] = useState(
     cards[0]?.id || cards[0]?._id || null
@@ -154,8 +155,9 @@ export default function ReusableCardGrid({
                 key={card._id}
                 title={card.title}
                 description={card.description}
-                image={card.imageUrl}
+                image={card.image}
                 imageAlt={card.imageAlt || card.title}
+                link={card.link}
               />
               // <article
               //   key={cardId}

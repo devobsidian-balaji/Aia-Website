@@ -24,8 +24,8 @@ import SystemIntegratorsPage from "./pages/membership/SystemIntegratorsPage.jsx"
 import MemberDirectory from "./pages/membership/member-directory/MemberDirectory.jsx";
 import RequestFormPage from "./pages/RequestForms/RequestFormPage.jsx";
 import LearnMorePage from "./pages/LearnMorePage.jsx";
-import EventsPage from "./pages/event/EventsPage.jsx";
-import EventDetailsPage from "./pages/event/EventDetailsPage.jsx";
+import EventsPage from "./pages/events/EventsPage.jsx";
+import EventDetailsPage from "./pages/events/EventDetailsPage.jsx";
 import ExecutiveCouncilPage from "./pages/about/executive-council/ExecutiveCouncilPage.jsx";
 import PastPresidentsPage from "./pages/about/past-presidents/PastPresidentsPage.jsx";
 import AimsObjectivesPage from "./pages/about/aims-objectives/AimsObjectivesPage.jsx";
@@ -227,7 +227,7 @@ export default function App() {
           }
         />
         <Route
-          path="/event"
+          path="/events"
           element={
             <PublicLayout>
               <EventsPage />
@@ -237,7 +237,7 @@ export default function App() {
 
         {/* Event Details */}
         <Route
-          path="/event/:slug"
+          path="/events/:slug"
           element={
             <PublicLayout>
               <EventDetailsPage />
@@ -273,7 +273,7 @@ export default function App() {
         />
 
         <Route
-          path="/publication/:slug"
+          path="/publication/articles/:slug"
           element={
             <PublicLayout>
               <ArticleDetailsPage />

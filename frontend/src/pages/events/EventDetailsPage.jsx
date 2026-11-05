@@ -3,9 +3,11 @@ import EventIntroductionSection from "../../components/event/EventIntroductionSe
 import SplitFeatureCard from "../../components/learn-more/SplitFeatureCard";
 import EventAgendaSection from "../../components/event/EventAgendaSection";
 import AutomationEcosystem from "../../components/AutomationEcosystem";
+import DynamicContentSection from "../../components/DynamicContentSection";
+import WhatShouldAttendData from "../../data/eventdata/WhatShouldAttendData";
 
 export default function EventDetailsPage() {
-      const automationItems = [
+  const automationItems = [
     {
       id: 1,
       image: "/Pillars/Technology and Cloud Licensing.png",
@@ -57,29 +59,29 @@ export default function EventDetailsPage() {
         partners={[
           {
             name: "INDXO",
-            logo: "/images/events/partners/indxo.png",
+            logo: "/member-directory-images/indxo.png",
           },
           {
             name: "Yantra247",
-            logo: "/images/events/partners/yantra247.png",
+            logo: "/member-directory-images/yantra.png",
           },
           {
             name: "Renata",
-            logo: "/images/events/partners/renata.png",
+            logo: "/member-directory-images/renata.png",
           },
           {
             name: "JTN",
-            logo: "/images/events/partners/jtn.png",
+            logo: "/member-directory-images/jendamark.png",
           },
         ]}
         supporters={[
           {
             name: "ASDC",
-            logo: "/images/events/supporters/asdc.png",
+            logo: "/member-directory-images/asdc.png",
           },
         ]}
         contact={{
-          email: "info@aia-india.org",
+          email: "info@aia.org",
           phone: "",
           website: "",
         }}
@@ -88,12 +90,18 @@ export default function EventDetailsPage() {
         title="Workshop Agenda"
         image="/event-agenda-img.png"
       />
-      <AutomationEcosystem
+      {/* <AutomationEcosystem
               id="pillars"
               title="Who should attend?"
               paragraph="Participants from the following Industry segments will find this workshop extremely relevant."
               items={automationItems}
-            />
+            /> */}
+      <DynamicContentSection
+        id="who-should-attend"
+        title="Who should attend?"
+        paragraph="Participants from the following Industry segments will find this workshop extremely relevant."
+        {...WhatShouldAttendData}
+      />
     </main>
   );
 }

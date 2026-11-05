@@ -14,7 +14,7 @@ const getOrCreateSection = async () => {
   if (!section) {
     section = await WhatAia.create({
       sectionKey: SECTION_KEY,
-      heading: "What AIA does",
+      heading: DEFAULT_HEADING,
       cards: [],
     });
   }
@@ -33,12 +33,14 @@ const validateId = (id, res) => {
       success: false,
       message: "Invalid card ID",
     });
+
     return false;
   }
+
   return true;
 };
 
-// Public: home page section
+// PUBLIC SECTION
 export const getWhatAia = async (req, res) => {
   try {
     const section = await WhatAia.findOne({
@@ -61,33 +63,36 @@ export const getWhatAia = async (req, res) => {
       .filter((card) => card.isActive)
       .sort((a, b) => a.order - b.order);
 
-    res.json({ success: true, data: section });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-// Admin: get all cards, including inactive cards
-export const getAdminWhatAia = async (req, res) => {
-  try {
-    const section = await getOrCreateSection();
-
-    res.json({
+    return res.json({
       success: true,
       data: section,
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-// Update heading and subtitle
+// ADMIN GET
+export const getAdminWhatAia = async (req, res) => {
+  try {
+    const section = await getOrCreateSection();
+
+    return res.json({
+      success: true,
+      data: section,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// UPDATE SECTION
 export const updateWhatAiaSection = async (req, res) => {
   try {
     const { heading, subtitle, isActive } = req.body;
@@ -100,6 +105,7 @@ export const updateWhatAiaSection = async (req, res) => {
           message: "Heading is required",
         });
       }
+
       update.heading = heading.trim();
     }
 
@@ -110,6 +116,7 @@ export const updateWhatAiaSection = async (req, res) => {
           message: "Subtitle must be text",
         });
       }
+
       update.subtitle = subtitle.trim();
     }
 
@@ -117,9 +124,10 @@ export const updateWhatAiaSection = async (req, res) => {
       if (typeof isActive !== "boolean") {
         return res.status(400).json({
           success: false,
-          message: "isActive must be a boolean",
+          message: "isActive must be boolean",
         });
       }
+
       update.isActive = isActive;
     }
 
@@ -127,24 +135,39 @@ export const updateWhatAiaSection = async (req, res) => {
       { sectionKey: SECTION_KEY },
       {
         $set: update,
-        $setOnInsert: { sectionKey: SECTION_KEY },
+        $setOnInsert: {
+          sectionKey: SECTION_KEY,
+        },
       },
-      { new: true, upsert: true, runValidators: true }
+      {
+        new: true,
+        upsert: true,
+        runValidators: true,
+      }
     );
 
-    res.json({ success: true, data: section });
+    return res.json({
+      success: true,
+      data: section,
+    });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-// Create card
+// CREATE CARD
 export const createWhatAiaCard = async (req, res) => {
   try {
-    const { title, description, imageUrl, imageAlt, order } = req.body;
+    const {
+      title,
+      description,
+      imageUrl,
+      imageAlt,
+      order,
+    } = req.body;
 
     if (
       typeof title !== "string" ||
@@ -175,25 +198,26 @@ export const createWhatAiaCard = async (req, res) => {
 
     await section.save();
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       data: section.cards[section.cards.length - 1],
       message: "Card created successfully",
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-// Update card
+// UPDATE CARD
 export const updateWhatAiaCard = async (req, res) => {
   try {
     if (!validateId(req.params.cardId, res)) return;
 
     const section = await getOrCreateSection();
+
     const card = section.cards.id(req.params.cardId);
 
     if (!card) {
@@ -203,72 +227,104 @@ export const updateWhatAiaCard = async (req, res) => {
       });
     }
 
-    const allowedFields = [
-      "title",
-      "description",
-      "imageUrl",
-      "imageAlt",
-      "order",
-      "isActive",
-    ];
+    const {
+      title,
+      description,
+      imageUrl,
+      imageAlt,
+      order,
+      isActive,
+    } = req.body;
 
-    for (const field of allowedFields) {
-      if (req.body[field] === undefined) continue;
-
-      if (["title", "description", "imageUrl"].includes(field)) {
-        if (
-          typeof req.body[field] !== "string" ||
-          !req.body[field].trim()
-        ) {
-          return res.status(400).json({
-            success: false,
-            message: `${field} must be a non-empty string`,
-          });
-        }
-        card[field] = req.body[field].trim();
-      } else if (field === "order") {
-        const order = Number(req.body.order);
-        if (!Number.isFinite(order)) {
-          return res.status(400).json({
-            success: false,
-            message: "Order must be a number",
-          });
-        }
-        card.order = order;
-      } else if (field === "isActive") {
-        if (typeof req.body.isActive !== "boolean") {
-          return res.status(400).json({
-            success: false,
-            message: "isActive must be a boolean",
-          });
-        }
-        card.isActive = req.body.isActive;
-      } else {
-        card[field] = req.body[field];
+    if (title !== undefined) {
+      if (typeof title !== "string" || !title.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Title is required",
+        });
       }
+
+      card.title = title.trim();
+    }
+
+    if (description !== undefined) {
+      if (
+        typeof description !== "string" ||
+        !description.trim()
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Description is required",
+        });
+      }
+
+      card.description = description.trim();
+    }
+
+    if (imageUrl !== undefined) {
+      if (
+        typeof imageUrl !== "string" ||
+        !imageUrl.trim()
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Image is required",
+        });
+      }
+
+      card.imageUrl = imageUrl.trim();
+    }
+
+    if (imageAlt !== undefined) {
+      card.imageAlt = imageAlt;
+    }
+
+    if (order !== undefined) {
+      const parsedOrder = Number(order);
+
+      if (!Number.isFinite(parsedOrder)) {
+        return res.status(400).json({
+          success: false,
+          message: "Order must be a number",
+        });
+      }
+
+      card.order = parsedOrder;
+    }
+
+    if (isActive !== undefined) {
+      if (typeof isActive !== "boolean") {
+        return res.status(400).json({
+          success: false,
+          message: "isActive must be boolean",
+        });
+      }
+
+      card.isActive = isActive;
     }
 
     await section.save();
 
-    res.json({
+    return res.json({
       success: true,
       data: card,
       message: "Card updated successfully",
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-// Delete card
+// DELETE CARD
 export const deleteWhatAiaCard = async (req, res) => {
   try {
     if (!validateId(req.params.cardId, res)) return;
 
     const section = await getOrCreateSection();
+
     const card = section.cards.id(req.params.cardId);
 
     if (!card) {
@@ -279,14 +335,15 @@ export const deleteWhatAiaCard = async (req, res) => {
     }
 
     card.deleteOne();
+
     await section.save();
 
-    res.json({
+    return res.json({
       success: true,
       message: "Card deleted successfully",
     });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });

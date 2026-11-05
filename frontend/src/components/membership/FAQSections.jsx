@@ -82,17 +82,17 @@ export default function FAQSections() {
           {/* FAQ label */}
 
           <div
-            className="mb-2 flex items-center gap-1.5 font-sans text-[10px] font-medium tracking-[0.02em] text-[#F06B5E] sm:text-[11px]"
+            className="mb-2 flex items-center gap-1.5 text-[10px] font-medium tracking-[0.02em] text-[#F06B5E] sm:text-[11px]"
           >
             <span className="text-[12px]">•</span>
 
-            <span className="font-sans text-[24px]">FAQ</span>
+            <span className="text-[24px]">FAQ</span>
           </div>
 
           {/* Heading */}
 
           <h2
-            className="font-sans text-[34px] font-medium leading-[1] tracking-[-0.045em] text-[#17202B] sm:text-[40px] md:text-[44px] lg:text-[48px] xl:text-[50px]"
+            className="text-[34px] font-medium leading-[1] tracking-[-0.045em] text-[#17202B] sm:text-[40px] md:text-[44px] lg:text-[48px] xl:text-[50px]"
           >
             Questions.
           </h2>
@@ -148,7 +148,7 @@ function FAQItem({ faq, isOpen, onToggle }) {
         {/* Question */}
 
         <span
-          className={`max-w-[calc(100%-45px)] font-sans text-[16px] font-medium leading-[1.4] tracking-[-0.01em] transition-colors duration-300 sm:text-[16px] md:text-[20px] lg:text-[20px]
+          className={`max-w-[calc(100%-45px)] text-[16px] font-medium leading-[1.4] tracking-[-0.01em] transition-colors duration-300 sm:text-[16px] md:text-[20px] lg:text-[20px]
 
             ${
               isOpen
@@ -226,7 +226,6 @@ function FAQItem({ faq, isOpen, onToggle }) {
           >
             <p
               className="
-                font-sans
                 text-[16px]
                 font-normal
                 leading-[1.45]

@@ -22,7 +22,7 @@ export default function EventsPage() {
 
       {/* 2. Key Metrics Strip (20+ Events, 15+ Speakers, 5k+ Participants, 10+ Partners) */}
       <EventsMetrics />
-           <EventFeatureSection />
+      <EventFeatureSection />
       <EventsSection />
 
       {/* 3. Events Catalogue with Orange Box Cards, Date Badges & Category Filters */}

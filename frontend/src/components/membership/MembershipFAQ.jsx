@@ -9,7 +9,7 @@ export default function MembershipFAQ({ faqs = [] }) {
 
   return (
     <section className="mt-16 sm:mt-20">
-      <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#E87565]">
+      <p className="mb-1 font-poppins text-[10px] font-bold uppercase tracking-[0.2em] text-[#E87565]">
         FAQs
       </p>
 

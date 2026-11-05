@@ -6,7 +6,7 @@ import FeatureCard from "../ui/FeatureCard";
 const eventCards = [
   {
     id: 1,
-    image: "/events-page-reference.jpg",
+    image: "/eventsassets/Mask group.png",
     imageAlt: "Joint Events and Forums",
     title: "Joint Events & Forums",
     description:
@@ -14,7 +14,7 @@ const eventCards = [
   },
   {
     id: 2,
-    image: "/iafsm-hero.jpg",
+    image: "/eventsassets/Mask group (1).png",
     imageAlt: "Panel Discussions",
     title: "Panel Discussions",
     description:
@@ -22,7 +22,7 @@ const eventCards = [
   },
   {
     id: 3,
-    image: "/samarth-udyog.png",
+    image: "/eventsassets/Mask group (2).png",
     imageAlt: "Expo Pavilions",
     title: "Expo Pavilions",
     description:

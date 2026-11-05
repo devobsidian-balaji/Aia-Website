@@ -504,10 +504,10 @@ const FALLBACK_HERO = {
   description:
     "Empowering manufacturers to build and sustain solutions based on Industrial Automation, Robotics, Industry 4.0, AI and Collaborative Innovation.",
   videoUrl: "",
-  ctaPrimaryText: "Become a Member",
+  ctaPrimaryText: "Connect with us",
   ctaPrimaryUrl: "#membership",
   ctaSecondaryText: "Explore Smart Factory",
-  ctaSecondaryUrl: "#build-factory",
+  ctaSecondaryUrl: "/learn-more",
 };
 
 export default function Hero({ onBecomeMemberClick }) {
@@ -697,7 +697,7 @@ export default function Hero({ onBecomeMemberClick }) {
       </div>
 
       {/* Video play / pause button */}
-      {hero.videoUrl && (
+      {/* {hero.videoUrl && (
         <button
           type="button"
           onClick={togglePlayback}
@@ -718,7 +718,7 @@ export default function Hero({ onBecomeMemberClick }) {
             />
           )}
         </button>
-      )}
+      )} */}
     </section>
   );
 }

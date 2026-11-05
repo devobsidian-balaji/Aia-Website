@@ -12,6 +12,7 @@ import { memberShipSlides } from "../../data/membersData";
 import CmsSliderSection from "../../components/sliders/CmsSliderSection";
 import WhyJoinCmsSection from "../../components/why-join/WhyJoinCmsSection";
 import DynamicPageHero from "../../components/common/DynamicPageHero";
+import MemberDirectory from "../../components/membership/MemberDirectory";
 
 // import AboutHero from '../components/AboutHero.jsx'
 // import AboutAIAOverview from '../components/AboutAIAOverview.jsx'
@@ -26,11 +27,11 @@ export default function MemberShipPage() {
       {/* 1. Full-Bleed Membership Hero */}
       {/* <MemberShipHero /> */}
       <DynamicPageHero
-  pageKey="membership"
-  fallbackImage="/membershipassets/membership-hero-team.png"
-  fallbackHeading="Membership"
-  scrollTarget="#membership-content"
-/>
+        pageKey="membership"
+        fallbackImage="/membershipassets/membership-hero-team.png"
+        fallbackHeading="Membership"
+        scrollTarget="#membership-content"
+      />
 
       {/* 2. Dynamic 3-Card Membership Overview */}
       {/* <MemberShipPara /> */}
@@ -43,7 +44,7 @@ export default function MemberShipPage() {
       <WhyJoinCmsSection pageKey="membership" sectionKey="why-join" />
 
       {/* <MemberShipObjectives /> */}
-      {/* <MemberDirectory /> */}
+      <MemberDirectory />
       <FAQSections />
 
       {/* 3. Dynamic Vision, Mission, Objectives with Dotted Curves */}

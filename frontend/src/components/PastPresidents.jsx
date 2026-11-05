@@ -1,180 +1,338 @@
-import React, { useState, useEffect } from 'react'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { getPastPresidents } from '../services/api'
+
+import React, { useState, useEffect } from "react";
+import { ArrowLeft, ArrowRight, RefreshCw } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { getPastPresidents } from "../services/api";
+
+// Skeleton Card
+function PresidentSkeleton() {
+  return (
+    <div className="flex animate-pulse flex-col items-center space-y-5">
+      <div className="h-52 w-52 rounded-full border-2 border-gray-100 bg-gray-200 p-2 sm:h-60 sm:w-60">
+        <div className="h-full w-full rounded-full bg-gray-300" />
+      </div>
+
+      <div className="w-full space-y-3 text-center">
+        <div className="mx-auto h-6 w-3/4 rounded bg-gray-200" />
+        <div className="mx-auto h-3 w-1/2 rounded bg-gray-200" />
+      </div>
+
+      <div className="w-full max-w-[190px] space-y-2">
+        <div className="h-3 w-full rounded bg-gray-100" />
+        <div className="h-3 w-full rounded bg-gray-100" />
+        <div className="mx-auto h-3 w-2/3 rounded bg-gray-100" />
+      </div>
+
+      <div className="h-3 w-20 rounded bg-gray-200" />
+    </div>
+  );
+}
 
 export default function PastPresidents() {
-  const [presidents, setPresidents] = useState([
-    {
-      _id: 'p1',
-      name: 'Mr. P Sivaram',
-      term: 'Past President 2016-2018',
-      role: 'Past President',
-      description: 'Mr. Sivaram He has nearly forty years of work experience, most notably having served as the MD of B&R Industrial Automation India, for over 20 years, which he founded in 1996.',
-      imageUrl: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=faces',
-    },
-    {
-      _id: 'p2',
-      name: 'Mr. Dilip Sawhney',
-      term: 'Past President 2014-2016',
-      role: 'Past President',
-      description: 'Mr Sawhney has more than 27 years of experience in Industrial Automation & Healthcare technology industry. He has been an elected member of the National Council of CII.',
-      imageUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=faces',
-    },
-    {
-      _id: 'p3',
-      name: 'Mr. K Nandakumar',
-      term: 'Past President 2012-2014',
-      role: 'Past President',
-      description: "Mr. K. Nandakumar is the Founder and Managing Director of the Chemtrols Group. Started in 1975, Chemtrols is one of India's Leading Solutions Provider in Process Analytics.",
-      imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=faces',
+  const location = useLocation();
+
+  // Detect current page automatically
+  const isAllPresidentsPage =
+    location.pathname.replace(/\/+$/, "") === "/about/past-presidents";
+
+  const [presidents, setPresidents] = useState([]);
+  const [startIndex, setStartIndex] = useState(0);
+  const [selectedBio, setSelectedBio] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  const itemsPerPage = 3;
+
+  // Fetch Past Presidents from API
+  const fetchPresidents = async () => {
+    try {
+      setLoading(true);
+      setError("");
+
+      const data = await getPastPresidents();
+
+      const activePresidents = Array.isArray(data)
+        ? data.filter((president) => president.isActive !== false)
+        : [];
+
+      setPresidents(activePresidents);
+      setStartIndex(0);
+      setSelectedBio(null);
+    } catch (err) {
+      console.error("Past Presidents API Error:", err);
+
+      setPresidents([]);
+      setError(
+        err.message ||
+          "Unable to load past presidents. Please try again."
+      );
+    } finally {
+      setLoading(false);
     }
-  ])
-  const [startIndex, setStartIndex] = useState(0)
-  const [selectedBio, setSelectedBio] = useState(null)
+  };
 
   useEffect(() => {
-    let isMounted = true
-    getPastPresidents().then((data) => {
-      if (isMounted && data && data.length > 0) {
-        setPresidents(data.filter(p => p.isActive !== false))
-      }
-    }).catch(console.error)
+    fetchPresidents();
+  }, []);
 
-    return () => { isMounted = false }
-  }, [])
+  // Carousel Navigation (About page only)
+  const canPrev = startIndex > 0;
 
-  const itemsPerPage = 3
-  const canPrev = startIndex > 0
-  const canNext = startIndex + itemsPerPage < presidents.length
+  const canNext =
+    startIndex + itemsPerPage < presidents.length;
 
   const handlePrev = () => {
-    if (canPrev) setStartIndex(prev => Math.max(0, prev - 1))
-  }
+    if (canPrev) {
+      setStartIndex((prev) => Math.max(0, prev - 1));
+    }
+  };
 
   const handleNext = () => {
-    if (canNext) setStartIndex(prev => Math.min(presidents.length - itemsPerPage, prev + 1))
-  }
+    if (canNext) {
+      setStartIndex((prev) =>
+        Math.min(presidents.length - itemsPerPage, prev + 1)
+      );
+    }
+  };
 
-  const visiblePresidents = presidents.slice(startIndex, startIndex + itemsPerPage)
+  // About page: 3 members at a time
+  // Past Presidents page: All members
+  const visiblePresidents = isAllPresidentsPage
+    ? presidents
+    : presidents.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <section id="past-presidents" className="py-24 bg-white font-sans relative overflow-hidden text-center">
-      
-      {/* Background Micro-Grid Texture */}
-      <div 
-        className="absolute inset-0 opacity-40 pointer-events-none bg-repeat bg-[length:360px_360px]"
-        style={{ backgroundImage: `url('/grid-bg.png')` }}
-      ></div>
+    <section
+      id="past-presidents"
+      className="relative overflow-hidden bg-white py-16 font-sans text-center sm:py-20 lg:py-24"
+    >
+      {/* Background Micro-Grid */}
+      <div
+        className="pointer-events-none absolute inset-0 bg-repeat opacity-40"
+        style={{
+          backgroundImage: "url('/grid-bg.png')",
+          backgroundSize: "360px 360px",
+        }}
+      />
 
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 relative z-10">
-        
-        {/* Header matching Image 1: Centered Title + Right Navigation Buttons */}
-        <div className="relative flex flex-col sm:flex-row items-center justify-between mb-16 max-w-6xl mx-auto">
-          <div className="sm:w-28 hidden sm:block"></div> {/* Spacer for perfect centering */}
-          
-          <h2 className="text-4xl sm:text-5xl lg:text-[54px] font-black text-[#1F2937] tracking-tight">
+      <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+
+        {/* Header */}
+        <div className="relative mx-auto mb-12 flex max-w-6xl flex-col items-center justify-between gap-5 sm:mb-16 sm:flex-row">
+
+          {/* Spacer for centered heading on About page */}
+          <div className="hidden w-28 sm:block" />
+
+          <h2 className="text-3xl font-black tracking-tight text-[#1F2937] sm:text-4xl lg:text-[54px]">
             AIA Past Presidents
           </h2>
 
-          {/* Carousel Arrow Controls matching Image 1 */}
-          <div className="flex items-center gap-3 mt-4 sm:mt-0">
-            <button
-              onClick={handlePrev}
-              disabled={!canPrev}
-              className={`w-10 h-10 rounded-full border border-[#E37263] flex items-center justify-center transition-all ${
-                canPrev 
-                  ? 'text-[#E37263] hover:bg-[#E37263] hover:text-white cursor-pointer active:scale-95' 
-                  : 'text-[#E37263]/40 border-[#E37263]/40 cursor-not-allowed'
-              }`}
-              aria-label="Previous Presidents"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
+          {/* Previous / Next buttons only on About page */}
+          {!isAllPresidentsPage && (
+            <div className="flex items-center gap-3 sm:w-28 sm:justify-end">
 
-            <button
-              onClick={handleNext}
-              disabled={!canNext}
-              className={`w-10 h-10 rounded-full bg-[#E37263] text-white flex items-center justify-center shadow-md transition-all ${
-                canNext 
-                  ? 'hover:bg-[#d0594a] cursor-pointer active:scale-95' 
-                  : 'opacity-50 cursor-not-allowed'
-              }`}
-              aria-label="Next Presidents"
-            >
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
+              <button
+                type="button"
+                onClick={handlePrev}
+                disabled={!canPrev || loading}
+                className={`flex h-10 w-10 items-center justify-center rounded-full border border-[#E37263] transition-all ${
+                  canPrev && !loading
+                    ? "cursor-pointer text-[#E37263] hover:bg-[#E37263] hover:text-white active:scale-95"
+                    : "cursor-not-allowed border-[#E37263]/40 text-[#E37263]/40"
+                }`}
+                aria-label="Previous Presidents"
+              >
+                <ArrowLeft size={16} />
+              </button>
 
-        {/* 3 Circular Portrait Cards matching Image 1 */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-6xl mx-auto items-stretch">
-          {visiblePresidents.map((president, idx) => (
-            <div 
-              key={president._id || idx}
-              className="flex flex-col items-center text-center space-y-5 group"
-            >
-              {/* Circular Portrait with Orange/Coral Border Ring matching Image 1 */}
-              <div className="relative w-52 h-52 sm:w-60 sm:h-60 rounded-full p-2 border-2 border-[#E37263] shadow-md group-hover:scale-105 transition-transform duration-300 bg-white">
-                <div className="w-full h-full rounded-full overflow-hidden">
-                  <img
-                    src={president.imageUrl}
-                    alt={president.name}
-                    className="w-full h-full object-cover select-none"
-                  />
-                </div>
-              </div>
-
-              {/* Name matching Image 1 */}
-              <div className="space-y-1">
-                <h3 className="text-xl sm:text-2xl font-black text-[#1F2937] tracking-tight">
-                  {president.name}
-                </h3>
-                
-                {/* Term in Coral font */}
-                <div className="text-xs sm:text-sm font-bold text-[#E37263]">
-                  ({president.term})
-                </div>
-              </div>
-
-              {/* Bio Description */}
-              <p className="text-xs sm:text-sm text-black/75 leading-relaxed font-normal max-w-sm">
-                {president.description}
-              </p>
-
-              {/* Read More Link matching Image 1 */}
-              <div>
-                <button
-                  onClick={() => setSelectedBio(president)}
-                  className="text-xs font-bold text-[#E37263] underline underline-offset-4 hover:text-[#d0594a] transition-colors"
-                >
-                  Read More
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={!canNext || loading}
+                className={`flex h-10 w-10 items-center justify-center rounded-full bg-[#E37263] text-white shadow-md transition-all ${
+                  canNext && !loading
+                    ? "cursor-pointer hover:bg-[#d0594a] active:scale-95"
+                    : "cursor-not-allowed opacity-40"
+                }`}
+                aria-label="Next Presidents"
+              >
+                <ArrowRight size={16} />
+              </button>
 
             </div>
-          ))}
+          )}
+
+          {/* Spacer for all presidents page */}
+          {isAllPresidentsPage && (
+            <div className="hidden w-28 sm:block" />
+          )}
         </div>
 
+        {/* Loading Skeleton */}
+        {loading && (
+          <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12">
+            {Array.from({ length: isAllPresidentsPage ? 6 : 3 }).map(
+              (_, index) => (
+                <PresidentSkeleton key={index} />
+              )
+            )}
+          </div>
+        )}
+
+        {/* API Error */}
+        {!loading && error && (
+          <div className="flex min-h-[280px] flex-col items-center justify-center rounded-2xl border border-red-100 bg-red-50/50 px-5">
+            <p className="text-sm font-medium text-red-600">
+              {error}
+            </p>
+
+            <button
+              type="button"
+              onClick={fetchPresidents}
+              className="mt-5 inline-flex items-center gap-2 rounded-lg bg-[#E37263] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#d0594a]"
+            >
+              <RefreshCw size={15} />
+              Try Again
+            </button>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!loading && !error && presidents.length === 0 && (
+          <div className="flex min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-5">
+            <h3 className="text-lg font-bold text-[#1F2937]">
+              No Past Presidents Available
+            </h3>
+
+            <p className="mt-2 max-w-sm text-sm text-gray-500">
+              Past President information will appear here once published.
+            </p>
+          </div>
+        )}
+
+        {/* Presidents Grid */}
+        {!loading && !error && presidents.length > 0 && (
+          <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12">
+
+            {visiblePresidents.map((president, idx) => (
+              <div
+                key={president._id || idx}
+                className="group flex flex-col items-center space-y-5 text-center"
+              >
+                {/* Circular Portrait */}
+                <div className="relative h-52 w-52 rounded-full border-2 border-[#E37263] bg-white p-2 shadow-md transition-transform duration-300 group-hover:scale-105 sm:h-60 sm:w-60">
+                  <div className="h-full w-full overflow-hidden rounded-full bg-gray-100">
+                    <img
+                      src={president.imageUrl}
+                      alt={president.name || "Past President"}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-full w-full select-none object-cover"
+                    />
+                  </div>
+                </div>
+
+                {/* Name and Term */}
+                <div className="space-y-1">
+                  <h3 className="text-xl font-black tracking-tight text-[#1F2937] sm:text-2xl">
+                    {president.name}
+                  </h3>
+
+                  {president.term && (
+                    <div className="text-xs font-bold text-[#E37263] sm:text-sm">
+                      ({president.term})
+                    </div>
+                  )}
+                </div>
+
+                {/* Description */}
+                {president.description && (
+                  <p className="mx-auto w-full max-w-[350px] break-words text-center text-[15px] font-normal leading-[1.6] text-[#253044] sm:text-[16px]">
+                    {president.description}
+                  </p>
+                )}
+
+                {/* Read More */}
+                {/* <button
+                  type="button"
+                  onClick={() => setSelectedBio(president)}
+                  className="text-xs font-bold text-[#E37263] underline underline-offset-4 transition-colors hover:text-[#d0594a]"
+                >
+                  Read More
+                </button> */}
+              </div>
+            ))}
+
+          </div>
+        )}
+
+        {/* View All button only on About page */}
+        {!isAllPresidentsPage &&
+          !loading &&
+          !error &&
+          presidents.length > 3 && (
+            <div className="mt-12 text-center">
+              <Link
+                to="/about/past-presidents"
+                className="inline-flex items-center gap-2 rounded-full bg-[#E37263] px-7 py-3 text-sm font-bold text-white transition-all duration-300 hover:-translate-y-1 hover:bg-[#d0594a] hover:shadow-lg"
+              >
+                View All Past Presidents
+                <ArrowRight size={17} />
+              </Link>
+            </div>
+          )}
       </div>
 
       {/* Bio Modal */}
       {selectedBio && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-8 text-center space-y-4 shadow-2xl border border-gray-200">
-            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-[#E37263] mx-auto shadow-md">
-              <img src={selectedBio.imageUrl} alt={selectedBio.name} className="w-full h-full object-cover" />
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) {
+              setSelectedBio(null);
+            }
+          }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="w-full max-w-lg space-y-4 rounded-3xl border border-gray-200 bg-white p-6 text-center shadow-2xl sm:p-8"
+          >
+            {/* Profile Image */}
+            <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-2 border-[#E37263] shadow-md">
+              <img
+                src={selectedBio.imageUrl}
+                alt={selectedBio.name || "Past President"}
+                className="h-full w-full object-cover"
+              />
             </div>
+
+            {/* Name */}
             <div>
-              <h3 className="text-2xl font-black text-[#1F2937]">{selectedBio.name}</h3>
-              <p className="text-sm font-bold text-[#E37263]">({selectedBio.term})</p>
+              <h3 className="text-2xl font-black text-[#1F2937]">
+                {selectedBio.name}
+              </h3>
+
+              {selectedBio.term && (
+                <p className="text-sm font-bold text-[#E37263]">
+                  ({selectedBio.term})
+                </p>
+              )}
             </div>
-            <p className="text-sm text-gray-700 leading-relaxed text-left">
-              {selectedBio.description}
+
+            {/* Full Description */}
+            <p className="break-words text-left text-sm leading-relaxed text-gray-700">
+              {selectedBio.description ||
+                "No additional information available."}
             </p>
+
+            {/* Close */}
             <div className="pt-2">
               <button
+                type="button"
                 onClick={() => setSelectedBio(null)}
-                className="px-6 py-2.5 rounded-xl bg-[#E37263] text-white text-xs font-bold shadow hover:bg-[#d0594a] transition"
+                className="rounded-xl bg-[#E37263] px-6 py-2.5 text-xs font-bold text-white shadow transition hover:bg-[#d0594a]"
               >
                 Close
               </button>
@@ -182,7 +340,6 @@ export default function PastPresidents() {
           </div>
         </div>
       )}
-
     </section>
-  )
+  );
 }

@@ -32,7 +32,7 @@ const eventSchema = new mongoose.Schema({
     type: String,
     default: 'Conferences',
     trim: true,
-    enum: ['Conferences', 'Workshops', 'Webinars', 'Training Program', 'Exhibitions'],
+    enum: ['Conference', 'Workshops', 'Webinars', 'Training Program', 'Exhibitions'],
   },
   order: {
     type: Number,

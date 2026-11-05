@@ -6,6 +6,8 @@ import EventsSection from '../components/EventsSection.jsx'
 import OurInitiatives from '../components/OurInitiatives.jsx'
 import HomeFeatureSection from '../components/home/HomeFeatureSection.jsx'
 import DynamicPageHero from '../components/common/DynamicPageHero.jsx'
+import DynamicContentSection from '../components/DynamicContentSection.jsx'
+import OurPillarsData from '../data/iafsmdata/OurPillars.js'
 
 export default function IAFSMPage() {
   return (
@@ -23,7 +25,14 @@ export default function IAFSMPage() {
             <HomeFeatureSection />
             
       {/* 2. Pillars Section matching Image 1 staggered alignment */}
-      <IAFSMPillars />
+      {/* <IAFSMPillars /> */}
+      <DynamicContentSection
+        id="iafsm"
+        title="Our Pillar"
+        paragraph=""
+        {...OurPillarsData}
+      />
+
 
       {/* 3. What is IAFSM Section matching Image 4 */}
       {/* <WhatIsIAFSM /> */}

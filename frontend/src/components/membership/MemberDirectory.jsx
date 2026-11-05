@@ -6,19 +6,19 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 const members = [
   {
     id: 1,
-    logo: "",
+    logo: "/member-directory-images/indxo.png",
     name: "INDXO AI Pvt Ltd.",
     location: "Bengaluru, South India",
   },
   {
     id: 2,
-    logo: "",
+    logo: "/member-directory-images/yantra.png",
     name: "Yantra 24*7",
     location: "Coimbatore, South India",
   },
   {
     id: 3,
-    logo: "",
+    logo: "/member-directory-images/renata.png",
     name: "Renata Envirocomp Pvt Ltd.",
     location: "System IntegratorsDelhi, North India",
   },
@@ -70,28 +70,12 @@ export default function MemberDirectory() {
       ================================================= */}
 
       <div
-        className="
-          pointer-events-none
-          absolute
-          -bottom-32
-          right-[-5%]
-          h-[280px]
-          w-[65%]
-          rounded-full
-          bg-[#4C83B7]/30
-          blur-[80px]
+        className="pointer-events-none absolute -bottom-32 right-[-5%] h-[280px] w-[65%] rounded-full bg-[#4C83B7]/30 blur-[80px]
         "
       />
 
       <div
-        className="
-          pointer-events-none
-          absolute
-          right-0
-          top-0
-          h-full
-          w-[1px]
-          bg-cyan-300/70
+        className="pointer-events-none absolute right-0 top-0 h-full w-[1px] bg-cyan-300/70
         "
       />
 
@@ -100,30 +84,7 @@ export default function MemberDirectory() {
       ================================================= */}
 
       <div
-        className="
-          relative
-          z-10
-          mx-auto
-          flex
-          min-h-[430px]
-          w-full
-          max-w-[1440px]
-          flex-col
-          px-6
-          py-10
-
-          sm:px-8
-          sm:py-12
-
-          md:px-10
-          md:py-14
-
-          lg:min-h-[480px]
-          lg:flex-row
-          lg:px-14
-          lg:py-16
-
-          xl:px-16
+        className="relative z-10 mx-auto flex min-h-[430px] w-full max-w-[1440px] flex-col px-6 py-10 sm:px-8 sm:py-12 md:px-10 md:py-14 lg:min-h-[480px] lg:flex-row lg:px-14 lg:py-16 xl:px-16
         "
       >
         {/* =================================================
@@ -131,17 +92,7 @@ export default function MemberDirectory() {
         ================================================= */}
 
         <div
-          className="
-            relative
-            flex
-            shrink-0
-            flex-col
-            justify-between
-
-            lg:w-[22%]
-            lg:pr-8
-
-            xl:w-[23%]
+          className="relative flex shrink-0 flex-col justify-between lg:w-[22%] lg:pr-8 xl:w-[23%]
           "
         >
           {/* Heading */}
@@ -149,7 +100,6 @@ export default function MemberDirectory() {
           <h2
             className="
               max-w-[220px]
-              font-sans
               text-[32px]
               font-semibold
               leading-[1.25]
@@ -313,7 +263,6 @@ function MemberCard({ member }) {
           <span
             className="
               select-none
-              font-sans
               text-xs
               uppercase
               tracking-[0.15em]
@@ -332,7 +281,6 @@ function MemberCard({ member }) {
       <div className="pt-4">
         <h3
           className="
-            font-sans
             text-[14px]
             font-medium
             leading-[1.25]
@@ -352,7 +300,6 @@ function MemberCard({ member }) {
         <p
           className="
             mt-2
-            font-sans
             text-[9px]
             font-normal
             leading-[1.35]
@@ -362,7 +309,7 @@ function MemberCard({ member }) {
 
             lg:text-[9px]
 
-            xl:text-[10px]
+            xl:text-[12px]
           "
         >
           {member.location}

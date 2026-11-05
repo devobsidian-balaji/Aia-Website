@@ -14,11 +14,11 @@ export default function MembershipFeeTable({ rows = [] }) {
           <thead>
             <tr className="bg-[#FFF8F7] text-[#263247]">
               <th className="border border-[#F2DEDA] p-2">S. No.</th>
-              <th className="border border-[#F2DEDA] p-2">
+              {/* <th className="border border-[#F2DEDA] p-2">
                 Class of Membership
-              </th>
+              </th> */}
               <th className="border border-[#F2DEDA] p-2">
-                Annual Revenue (₹ Cr.)
+                Annual revenue of Company or Group (in INR, Crores)
               </th>
               <th className="border border-[#F2DEDA] p-2">
                 Non-Refundable Admission Fee
@@ -38,10 +38,10 @@ export default function MembershipFeeTable({ rows = [] }) {
                 <td className="border border-[#F2DEDA] p-2">
                   {index + 1}
                 </td>
-
+{/* 
                 <td className="border border-[#F2DEDA] p-2 font-semibold">
                   {row.membership}
-                </td>
+                </td> */}
 
                 <td className="border border-[#F2DEDA] p-2">
                   {row.revenue}

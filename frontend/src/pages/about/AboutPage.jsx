@@ -13,6 +13,8 @@ import StickyStackCards from "../../components/industry-insight/StickyStackCards
 import { editorialItems } from "../../data/editorialData.js";
 import StickyStackCmsSection from "../../components/StickyStackCmsSection.jsx";
 import DynamicPageHero from "../../components/common/DynamicPageHero.jsx";
+import DynamicContentSection from "../../components/DynamicContentSection.jsx";
+import AutomationEcosystemData from "../../data/aboutpagedata/AutomationEcosystemData.js";
 
 
 export default function AboutPage() {
@@ -71,11 +73,18 @@ export default function AboutPage() {
 
       <CmsSliderSection pageKey="about-aia" sectionKey="about-slider" />
 
-      <AutomationEcosystem
+      {/* <AutomationEcosystem
         id="pillars"
         title="Automation Ecosystem"
         items={automationItems}
-      />
+      /> */}
+
+      <DynamicContentSection
+  id="automation-ecosystem"
+  title="Automation Ecosystem"
+  paragraph=""
+  {...AutomationEcosystemData}
+/>
 
 
       {/* 3. Dynamic Vision, Mission, Objectives with Dotted Curves */}

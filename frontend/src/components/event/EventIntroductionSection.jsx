@@ -192,7 +192,7 @@ function SupportedByCard({ supporters, contact }) {
       </div>
 
       <p className="mb-3 mt-4 text-xs font-semibold text-[#E87565]">
-        Connect with us for more info
+        Contact us for more info
       </p>
 
       <div className="flex items-center gap-3">
@@ -200,7 +200,7 @@ function SupportedByCard({ supporters, contact }) {
           <a
             href={`mailto:${contact.email}`}
             aria-label="Email"
-            className="text-[#E87565] transition hover:text-[#263247]"
+            className="transition hover:text-[#263247]"
           >
             <Mail size={16} />
           </a>
@@ -210,7 +210,7 @@ function SupportedByCard({ supporters, contact }) {
           <a
             href={`tel:${contact.phone}`}
             aria-label="Phone"
-            className="text-[#E87565] transition hover:text-[#263247]"
+            className="transition hover:text-[#263247]"
           >
             <Phone size={16} />
           </a>
@@ -222,9 +222,9 @@ function SupportedByCard({ supporters, contact }) {
             target="_blank"
             rel="noreferrer"
             aria-label="Website"
-            className="text-[#E87565] transition hover:text-[#263247]"
+            className="transition hover:text-[#263247]"
           >
-            <Globe size={16} />
+            <Globe2 size={16} />
           </a>
         )}
       </div>

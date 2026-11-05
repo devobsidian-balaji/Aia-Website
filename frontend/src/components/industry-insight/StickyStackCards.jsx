@@ -154,7 +154,6 @@ function StickyCard({
           >
             <span
               className={`
-                font-sans
                 text-[32px]
                 font-medium
                 leading-none
@@ -187,7 +186,7 @@ function StickyCard({
 
           {item.title && (
             <h2
-              className={`max-w-[850px] font-sans text-[24px] font-bold leading-[1.25] tracking-[0.02em] sm:text-[17px] md:text-[20px] lg:text-[32px] xl:text-[54px] mb-5
+              className={`max-w-[850px] text-[24px] font-bold leading-[1.25] tracking-[0.02em] sm:text-[17px] md:text-[20px] lg:text-[32px] xl:text-[32px] mb-5
                 
 
                 ${item.titleClassName}

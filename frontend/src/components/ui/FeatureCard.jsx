@@ -1,9 +1,11 @@
+import { Link } from "react-router-dom";
 
 export default function FeatureCard({
   image,
   imageAlt = "",
   title,
   description,
+  link = ""
 }) {
   return (
     <article className="group relative flex h-full flex-col rounded-[5px] border border-rose-100 bg-white p-2 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-rose-200 hover:shadow-[0_10px_30px_rgba(190,24,60,0.07)]">
@@ -25,6 +27,14 @@ export default function FeatureCard({
         <p className="text-sm sm:text-base text-black/70 leading-relaxed max-w-lg font-normal">
           {description}
         </p>
+        {link && ( <Link
+         to={link}
+    // onClick={onReadMore}
+    className="mt-4 w-fit text-sm font-semibold text-[#E76F51] hover:text-[#c9563c] transition-colors"
+  >
+    Read More →
+  </Link>)}
+        
       </div>
 
       {/* Red accent appears on hover */}

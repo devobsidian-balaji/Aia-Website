@@ -25,11 +25,11 @@
 //       {/* Top Header Contact, Social & Admin Strip */}
 //       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-2 flex items-center justify-between text-xs text-gray-300 border-b border-white/5">
 //         <a 
-//           href="mailto:info@aia-india.org" 
+//           href="mailto:info@aia.org" 
 //           className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
 //         >
 //           <Mail className="w-3.5 h-3.5 text-gray-400" />
-//           <span className="font-medium tracking-wide">info@aia-india.org</span>
+//           <span className="font-medium tracking-wide">info@aia.org</span>
 //         </a>
 
 //         {/* Right Side Social & Admin Button */}
@@ -499,11 +499,11 @@ const isDropdownActive = (item) => {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-2 sm:px-8 lg:px-12">
 
           <a
-            href="mailto:info@aia-india.org"
+            href="mailto:info@aia.org"
             className="flex items-center gap-2 text-[11px] text-gray-300 transition hover:text-white"
           >
             <Mail size={14} />
-            <span>info@aia-india.org</span>
+            <span>info@aia.org</span>
           </a>
 
           <div className="flex items-center gap-3 sm:gap-4">
