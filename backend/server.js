@@ -12,6 +12,7 @@ import { Initiative } from './models/Initiative.js';
 import { PillarFootprint } from './models/PillarFootprint.js';
 import { CampusEvent } from './models/CampusEvent.js';
 import { Publication } from './models/Publication.js';
+import { uploadsDir } from './config/uploadPaths.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -19,11 +20,23 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Ensure uploads directory exists
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
+// ==========================================
+// STATIC UPLOADS SERVING
+// ==========================================
+
+app.use(
+  "/uploads",
+  express.static(uploadsDir, {
+    maxAge: "30d",
+    immutable: true,
+    setHeaders: (res) => {
+      res.setHeader(
+        "Access-Control-Allow-Origin",
+        "*"
+      );
+    },
+  })
+);
 
 // Global Middlewares
 app.use(cors());

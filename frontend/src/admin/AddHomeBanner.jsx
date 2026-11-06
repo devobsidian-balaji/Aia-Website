@@ -228,76 +228,569 @@
 
 
 
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
+// import {
+//   Video,
+//   UploadCloud,
+//   CheckCircle2,
+//   AlertCircle,
+//   Loader2,
+//   Play,
+//   RefreshCw,
+//   Trash2,
+// } from "lucide-react";
+
+// const API_URL = (
+//   import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+// ).replace(/\/$/, "");
+
+// export default function AddHomeBanner({ onBannerAdded }) {
+//   const [form, setForm] = useState({
+//     title: "Building the automation backbone of India's factories.",
+//     description:
+//       "Empowering manufacturers to build and sustain solutions based on Industrial Automation, Robotics, Industry 4.0, AI and Collaborative Innovation.",
+//     ctaPrimaryText: "Become a Member",
+//     ctaPrimaryUrl: "#membership",
+//     ctaSecondaryText: "Explore Smart Factory",
+//     ctaSecondaryUrl: "#build-factory",
+//   });
+
+//   const [video, setVideo] = useState(null);
+//   const [videoPreview, setVideoPreview] = useState("");
+//   const [savedBanner, setSavedBanner] = useState(null);
+
+//   const [loading, setLoading] = useState(false);
+//   const [fetching, setFetching] = useState(true);
+//   const [successMsg, setSuccessMsg] = useState("");
+//   const [errorMsg, setErrorMsg] = useState("");
+
+//   const inputClass =
+//     "w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#E25238] focus:ring-2 focus:ring-[#E25238]/10";
+
+//   // Fetch already uploaded hero video
+//   const fetchSavedBanner = async () => {
+//     setFetching(true);
+
+//     try {
+//       const response = await fetch(`${API_URL}/banners`);
+//       const result = await response.json();
+
+//       if (!response.ok || !result.success) {
+//         throw new Error(result.message || "Failed to fetch hero video.");
+//       }
+
+//       const activeBanner = result.data?.find(
+//         (item) => item.isActive && item.videoUrl
+//       );
+
+//       setSavedBanner(activeBanner || null);
+
+//       if (activeBanner) {
+//         setForm({
+//           title: activeBanner.title || "",
+//           description: activeBanner.description || "",
+//           ctaPrimaryText: activeBanner.ctaPrimaryText || "",
+//           ctaPrimaryUrl: activeBanner.ctaPrimaryUrl || "",
+//           ctaSecondaryText: activeBanner.ctaSecondaryText || "",
+//           ctaSecondaryUrl: activeBanner.ctaSecondaryUrl || "",
+//         });
+//       }
+//     } catch (error) {
+//       console.error("Hero fetch error:", error);
+//       setErrorMsg(error.message || "Unable to load saved hero video.");
+//     } finally {
+//       setFetching(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchSavedBanner();
+//   }, []);
+
+//   // Release temporary local preview URL
+//   useEffect(() => {
+//     return () => {
+//       if (videoPreview) {
+//         URL.revokeObjectURL(videoPreview);
+//       }
+//     };
+//   }, [videoPreview]);
+
+//   const updateField = (e) => {
+//     const { name, value } = e.target;
+
+//     setForm((prev) => ({
+//       ...prev,
+//       [name]: value,
+//     }));
+//   };
+
+//   // Select video
+//   const handleVideoChange = (e) => {
+//     const file = e.target.files?.[0];
+
+//     if (!file) return;
+
+//     setErrorMsg("");
+//     setSuccessMsg("");
+
+//     const allowedTypes = [
+//       "video/mp4",
+//       "video/webm",
+//       "video/ogg",
+//       "video/quicktime",
+//     ];
+
+//     if (!allowedTypes.includes(file.type)) {
+//       setErrorMsg("Please upload MP4, WebM, MOV or OGG video.");
+//       e.target.value = "";
+//       return;
+//     }
+
+//     if (file.size > 100 * 1024 * 1024) {
+//       setErrorMsg("Video size must be below 100 MB.");
+//       e.target.value = "";
+//       return;
+//     }
+
+//     setVideo(file);
+//     setVideoPreview(URL.createObjectURL(file));
+//   };
+
+//   const removeSelectedVideo = () => {
+//     setVideo(null);
+//     setVideoPreview("");
+//   };
+
+//   // Upload video
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     if (!video) {
+//       setErrorMsg("Please select a video before uploading.");
+//       return;
+//     }
+
+//     setLoading(true);
+//     setErrorMsg("");
+//     setSuccessMsg("");
+
+//     try {
+//       const payload = new FormData();
+
+//       payload.append("video", video);
+
+//       Object.entries(form).forEach(([key, value]) => {
+//         payload.append(key, value);
+//       });
+
+//       const response = await fetch(`${API_URL}/banners`, {
+//         method: "POST",
+//         body: payload,
+//       });
+
+//       const result = await response.json();
+
+//       if (!response.ok || !result.success) {
+//         throw new Error(result.message || "Video upload failed.");
+//       }
+
+//       setSuccessMsg("Home hero video uploaded successfully!");
+
+//       setVideo(null);
+//       setVideoPreview("");
+
+//       // Fetch saved video again from database
+//       await fetchSavedBanner();
+
+//       if (onBannerAdded) {
+//         onBannerAdded();
+//       }
+//     } catch (error) {
+//       console.error("Hero upload error:", error);
+//       setErrorMsg(error.message || "Failed to upload hero video.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   const inputFields = [
+//     ["ctaPrimaryText", "Primary Button Text"],
+//     ["ctaPrimaryUrl", "Primary Button URL"],
+//     ["ctaSecondaryText", "Secondary Button Text"],
+//     ["ctaSecondaryUrl", "Secondary Button URL"],
+//   ];
+
+//   return (
+//     <div className="mx-auto max-w-4xl space-y-6 p-4 sm:p-6 lg:p-8">
+//       <form
+//         onSubmit={handleSubmit}
+//         className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+//       >
+//         {/* Header */}
+//         <div className="flex items-center gap-3 border-b bg-[#F4F8FF] px-6 py-5">
+//           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+//             <Video size={20} />
+//           </div>
+
+//           <div>
+//             <h2 className="font-bold text-slate-800">
+//               Home Hero Video CMS
+//             </h2>
+//             <p className="text-xs text-slate-500">
+//               Manage your homepage background video and content.
+//             </p>
+//           </div>
+//         </div>
+
+//         <div className="space-y-6 p-6">
+//           {/* Existing saved video */}
+//           <div className="rounded-2xl border border-slate-200 p-4">
+//             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+//               <div>
+//                 <h3 className="font-semibold text-slate-800">
+//                   Currently Uploaded Video
+//                 </h3>
+//                 <p className="mt-1 text-xs text-slate-500">
+//                   This video is currently used on the homepage.
+//                 </p>
+//               </div>
+
+//               <button
+//                 type="button"
+//                 onClick={fetchSavedBanner}
+//                 disabled={fetching}
+//                 className="inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+//               >
+//                 <RefreshCw
+//                   size={14}
+//                   className={fetching ? "animate-spin" : ""}
+//                 />
+//                 Refresh
+//               </button>
+//             </div>
+
+//             {fetching ? (
+//               <div className="flex h-48 items-center justify-center rounded-xl bg-slate-100">
+//                 <Loader2 className="animate-spin text-slate-500" />
+//               </div>
+//             ) : savedBanner?.videoUrl ? (
+//               <div className="overflow-hidden rounded-xl bg-black">
+//                 <video
+//                   key={savedBanner.videoUrl}
+//                   src={savedBanner.videoUrl}
+//                   controls
+//                   playsInline
+//                   preload="metadata"
+//                   className="max-h-72 w-full object-contain"
+//                   onError={() =>
+//                     setErrorMsg(
+//                       "Saved video URL is unavailable. Check your backend uploads storage."
+//                     )
+//                   }
+//                 />
+
+//                 <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-50 px-4 py-3">
+//                   <div className="flex items-center gap-2 text-sm font-medium text-green-700">
+//                     <CheckCircle2 size={16} />
+//                     Active hero video
+//                   </div>
+
+//                   <span className="text-xs text-slate-500">
+//                     {savedBanner.name || "Home Hero"}
+//                   </span>
+//                 </div>
+//               </div>
+//             ) : (
+//               <div className="flex min-h-44 flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 text-center">
+//                 <Video size={34} className="mb-3 text-slate-400" />
+
+//                 <p className="text-sm font-semibold text-slate-700">
+//                   No active hero video found
+//                 </p>
+
+//                 <p className="mt-1 text-xs text-slate-400">
+//                   Upload a video below to display it on your homepage.
+//                 </p>
+//               </div>
+//             )}
+//           </div>
+
+//           {/* New video upload */}
+//           <div>
+//             <label className="mb-2 block text-sm font-semibold text-slate-700">
+//               Upload New Hero Video
+//             </label>
+
+//             <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 p-8 text-center transition hover:border-[#E25238] hover:bg-red-50/30">
+//               <Video size={36} className="mb-3 text-[#E25238]" />
+
+//               <span className="text-sm font-semibold text-slate-700">
+//                 Click to upload background video
+//               </span>
+
+//               <span className="mt-1 text-xs text-slate-400">
+//                 MP4, WebM, MOV or OGG — Maximum 100 MB
+//               </span>
+
+//               <input
+//                 type="file"
+//                 accept="video/mp4,video/webm,video/ogg,video/quicktime"
+//                 onChange={handleVideoChange}
+//                 className="hidden"
+//               />
+//             </label>
+
+//             {videoPreview && (
+//               <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-black">
+//                 <video
+//                   src={videoPreview}
+//                   controls
+//                   playsInline
+//                   className="max-h-64 w-full object-contain"
+//                 />
+
+//                 <div className="flex items-center justify-between gap-3 bg-white px-4 py-3">
+//                   <span className="min-w-0 truncate text-xs text-slate-600">
+//                     {video?.name}
+//                   </span>
+
+//                   <button
+//                     type="button"
+//                     onClick={removeSelectedVideo}
+//                     className="flex shrink-0 items-center gap-1 rounded-lg px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50"
+//                   >
+//                     <Trash2 size={14} />
+//                     Remove
+//                   </button>
+//                 </div>
+//               </div>
+//             )}
+//           </div>
+
+//           {/* Hero content */}
+//           <div className="space-y-5 border-t pt-5">
+//             <h3 className="font-bold text-slate-800">
+//               Hero Content Settings
+//             </h3>
+
+//             <div>
+//               <label className="mb-2 block text-sm font-semibold text-slate-700">
+//                 Hero Heading
+//               </label>
+
+//               <textarea
+//                 name="title"
+//                 value={form.title}
+//                 onChange={updateField}
+//                 rows={2}
+//                 className={inputClass}
+//                 required
+//               />
+//             </div>
+
+//             <div>
+//               <label className="mb-2 block text-sm font-semibold text-slate-700">
+//                 Hero Description
+//               </label>
+
+//               <textarea
+//                 name="description"
+//                 value={form.description}
+//                 onChange={updateField}
+//                 rows={3}
+//                 className={inputClass}
+//               />
+//             </div>
+
+//             <div className="grid gap-4 sm:grid-cols-2">
+//               {inputFields.map(([name, label]) => (
+//                 <div key={name}>
+//                   <label className="mb-2 block text-sm font-semibold text-slate-700">
+//                     {label}
+//                   </label>
+
+//                   <input
+//                     type="text"
+//                     name={name}
+//                     value={form[name]}
+//                     onChange={updateField}
+//                     className={inputClass}
+//                   />
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+
+//           {/* Messages */}
+//           {successMsg && (
+//             <div className="flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+//               <CheckCircle2 size={18} />
+//               {successMsg}
+//             </div>
+//           )}
+
+//           {errorMsg && (
+//             <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+//               <AlertCircle size={18} />
+//               <span className="break-words">{errorMsg}</span>
+//             </div>
+//           )}
+
+//           {/* Save */}
+//           <div className="flex justify-end border-t pt-5">
+//             <button
+//               type="submit"
+//               disabled={loading || !video}
+//               className="inline-flex items-center gap-2 rounded-xl bg-[#E25238] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c9442d] disabled:cursor-not-allowed disabled:opacity-50"
+//             >
+//               {loading ? (
+//                 <>
+//                   <Loader2 size={17} className="animate-spin" />
+//                   Uploading Video...
+//                 </>
+//               ) : (
+//                 <>
+//                   <UploadCloud size={17} />
+//                   Save Home Hero
+//                 </>
+//               )}
+//             </button>
+//           </div>
+//         </div>
+//       </form>
+//     </div>
+//   );
+// }
+
+
+import React, { useEffect, useRef, useState } from "react";
 import {
-  Video,
   UploadCloud,
+  Video,
   CheckCircle2,
   AlertCircle,
   Loader2,
+  Trash2,
   Play,
   RefreshCw,
-  Trash2,
 } from "lucide-react";
 
 const API_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 ).replace(/\/$/, "");
 
-export default function AddHomeBanner({ onBannerAdded }) {
-  const [form, setForm] = useState({
-    title: "Building the automation backbone of India's factories.",
-    description:
-      "Empowering manufacturers to build and sustain solutions based on Industrial Automation, Robotics, Industry 4.0, AI and Collaborative Innovation.",
-    ctaPrimaryText: "Become a Member",
-    ctaPrimaryUrl: "#membership",
-    ctaSecondaryText: "Explore Smart Factory",
-    ctaSecondaryUrl: "#build-factory",
-  });
+const BACKEND_URL = API_URL.replace(/\/api\/?$/, "");
 
+const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
+
+const ALLOWED_VIDEO_TYPES = [
+  "video/mp4",
+  "video/webm",
+  "video/ogg",
+  "video/quicktime",
+  "video/x-m4v",
+];
+
+const initialForm = {
+  title: "",
+  description: "",
+  ctaPrimaryText: "",
+  ctaPrimaryUrl: "",
+  ctaSecondaryText: "",
+  ctaSecondaryUrl: "",
+};
+
+function getVideoUrl(url) {
+  if (!url) return "";
+
+  // Handle previously saved localhost URLs
+  if (/^https?:\/\/localhost:5000/i.test(url)) {
+    return url.replace(
+      /^https?:\/\/localhost:5000/i,
+      BACKEND_URL
+    );
+  }
+
+  // Already absolute URL
+  if (/^https?:\/\//i.test(url)) {
+    return url;
+  }
+
+  // Relative backend upload path
+  if (url.startsWith("/uploads/")) {
+    return `${BACKEND_URL}${url}`;
+  }
+
+  return url;
+}
+
+export default function AddHomeBanner({ onBannerAdded }) {
+  const fileInputRef = useRef(null);
+
+  const [form, setForm] = useState(initialForm);
   const [video, setVideo] = useState(null);
   const [videoPreview, setVideoPreview] = useState("");
   const [savedBanner, setSavedBanner] = useState(null);
 
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
+
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
-  const inputClass =
-    "w-full rounded-xl border border-slate-300 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-[#E25238] focus:ring-2 focus:ring-[#E25238]/10";
+  // ==========================================
+  // FETCH EXISTING HOME HERO
+  // ==========================================
 
-  // Fetch already uploaded hero video
   const fetchSavedBanner = async () => {
     setFetching(true);
+    setErrorMsg("");
 
     try {
       const response = await fetch(`${API_URL}/banners`);
+
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        throw new Error(result.message || "Failed to fetch hero video.");
+        throw new Error(
+          result.message || "Unable to fetch Home Hero."
+        );
       }
 
-      const activeBanner = result.data?.find(
-        (item) => item.isActive && item.videoUrl
+      const banners = Array.isArray(result.data)
+        ? result.data
+        : [];
+
+      const activeBanner = banners.find(
+        (banner) => banner.isActive === true
       );
 
-      setSavedBanner(activeBanner || null);
-
       if (activeBanner) {
+        setSavedBanner(activeBanner);
+
         setForm({
           title: activeBanner.title || "",
           description: activeBanner.description || "",
           ctaPrimaryText: activeBanner.ctaPrimaryText || "",
           ctaPrimaryUrl: activeBanner.ctaPrimaryUrl || "",
-          ctaSecondaryText: activeBanner.ctaSecondaryText || "",
-          ctaSecondaryUrl: activeBanner.ctaSecondaryUrl || "",
+          ctaSecondaryText:
+            activeBanner.ctaSecondaryText || "",
+          ctaSecondaryUrl:
+            activeBanner.ctaSecondaryUrl || "",
         });
+
+        setVideoPreview(
+          getVideoUrl(activeBanner.videoUrl)
+        );
+      } else {
+        setSavedBanner(null);
+        setForm(initialForm);
+        setVideoPreview("");
       }
     } catch (error) {
-      console.error("Hero fetch error:", error);
-      setErrorMsg(error.message || "Unable to load saved hero video.");
+      console.error("Fetch Home Hero:", error);
+      setErrorMsg(error.message);
     } finally {
       setFetching(false);
     }
@@ -307,17 +800,24 @@ export default function AddHomeBanner({ onBannerAdded }) {
     fetchSavedBanner();
   }, []);
 
-  // Release temporary local preview URL
+  // ==========================================
+  // CLEANUP VIDEO PREVIEW
+  // ==========================================
+
   useEffect(() => {
     return () => {
-      if (videoPreview) {
+      if (videoPreview.startsWith("blob:")) {
         URL.revokeObjectURL(videoPreview);
       }
     };
   }, [videoPreview]);
 
-  const updateField = (e) => {
-    const { name, value } = e.target;
+  // ==========================================
+  // FORM INPUT CHANGE
+  // ==========================================
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
 
     setForm((prev) => ({
       ...prev,
@@ -325,338 +825,436 @@ export default function AddHomeBanner({ onBannerAdded }) {
     }));
   };
 
-  // Select video
-  const handleVideoChange = (e) => {
-    const file = e.target.files?.[0];
+  // ==========================================
+  // VIDEO SELECTION
+  // ==========================================
+
+  const handleVideoChange = (event) => {
+    const file = event.target.files?.[0];
+
+    setSuccessMsg("");
+    setErrorMsg("");
 
     if (!file) return;
 
-    setErrorMsg("");
-    setSuccessMsg("");
+    if (
+      !ALLOWED_VIDEO_TYPES.includes(file.type) &&
+      !/\.(mp4|webm|ogg|mov|m4v)$/i.test(file.name)
+    ) {
+      setErrorMsg(
+        "Please select a valid MP4, WebM, OGG or MOV video."
+      );
 
-    const allowedTypes = [
-      "video/mp4",
-      "video/webm",
-      "video/ogg",
-      "video/quicktime",
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-      setErrorMsg("Please upload MP4, WebM, MOV or OGG video.");
-      e.target.value = "";
+      event.target.value = "";
       return;
     }
 
-    if (file.size > 100 * 1024 * 1024) {
-      setErrorMsg("Video size must be below 100 MB.");
-      e.target.value = "";
+    if (file.size > MAX_VIDEO_SIZE) {
+      setErrorMsg(
+        "Video size must be less than 100 MB."
+      );
+
+      event.target.value = "";
       return;
+    }
+
+    if (videoPreview.startsWith("blob:")) {
+      URL.revokeObjectURL(videoPreview);
     }
 
     setVideo(file);
     setVideoPreview(URL.createObjectURL(file));
   };
 
+  // ==========================================
+  // REMOVE SELECTED VIDEO
+  // ==========================================
+
   const removeSelectedVideo = () => {
+    if (videoPreview.startsWith("blob:")) {
+      URL.revokeObjectURL(videoPreview);
+    }
+
     setVideo(null);
-    setVideoPreview("");
+
+    setVideoPreview(
+      savedBanner?.videoUrl
+        ? getVideoUrl(savedBanner.videoUrl)
+        : ""
+    );
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
-  // Upload video
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // ==========================================
+  // SAVE HOME HERO
+  // ==========================================
 
-    if (!video) {
-      setErrorMsg("Please select a video before uploading.");
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    setSuccessMsg("");
+    setErrorMsg("");
+
+    if (!savedBanner && !video) {
+      setErrorMsg("Please upload a Home Hero video.");
       return;
     }
 
+    if (video && video.size > MAX_VIDEO_SIZE) {
+      setErrorMsg("Video size must be less than 100 MB.");
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append("title", form.title);
+    formData.append("description", form.description);
+    formData.append("ctaPrimaryText", form.ctaPrimaryText);
+    formData.append("ctaPrimaryUrl", form.ctaPrimaryUrl);
+    formData.append("ctaSecondaryText", form.ctaSecondaryText);
+    formData.append("ctaSecondaryUrl", form.ctaSecondaryUrl);
+
+    if (video) {
+      formData.append("video", video);
+    }
+
+    const isUpdating = Boolean(savedBanner?._id);
+
+    const requestUrl = isUpdating
+      ? `${API_URL}/banners/${savedBanner._id}`
+      : `${API_URL}/banners`;
+
+    const method = isUpdating ? "PUT" : "POST";
+
     setLoading(true);
-    setErrorMsg("");
-    setSuccessMsg("");
 
     try {
-      const payload = new FormData();
-
-      payload.append("video", video);
-
-      Object.entries(form).forEach(([key, value]) => {
-        payload.append(key, value);
-      });
-
-      const response = await fetch(`${API_URL}/banners`, {
-        method: "POST",
-        body: payload,
+      const response = await fetch(requestUrl, {
+        method,
+        body: formData,
       });
 
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        throw new Error(result.message || "Video upload failed.");
+        throw new Error(
+          result.message || "Unable to save Home Hero."
+        );
       }
 
-      setSuccessMsg("Home hero video uploaded successfully!");
+      setSuccessMsg(
+        result.message || "Home Hero saved successfully!"
+      );
 
       setVideo(null);
-      setVideoPreview("");
 
-      // Fetch saved video again from database
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+
       await fetchSavedBanner();
 
       if (onBannerAdded) {
-        onBannerAdded();
+        onBannerAdded(result.data);
       }
     } catch (error) {
-      console.error("Hero upload error:", error);
-      setErrorMsg(error.message || "Failed to upload hero video.");
+      console.error("Save Home Hero:", error);
+      setErrorMsg(error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const inputFields = [
-    ["ctaPrimaryText", "Primary Button Text"],
-    ["ctaPrimaryUrl", "Primary Button URL"],
-    ["ctaSecondaryText", "Secondary Button Text"],
-    ["ctaSecondaryUrl", "Secondary Button URL"],
-  ];
+  // ==========================================
+  // LOADING
+  // ==========================================
+
+  if (fetching) {
+    return (
+      <div className="flex min-h-60 items-center justify-center">
+        <Loader2 className="h-7 w-7 animate-spin text-blue-600" />
+        <span className="ml-3 text-sm text-slate-500">
+          Loading Home Hero...
+        </span>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // UI
+  // ==========================================
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 p-4 sm:p-6 lg:p-8">
-      <form
-        onSubmit={handleSubmit}
-        className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-      >
-        {/* Header */}
-        <div className="flex items-center gap-3 border-b bg-[#F4F8FF] px-6 py-5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
-            <Video size={20} />
+    <div className="mx-auto w-full max-w-5xl space-y-6 rounded-xl bg-white p-5 shadow-sm sm:p-7">
+
+      {/* HEADER */}
+
+      <div>
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
+            <Video size={22} />
           </div>
 
           <div>
-            <h2 className="font-bold text-slate-800">
-              Home Hero Video CMS
+            <h2 className="text-xl font-bold text-slate-900">
+              Home Hero CMS
             </h2>
-            <p className="text-xs text-slate-500">
-              Manage your homepage background video and content.
+
+            <p className="text-sm text-slate-500">
+              Manage your homepage hero video and content.
             </p>
           </div>
         </div>
+      </div>
 
-        <div className="space-y-6 p-6">
-          {/* Existing saved video */}
-          <div className="rounded-2xl border border-slate-200 p-4">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h3 className="font-semibold text-slate-800">
-                  Currently Uploaded Video
-                </h3>
-                <p className="mt-1 text-xs text-slate-500">
-                  This video is currently used on the homepage.
-                </p>
-              </div>
+      <form onSubmit={handleSubmit} className="space-y-6">
 
-              <button
-                type="button"
-                onClick={fetchSavedBanner}
-                disabled={fetching}
-                className="inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50"
-              >
-                <RefreshCw
-                  size={14}
-                  className={fetching ? "animate-spin" : ""}
-                />
-                Refresh
-              </button>
-            </div>
+        {/* VIDEO UPLOAD */}
 
-            {fetching ? (
-              <div className="flex h-48 items-center justify-center rounded-xl bg-slate-100">
-                <Loader2 className="animate-spin text-slate-500" />
-              </div>
-            ) : savedBanner?.videoUrl ? (
-              <div className="overflow-hidden rounded-xl bg-black">
-                <video
-                  key={savedBanner.videoUrl}
-                  src={savedBanner.videoUrl}
-                  controls
-                  playsInline
-                  preload="metadata"
-                  className="max-h-72 w-full object-contain"
-                  onError={() =>
-                    setErrorMsg(
-                      "Saved video URL is unavailable. Check your backend uploads storage."
-                    )
-                  }
-                />
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
+            Home Hero Video
+          </label>
 
-                <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-50 px-4 py-3">
-                  <div className="flex items-center gap-2 text-sm font-medium text-green-700">
-                    <CheckCircle2 size={16} />
-                    Active hero video
-                  </div>
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            className="flex min-h-44 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 p-6 text-center transition hover:border-blue-500 hover:bg-blue-50/40"
+          >
+            <UploadCloud className="mb-3 h-9 w-9 text-blue-600" />
 
-                  <span className="text-xs text-slate-500">
-                    {savedBanner.name || "Home Hero"}
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className="flex min-h-44 flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 text-center">
-                <Video size={34} className="mb-3 text-slate-400" />
+            <p className="font-semibold text-slate-800">
+              Click to upload hero video
+            </p>
 
-                <p className="text-sm font-semibold text-slate-700">
-                  No active hero video found
-                </p>
+            <p className="mt-1 text-xs text-slate-500">
+              MP4, WebM, OGG or MOV · Maximum 100 MB
+            </p>
 
-                <p className="mt-1 text-xs text-slate-400">
-                  Upload a video below to display it on your homepage.
-                </p>
-              </div>
+            {video && (
+              <p className="mt-3 break-all text-sm font-medium text-green-600">
+                Selected: {video.name}
+              </p>
             )}
           </div>
 
-          {/* New video upload */}
-          <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
-              Upload New Hero Video
-            </label>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="video/mp4,video/webm,video/ogg,video/quicktime,.m4v"
+            onChange={handleVideoChange}
+            className="hidden"
+          />
 
-            <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-300 p-8 text-center transition hover:border-[#E25238] hover:bg-red-50/30">
-              <Video size={36} className="mb-3 text-[#E25238]" />
+          {/* VIDEO PREVIEW */}
 
-              <span className="text-sm font-semibold text-slate-700">
-                Click to upload background video
-              </span>
+          {videoPreview && (
+            <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-black">
+              <video
+                key={videoPreview}
+                src={videoPreview}
+                controls
+                playsInline
+                preload="metadata"
+                className="max-h-80 w-full object-contain"
+                onError={(event) => {
+                  console.error(
+                    "Home Hero video URL:",
+                    event.currentTarget.src
+                  );
 
-              <span className="mt-1 text-xs text-slate-400">
-                MP4, WebM, MOV or OGG — Maximum 100 MB
-              </span>
-
-              <input
-                type="file"
-                accept="video/mp4,video/webm,video/ogg,video/quicktime"
-                onChange={handleVideoChange}
-                className="hidden"
+                  setErrorMsg(
+                    "Video URL is unavailable. Check backend uploads storage."
+                  );
+                }}
+                onLoadedMetadata={() => {
+                  setErrorMsg("");
+                }}
               />
-            </label>
 
-            {videoPreview && (
-              <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-black">
-                <video
-                  src={videoPreview}
-                  controls
-                  playsInline
-                  className="max-h-64 w-full object-contain"
-                />
+              <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3">
+                <span className="text-xs text-slate-500">
+                  {video
+                    ? "New video preview"
+                    : "Saved Home Hero video"}
+                </span>
 
-                <div className="flex items-center justify-between gap-3 bg-white px-4 py-3">
-                  <span className="min-w-0 truncate text-xs text-slate-600">
-                    {video?.name}
-                  </span>
-
+                {video && (
                   <button
                     type="button"
                     onClick={removeSelectedVideo}
-                    className="flex shrink-0 items-center gap-1 rounded-lg px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50"
+                    className="inline-flex items-center gap-2 rounded-md border border-red-200 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50"
                   >
                     <Trash2 size={14} />
-                    Remove
+                    Remove selected video
                   </button>
-                </div>
+                )}
               </div>
+            </div>
+          )}
+
+          {!videoPreview && savedBanner && (
+            <p className="mt-3 text-sm text-amber-600">
+              No video preview available. Upload a new video to replace it.
+            </p>
+          )}
+        </div>
+
+        {/* TITLE */}
+
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
+            Hero Title
+          </label>
+
+          <input
+            type="text"
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            placeholder="Enter hero title"
+            className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          />
+        </div>
+
+        {/* DESCRIPTION */}
+
+        <div>
+          <label className="mb-2 block text-sm font-semibold text-slate-700">
+            Hero Description
+          </label>
+
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            rows={3}
+            placeholder="Enter hero description"
+            className="w-full resize-y rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+          />
+        </div>
+
+        {/* PRIMARY CTA */}
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Primary Button Text
+            </label>
+
+            <input
+              type="text"
+              name="ctaPrimaryText"
+              value={form.ctaPrimaryText}
+              onChange={handleChange}
+              placeholder="Connect with us"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Primary Button URL
+            </label>
+
+            <input
+              type="text"
+              name="ctaPrimaryUrl"
+              value={form.ctaPrimaryUrl}
+              onChange={handleChange}
+              placeholder="#membership"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+        </div>
+
+        {/* SECONDARY CTA */}
+
+        <div className="grid gap-5 md:grid-cols-2">
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Secondary Button Text
+            </label>
+
+            <input
+              type="text"
+              name="ctaSecondaryText"
+              value={form.ctaSecondaryText}
+              onChange={handleChange}
+              placeholder="Explore Smart Factory"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-semibold text-slate-700">
+              Secondary Button URL
+            </label>
+
+            <input
+              type="text"
+              name="ctaSecondaryUrl"
+              value={form.ctaSecondaryUrl}
+              onChange={handleChange}
+              placeholder="/learn-more"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+        </div>
+
+        {/* SUCCESS MESSAGE */}
+
+        {successMsg && (
+          <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+            <CheckCircle2 size={18} />
+            {successMsg}
+          </div>
+        )}
+
+        {/* ERROR MESSAGE */}
+
+        {errorMsg && (
+          <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-600">
+            <AlertCircle size={18} />
+            <span>{errorMsg}</span>
+          </div>
+        )}
+
+        {/* SUBMIT */}
+
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-5">
+
+          <button
+            type="button"
+            onClick={fetchSavedBanner}
+            disabled={loading}
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:opacity-50"
+          >
+            <RefreshCw size={16} />
+            Refresh
+          </button>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? (
+              <>
+                <Loader2 size={17} className="animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <UploadCloud size={17} />
+                {savedBanner
+                  ? "Save Home Hero"
+                  : "Upload Home Hero"}
+              </>
             )}
-          </div>
-
-          {/* Hero content */}
-          <div className="space-y-5 border-t pt-5">
-            <h3 className="font-bold text-slate-800">
-              Hero Content Settings
-            </h3>
-
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Hero Heading
-              </label>
-
-              <textarea
-                name="title"
-                value={form.title}
-                onChange={updateField}
-                rows={2}
-                className={inputClass}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-semibold text-slate-700">
-                Hero Description
-              </label>
-
-              <textarea
-                name="description"
-                value={form.description}
-                onChange={updateField}
-                rows={3}
-                className={inputClass}
-              />
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              {inputFields.map(([name, label]) => (
-                <div key={name}>
-                  <label className="mb-2 block text-sm font-semibold text-slate-700">
-                    {label}
-                  </label>
-
-                  <input
-                    type="text"
-                    name={name}
-                    value={form[name]}
-                    onChange={updateField}
-                    className={inputClass}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Messages */}
-          {successMsg && (
-            <div className="flex items-center gap-2 rounded-xl border border-green-200 bg-green-50 p-4 text-sm text-green-700">
-              <CheckCircle2 size={18} />
-              {successMsg}
-            </div>
-          )}
-
-          {errorMsg && (
-            <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-              <AlertCircle size={18} />
-              <span className="break-words">{errorMsg}</span>
-            </div>
-          )}
-
-          {/* Save */}
-          <div className="flex justify-end border-t pt-5">
-            <button
-              type="submit"
-              disabled={loading || !video}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#E25238] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#c9442d] disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {loading ? (
-                <>
-                  <Loader2 size={17} className="animate-spin" />
-                  Uploading Video...
-                </>
-              ) : (
-                <>
-                  <UploadCloud size={17} />
-                  Save Home Hero
-                </>
-              )}
-            </button>
-          </div>
+          </button>
         </div>
       </form>
     </div>

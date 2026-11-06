@@ -85,43 +85,89 @@
 // };
 
 
+
+
 import { Banner } from "../models/Banner.js";
 import fs from "fs";
 import path from "path";
+import { uploadsDir } from "../config/uploadPaths.js";
+
+// ==========================================
+// BACKEND URL
+// ==========================================
+
+const getBackendUrl = () => {
+  const baseUrl =
+    process.env.BACKEND_URL ||
+    `http://localhost:${process.env.PORT || 5000}`;
+
+  return baseUrl.replace(/\/+$/, "");
+};
+
+// ==========================================
+// GENERATE VIDEO URL
+// ==========================================
 
 const getFileUrl = (filename) => {
-  const baseUrl = (
-    process.env.BACKEND_URL ||
-    `http://localhost:${process.env.PORT || 5000}`
-  ).replace(/\/$/, "");
-
-  return `${baseUrl}/uploads/${filename}`;
+  return `${getBackendUrl()}/uploads/${filename}`;
 };
+
+// ==========================================
+// DELETE UPLOADED VIDEO
+// ==========================================
 
 const deleteUploadedFile = (url) => {
   if (!url) return;
 
   try {
-    const filename = path.basename(new URL(url).pathname);
-    const filePath = path.resolve("uploads", filename);
+    const parsedUrl = new URL(url);
+    const filename = path.basename(parsedUrl.pathname);
+
+    if (!filename) return;
+
+    const filePath = path.resolve(uploadsDir, filename);
+
+    // Security: prevent deleting files outside uploads
+    if (!filePath.startsWith(uploadsDir + path.sep)) {
+      return;
+    }
 
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
+      console.log("Deleted uploaded video:", filename);
     }
   } catch (error) {
     console.error("Video deletion error:", error.message);
   }
 };
 
+// ==========================================
+// GET ALL BANNERS
+// ==========================================
+
 export const getBanners = async (req, res) => {
   try {
-    const banners = await Banner.find().sort({ createdAt: -1 });
+    const banners = await Banner.find().sort({
+      createdAt: -1,
+    });
 
-    res.json({ success: true, data: banners });
+    return res.json({
+      success: true,
+      data: banners,
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Get banners error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
+
+// ==========================================
+// CREATE HOME HERO BANNER
+// ==========================================
 
 export const createBanner = async (req, res) => {
   try {
@@ -132,29 +178,46 @@ export const createBanner = async (req, res) => {
       });
     }
 
-    await Banner.updateMany({}, { isActive: false });
+    const videoUrl = getFileUrl(req.file.filename);
+
+    await Banner.updateMany(
+      {},
+      { $set: { isActive: false } }
+    );
 
     const banner = await Banner.create({
       name: "Home Hero",
-      title: req.body.title,
-      description: req.body.description,
-      videoUrl: getFileUrl(req.file.filename),
-      ctaPrimaryText: req.body.ctaPrimaryText,
-      ctaPrimaryUrl: req.body.ctaPrimaryUrl,
-      ctaSecondaryText: req.body.ctaSecondaryText,
-      ctaSecondaryUrl: req.body.ctaSecondaryUrl,
+      title: req.body.title || "",
+      description: req.body.description || "",
+      videoUrl,
+
+      ctaPrimaryText: req.body.ctaPrimaryText || "",
+      ctaPrimaryUrl: req.body.ctaPrimaryUrl || "",
+
+      ctaSecondaryText: req.body.ctaSecondaryText || "",
+      ctaSecondaryUrl: req.body.ctaSecondaryUrl || "",
+
       isActive: true,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       data: banner,
       message: "Home hero video uploaded successfully.",
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Create banner error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
+
+// ==========================================
+// UPDATE HOME HERO BANNER
+// ==========================================
 
 export const updateBanner = async (req, res) => {
   try {
@@ -167,8 +230,10 @@ export const updateBanner = async (req, res) => {
       });
     }
 
+    let oldVideoUrl = null;
+
     if (req.file) {
-      deleteUploadedFile(banner.videoUrl);
+      oldVideoUrl = banner.videoUrl;
       banner.videoUrl = getFileUrl(req.file.filename);
     }
 
@@ -189,20 +254,35 @@ export const updateBanner = async (req, res) => {
 
     if (req.body.isActive !== undefined) {
       banner.isActive =
-        req.body.isActive === "true" || req.body.isActive === true;
+        req.body.isActive === "true" ||
+        req.body.isActive === true;
     }
 
     await banner.save();
 
-    res.json({
+    // Delete old video only after successful save
+    if (oldVideoUrl) {
+      deleteUploadedFile(oldVideoUrl);
+    }
+
+    return res.json({
       success: true,
       data: banner,
       message: "Home hero updated successfully.",
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Update banner error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
+
+// ==========================================
+// DELETE HOME HERO BANNER
+// ==========================================
 
 export const deleteBanner = async (req, res) => {
   try {
@@ -215,14 +295,22 @@ export const deleteBanner = async (req, res) => {
       });
     }
 
-    deleteUploadedFile(banner.videoUrl);
+    const videoUrl = banner.videoUrl;
+
     await banner.deleteOne();
 
-    res.json({
+    deleteUploadedFile(videoUrl);
+
+    return res.json({
       success: true,
       message: "Home hero deleted successfully.",
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Delete banner error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
