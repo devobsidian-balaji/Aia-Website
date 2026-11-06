@@ -492,13 +492,41 @@
 
 
 
+
 import React, { useEffect, useRef, useState } from "react";
 import { Play, Pause } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const API_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:5000/api"
-).replace(/\/$/, "");
+).replace(/\/+$/, "");
+
+const BACKEND_URL = API_URL.replace(/\/api$/i, "");
+
+// Convert old localhost and relative upload URLs to production backend URLs
+const getMediaUrl = (mediaPath) => {
+  if (!mediaPath) return "";
+
+  try {
+    if (/^https?:\/\//i.test(mediaPath)) {
+      const url = new URL(mediaPath);
+
+      if (
+        url.hostname === "localhost" ||
+        url.hostname === "127.0.0.1"
+      ) {
+        return `${BACKEND_URL}${url.pathname}${url.search}${url.hash}`;
+      }
+
+      return mediaPath;
+    }
+
+    return `${BACKEND_URL}/${mediaPath.replace(/^\/+/, "")}`;
+  } catch (error) {
+    console.error("Invalid media URL:", mediaPath, error);
+    return "";
+  }
+};
 
 const FALLBACK_HERO = {
   title: "Building the automation backbone of India's factories.",
@@ -519,13 +547,19 @@ export default function Hero({ onBecomeMemberClick }) {
   const [videoFailed, setVideoFailed] = useState(false);
   const [videoLoaded, setVideoLoaded] = useState(false);
 
+  // Resolve video URL for both localhost and production
+  const heroVideoUrl = getMediaUrl(hero.videoUrl);
+
   // Fetch home hero data
   useEffect(() => {
-    let mounted = true;
+    const controller = new AbortController();
 
     const fetchHero = async () => {
       try {
-        const response = await fetch(`${API_URL}/banners`);
+        const response = await fetch(`${API_URL}/banners`, {
+          signal: controller.signal,
+        });
+
         const result = await response.json();
 
         if (!response.ok || !result.success) {
@@ -536,28 +570,28 @@ export default function Hero({ onBecomeMemberClick }) {
           (item) => item.isActive && item.videoUrl
         );
 
-        if (mounted && activeHero) {
+        if (activeHero) {
           setHero(activeHero);
           setVideoFailed(false);
           setVideoLoaded(false);
         }
       } catch (error) {
-        console.error("Home hero API error:", error);
+        if (error.name !== "AbortError") {
+          console.error("Home hero API error:", error);
+        }
       }
     };
 
     fetchHero();
 
-    return () => {
-      mounted = false;
-    };
+    return () => controller.abort();
   }, []);
 
-  // Automatically play video when it becomes available
+  // Automatically play video when available
   useEffect(() => {
     const video = videoRef.current;
 
-    if (!video || !hero.videoUrl || videoFailed) return;
+    if (!video || !heroVideoUrl || videoFailed) return;
 
     video.muted = true;
     video.defaultMuted = true;
@@ -582,19 +616,21 @@ export default function Hero({ onBecomeMemberClick }) {
     if (video.readyState >= 2) {
       playVideo();
     } else {
-      video.addEventListener("loadeddata", playVideo, { once: true });
+      video.addEventListener("loadeddata", playVideo, {
+        once: true,
+      });
     }
 
     return () => {
       video.removeEventListener("loadeddata", playVideo);
     };
-  }, [hero.videoUrl, videoFailed]);
+  }, [heroVideoUrl, videoFailed]);
 
   // Play / Pause button
   const togglePlayback = async () => {
     const video = videoRef.current;
 
-    if (!video || !hero.videoUrl || videoFailed) return;
+    if (!video || !heroVideoUrl || videoFailed) return;
 
     if (video.paused) {
       try {
@@ -609,17 +645,19 @@ export default function Hero({ onBecomeMemberClick }) {
     }
   };
 
-  // Video events
+  // Video loaded
   const handleVideoLoaded = () => {
     setVideoLoaded(true);
+    setVideoFailed(false);
   };
 
+  // Video error
   const handleVideoError = () => {
     setVideoFailed(true);
     setVideoLoaded(false);
     setIsPlaying(false);
 
-    console.error("Hero video could not be loaded:", hero.videoUrl);
+    console.error("Hero video could not be loaded:", heroVideoUrl);
   };
 
   return (
@@ -628,11 +666,11 @@ export default function Hero({ onBecomeMemberClick }) {
       className="relative isolate flex min-h-[390px] w-full items-center overflow-hidden bg-[#111] font-sans text-white sm:min-h-[460px] lg:min-h-[540px]"
     >
       {/* Background video */}
-      {hero.videoUrl && !videoFailed && (
+      {heroVideoUrl && !videoFailed && (
         <video
           ref={videoRef}
-          key={hero.videoUrl}
-          src={hero.videoUrl}
+          key={heroVideoUrl}
+          src={heroVideoUrl}
           muted
           loop
           playsInline
@@ -648,7 +686,7 @@ export default function Hero({ onBecomeMemberClick }) {
       )}
 
       {/* Video loading fallback */}
-      {hero.videoUrl && !videoLoaded && !videoFailed && (
+      {heroVideoUrl && !videoLoaded && !videoFailed && (
         <div className="absolute inset-0 z-0 bg-[#111]" />
       )}
 
@@ -672,13 +710,6 @@ export default function Hero({ onBecomeMemberClick }) {
             {hero.ctaPrimaryText && (
               <Link
                 to="/request-form/membership"
-                // onClick={
-                //   onBecomeMemberClick ||
-                //   (() => {
-                //     window.location.hash =
-                //       hero.ctaPrimaryUrl || "#membership";
-                //   })
-                // }
                 className="inline-flex min-h-[34px] items-center justify-center rounded-[4px] bg-[#f15d4e] px-3.5 py-2 text-[10px] font-semibold text-white transition hover:bg-[#dc493b] sm:text-[11px]"
               >
                 {hero.ctaPrimaryText}
@@ -698,7 +729,8 @@ export default function Hero({ onBecomeMemberClick }) {
       </div>
 
       {/* Video play / pause button */}
-      {/* {hero.videoUrl && (
+      {/*
+      {heroVideoUrl && (
         <button
           type="button"
           onClick={togglePlayback}
@@ -707,19 +739,15 @@ export default function Hero({ onBecomeMemberClick }) {
           aria-label={
             isPlaying ? "Pause background video" : "Play background video"
           }
-          title={isPlaying ? "Pause video" : "Play video"}
         >
           {isPlaying ? (
             <Pause size={17} fill="currentColor" />
           ) : (
-            <Play
-              size={17}
-              fill="currentColor"
-              className="translate-x-[1px]"
-            />
+            <Play size={17} fill="currentColor" />
           )}
         </button>
-      )} */}
+      )}
+      */}
     </section>
   );
 }
