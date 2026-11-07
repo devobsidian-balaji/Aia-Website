@@ -90,7 +90,7 @@ export default function HomePage() {
         accentColor="#E96F62"
         className="py-12 lg:py-16"
       /> */}
-      <CmsSliderSection pageKey="home" sectionKey="industry-slider" />
+      <CmsSliderSection pageKey="home" sectionKey="home-slider" />
       <WhyJoinCmsSection pageKey="home" sectionKey="why-join" />
       <IndustrySectors />
       <HomeFeatureSection page="home" />

@@ -1,5 +1,5 @@
-
 import express from "express";
+
 import {
   getPublicWhyJoin,
   getAdminWhyJoin,
@@ -8,17 +8,21 @@ import {
   updateWhyJoinItem,
   deleteWhyJoinItem,
 } from "../controllers/whyJoinController.js";
+
 import { sliderImageUpload } from "../config/upload.js";
 
 const router = express.Router();
 
-// Public endpoint
+// Public
 router.get("/:pageKey/:sectionKey", getPublicWhyJoin);
 
-// Admin endpoints: attach existing admin authentication middleware here.
+// Admin
 router.get("/admin/:pageKey/:sectionKey", getAdminWhyJoin);
 
-router.put("/admin/:pageKey/:sectionKey", saveWhyJoinSettings);
+router.put(
+  "/admin/:pageKey/:sectionKey",
+  saveWhyJoinSettings
+);
 
 router.post(
   "/admin/:pageKey/:sectionKey/items",

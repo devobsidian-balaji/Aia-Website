@@ -1405,6 +1405,14 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
+const EVENT_CATEGORIES = [
+  "Conference",
+  "Workshops",
+  "Webinars",
+  "Training Program",
+  "Exhibitions",
+];
+
 const EMPTY_FORM = {
   title: "",
   slug: "",
@@ -1486,10 +1494,23 @@ function ImageUpload({
   aspect = "wide",
 }) {
   const inputRef = useRef(null);
-  const [reading, setReading] = useState(false);
+  const [preview, setPreview] = useState("");
+
+  useEffect(() => {
+    if (value instanceof File) {
+      const objectUrl = URL.createObjectURL(value);
+
+      setPreview(objectUrl);
+
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+
+    setPreview(value || "");
+  }, [value]);
+
   const [error, setError] = useState("");
 
-  const handleFile = async (file) => {
+  const handleFile = (file) => {
     if (!file) return;
 
     setError("");
@@ -1499,26 +1520,17 @@ function ImageUpload({
       return;
     }
 
-    // 5 MB limit for each image
     if (file.size > 5 * 1024 * 1024) {
       setError("Image must be smaller than 5 MB.");
       return;
     }
 
-    try {
-      setReading(true);
+    // IMPORTANT: Store the actual File object.
+    // api.js will append this File to FormData.
+    onChange(file);
 
-      const dataUrl = await readFile(file);
-
-      onChange(dataUrl);
-    } catch (err) {
-      setError(err.message || "Image upload failed.");
-    } finally {
-      setReading(false);
-
-      if (inputRef.current) {
-        inputRef.current.value = "";
-      }
+    if (inputRef.current) {
+      inputRef.current.value = "";
     }
   };
 
@@ -1533,10 +1545,10 @@ function ImageUpload({
           aspect === "square" ? "aspect-square" : "min-h-[190px]"
         }`}
       >
-        {value ? (
+        {preview ? (
           <div className="relative h-full min-h-[190px] w-full">
             <img
-              src={value}
+              src={preview}
               alt={`${label} preview`}
               className="absolute inset-0 h-full w-full object-contain"
             />
@@ -1565,23 +1577,15 @@ function ImageUpload({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            disabled={reading}
             className="flex min-h-[190px] w-full flex-col items-center justify-center p-5 text-center"
           >
-            {reading ? (
-              <Loader2
-                size={30}
-                className="mb-3 animate-spin text-[#E87565]"
-              />
-            ) : (
-              <UploadCloud
-                size={32}
-                className="mb-3 text-gray-400"
-              />
-            )}
+            <UploadCloud
+              size={32}
+              className="mb-3 text-gray-400"
+            />
 
             <span className="text-sm font-semibold text-gray-700">
-              {reading ? "Reading image..." : "Click to upload image"}
+              Click to upload image
             </span>
 
             <span className="mt-1 text-xs text-gray-400">
@@ -1605,7 +1609,6 @@ function ImageUpload({
     </div>
   );
 }
-
 export default function PublicationForm({
   type = "article",
   initialData = null,
@@ -1613,6 +1616,8 @@ export default function PublicationForm({
   onNavigate,
 }) {
   const isArticle = type === "article";
+  const isEvent = type === "event";
+  const publicationLabel = isEvent ? "Event" : isArticle ? "Article" : "News";
 
   const [form, setForm] = useState({ ...EMPTY_FORM });
   const [loading, setLoading] = useState(false);
@@ -1627,12 +1632,16 @@ export default function PublicationForm({
 
   useEffect(() => {
     if (!initialData) {
-      setForm({ ...EMPTY_FORM });
+      setForm({
+        ...EMPTY_FORM,
+        ...(type === "event" ? { category: "Conference" } : {}),
+      });
       return;
     }
 
     setForm({
       ...EMPTY_FORM,
+      ...(type === "event" ? { category: "Conference" } : {}),
       ...initialData,
 
       introductionParagraphs:
@@ -1657,7 +1666,7 @@ export default function PublicationForm({
         ? initialData.closingBullets
         : [],
     });
-  }, [initialData]);
+  }, [initialData, type]);
 
   const updateField = (key, value) => {
     setForm((prev) => ({
@@ -2124,9 +2133,7 @@ export default function PublicationForm({
 
       await onSave(payload);
 
-      setSuccess(
-        `${isArticle ? "Article" : "News"} saved successfully.`
-      );
+      setSuccess(`${publicationLabel} saved successfully.`);
     } catch (err) {
       console.error("Publication save error:", err);
 
@@ -2145,7 +2152,7 @@ export default function PublicationForm({
       <div>
         <h2 className="text-2xl font-bold text-[#263247]">
           {initialData ? "Edit" : "Add New"}{" "}
-          {isArticle ? "Article" : "News"}
+          {publicationLabel}
         </h2>
 
         <p className="mt-1 text-sm text-gray-500">
@@ -2165,7 +2172,9 @@ export default function PublicationForm({
             </h3>
 
             <p className="mt-2 text-xs text-gray-500">
-              Information used on the All Articles / All News listing page.
+              {isEvent
+                ? "Information used on the All Events listing page."
+                : "Information used on the All Articles / All News listing page."}
             </p>
           </div>
 
@@ -2207,16 +2216,33 @@ export default function PublicationForm({
               </div>
 
               <div>
-                <label className={labelClass}>Category</label>
+                <label className={labelClass}>
+                  {isEvent ? "Event Category *" : "Category"}
+                </label>
 
-                <input
-                  className={inputClass}
-                  value={form.category}
-                  onChange={(e) =>
-                    updateField("category", e.target.value)
-                  }
-                  placeholder="Industry Insights"
-                />
+                {isEvent ? (
+                  <select
+                    className={inputClass}
+                    value={form.category || "Conference"}
+                    onChange={(e) => updateField("category", e.target.value)}
+                    required
+                  >
+                    {EVENT_CATEGORIES.map((categoryOption) => (
+                      <option key={categoryOption} value={categoryOption}>
+                        {categoryOption}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    className={inputClass}
+                    value={form.category}
+                    onChange={(e) =>
+                      updateField("category", e.target.value)
+                    }
+                    placeholder="Industry Insights"
+                  />
+                )}
               </div>
 
               <div>
@@ -2596,9 +2622,7 @@ export default function PublicationForm({
                 Saving...
               </>
             ) : (
-              `${initialData ? "Update" : "Publish"} ${
-                isArticle ? "Article" : "News"
-              }`
+              `${initialData ? "Update" : "Publish"} ${publicationLabel}`
             )}
           </button>
 
@@ -2606,7 +2630,7 @@ export default function PublicationForm({
             type="button"
             onClick={() =>
               onNavigate?.(
-                isArticle ? "all-articles" : "all-news"
+                isEvent ? "all-events" : isArticle ? "all-articles" : "all-news"
               )
             }
             className="rounded-xl border border-gray-300 px-6 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50"

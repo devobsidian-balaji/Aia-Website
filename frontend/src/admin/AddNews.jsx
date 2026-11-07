@@ -1,3 +1,5 @@
+
+
 // import React from "react";
 // import {
 //   createNews,
@@ -8,28 +10,18 @@
 
 // export default function AddNews({
 //   onNavigate,
-//   initialData = null,
+//   initialData,
 //   onNewsAdded,
 // }) {
 //   const handleSave = async (formData) => {
-//     try {
-//       let response;
+//     const response = initialData?._id
+//       ? await updateNews(initialData._id, formData)
+//       : await createNews(formData);
 
-//       if (initialData?._id) {
-//         response = await updateNews(initialData._id, formData);
-//       } else {
-//         response = await createNews(formData);
-//       }
+//     onNewsAdded?.(response);
+//     onNavigate?.("all-news");
 
-//       onNewsAdded?.(response);
-
-//       onNavigate?.("all-news");
-
-//       return response;
-//     } catch (error) {
-//       console.error("News save error:", error);
-//       throw error;
-//     }
+//     return response;
 //   };
 
 //   return (
@@ -44,11 +36,7 @@
 
 
 import React from "react";
-import {
-  createNews,
-  updateNews,
-} from "../services/api";
-
+import { createNews, updateNews } from "../services/api";
 import PublicationForm from "./PublicationForm.jsx";
 
 export default function AddNews({
@@ -62,7 +50,6 @@ export default function AddNews({
       : await createNews(formData);
 
     onNewsAdded?.(response);
-
     onNavigate?.("all-news");
 
     return response;

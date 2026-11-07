@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const sliderCardSchema = new mongoose.Schema(
@@ -16,6 +15,10 @@ const sliderCardSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
       required: true,
+    },
+    imagePublicId: {
+      type: String,
+      default: "",
     },
     imageAlt: {
       type: String,

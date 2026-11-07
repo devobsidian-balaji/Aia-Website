@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const pageHeroSchema = new mongoose.Schema(
@@ -24,6 +23,12 @@ const pageHeroSchema = new mongoose.Schema(
     },
 
     bannerImage: {
+      type: String,
+      default: "",
+    },
+
+    // Cloudinary asset ID
+    bannerImagePublicId: {
       type: String,
       default: "",
     },

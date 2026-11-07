@@ -1,9 +1,6 @@
-
 import HomeFeatureSection from "../models/HomeFeatureSection.js";
-
-// ==========================================
-// VALID PAGE KEYS
-// ==========================================
+import uploadToCloudinary from "../utils/uploadToCloudinary.js";
+import cloudinary from "../config/cloudinary.js";
 
 const validPageKeys = ["home", "iafsm"];
 
@@ -22,10 +19,6 @@ const getPageKey = (req, res) => {
   return pageKey;
 };
 
-// ==========================================
-// GET OR CREATE PAGE SECTION
-// ==========================================
-
 async function getOrCreateSection(pageKey) {
   return HomeFeatureSection.findOneAndUpdate(
     { pageKey },
@@ -43,10 +36,6 @@ async function getOrCreateSection(pageKey) {
   );
 }
 
-// ==========================================
-// NORMALIZE DATA
-// ==========================================
-
 const normalizeBoolean = (value, fallback = true) => {
   if (value === undefined) return fallback;
 
@@ -55,23 +44,13 @@ const normalizeBoolean = (value, fallback = true) => {
 
 const normalizeItem = (body, existing = {}) => ({
   title: String(body.title ?? existing.title ?? "").trim(),
-
-  description:
-    body.description ?? existing.description ?? "",
-
-  imageAlt:
-    body.imageAlt ?? existing.imageAlt ?? "",
-
-  link:
-    body.link ?? existing.link ?? "",
-
-  linkText:
-    body.linkText ?? existing.linkText ?? "Learn More",
-
+  description: body.description ?? existing.description ?? "",
+  imageAlt: body.imageAlt ?? existing.imageAlt ?? "",
+  link: body.link ?? existing.link ?? "",
+  linkText: body.linkText ?? existing.linkText ?? "Learn More",
   order: Number.isFinite(Number(body.order))
     ? Number(body.order)
     : existing.order ?? 0,
-
   isActive: normalizeBoolean(
     body.isActive,
     existing.isActive !== false
@@ -79,8 +58,30 @@ const normalizeItem = (body, existing = {}) => ({
 });
 
 // ==========================================
-// PUBLIC: GET PAGE FEATURES
-// GET /api/home-features/:pageKey
+// CLOUDINARY HELPERS
+// ==========================================
+
+const deleteCloudinaryImage = async (publicId) => {
+  if (!publicId) return;
+
+  try {
+    const result = await cloudinary.uploader.destroy(publicId, {
+      resource_type: "image",
+      invalidate: true,
+    });
+
+    if (!["ok", "not found"].includes(result.result)) {
+      console.warn("Cloudinary image deletion result:", result);
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Cloudinary image deletion failed:", error);
+  }
+};
+
+// ==========================================
+// PUBLIC: GET HOME FEATURES
 // ==========================================
 
 export const getHomeFeatures = async (req, res) => {
@@ -95,7 +96,7 @@ export const getHomeFeatures = async (req, res) => {
     }).lean();
 
     if (!section) {
-      return res.json({
+      return res.status(200).json({
         success: true,
         data: {
           pageKey,
@@ -107,29 +108,29 @@ export const getHomeFeatures = async (req, res) => {
       });
     }
 
-    section.items = (section.items || [])
+    const items = (section.items || [])
       .filter((item) => item.isActive !== false)
-      .sort(
-        (a, b) => (a.order ?? 0) - (b.order ?? 0)
-      );
+      .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
-    return res.json({
+    return res.status(200).json({
       success: true,
-      data: section,
+      data: {
+        ...section,
+        items,
+      },
     });
   } catch (error) {
-    console.error("Get Home Features:", error);
+    console.error("Get home features error:", error);
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Unable to fetch home features",
     });
   }
 };
 
 // ==========================================
-// ADMIN: GET PAGE FEATURES
-// GET /api/home-features/admin/:pageKey
+// ADMIN: GET HOME FEATURES
 // ==========================================
 
 export const getAdminHomeFeatures = async (req, res) => {
@@ -140,23 +141,22 @@ export const getAdminHomeFeatures = async (req, res) => {
 
     const section = await getOrCreateSection(pageKey);
 
-    return res.json({
+    return res.status(200).json({
       success: true,
       data: section,
     });
   } catch (error) {
-    console.error("Get Admin Home Features:", error);
+    console.error("Get admin home features error:", error);
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Unable to fetch home features",
     });
   }
 };
 
 // ==========================================
 // ADMIN: SAVE SECTION SETTINGS
-// PUT /api/home-features/admin/:pageKey
 // ==========================================
 
 export const saveHomeFeatureSettings = async (req, res) => {
@@ -167,41 +167,40 @@ export const saveHomeFeatureSettings = async (req, res) => {
 
     const section = await getOrCreateSection(pageKey);
 
-    if (typeof req.body.heading === "string") {
-      section.heading = req.body.heading;
-    }
-
-    if (typeof req.body.subtitle === "string") {
-      section.subtitle = req.body.subtitle;
-    }
+    section.heading = req.body.heading ?? section.heading;
+    section.subtitle = req.body.subtitle ?? section.subtitle;
 
     if (req.body.isActive !== undefined) {
-      section.isActive = normalizeBoolean(req.body.isActive);
+      section.isActive = normalizeBoolean(
+        req.body.isActive,
+        section.isActive
+      );
     }
 
     await section.save();
 
-    return res.json({
+    return res.status(200).json({
       success: true,
-      message: "Section settings saved successfully.",
+      message: "Section settings saved successfully",
       data: section,
     });
   } catch (error) {
-    console.error("Save Home Feature Settings:", error);
+    console.error("Save home feature settings error:", error);
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Unable to save section settings",
     });
   }
 };
 
 // ==========================================
-// ADMIN: CREATE CARD
-// POST /api/home-features/admin/:pageKey/items
+// ADMIN: CREATE FEATURE CARD
 // ==========================================
 
 export const createHomeFeature = async (req, res) => {
+  let uploadedImage = null;
+
   try {
     const pageKey = getPageKey(req, res);
 
@@ -212,103 +211,146 @@ export const createHomeFeature = async (req, res) => {
     if (!fields.title) {
       return res.status(400).json({
         success: false,
-        message: "Card title is required.",
+        message: "Card title is required",
       });
     }
 
     if (!req.file) {
       return res.status(400).json({
         success: false,
-        message: "Card image is required.",
+        message: "Feature image is required",
       });
     }
 
     const section = await getOrCreateSection(pageKey);
 
-    const created = {
+    uploadedImage = await uploadToCloudinary(
+      req.file.path,
+      `AIA-Project-Assets/Home-Features/${pageKey}`
+    );
+
+    const newItem = {
       ...fields,
-      imageUrl: `/uploads/home-features/${req.file.filename}`,
+      imageUrl: uploadedImage.url,
+      imagePublicId: uploadedImage.publicId,
     };
 
-    section.items.push(created);
+    section.items.push(newItem);
 
-    await section.save();
+    try {
+      await section.save();
+    } catch (saveError) {
+      await deleteCloudinaryImage(uploadedImage.publicId);
+      uploadedImage = null;
+      throw saveError;
+    }
+
+    const createdItem = section.items[section.items.length - 1];
 
     return res.status(201).json({
       success: true,
-      message: "Card created successfully.",
-      data: section.items[section.items.length - 1],
+      message: "Feature card created successfully",
+      data: createdItem,
     });
   } catch (error) {
-    console.error("Create Home Feature:", error);
+    console.error("Create home feature error:", error);
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Unable to create feature card",
     });
   }
 };
 
 // ==========================================
-// ADMIN: UPDATE CARD
-// PUT /api/home-features/admin/:pageKey/items/:itemId
+// ADMIN: UPDATE FEATURE CARD
 // ==========================================
 
 export const updateHomeFeature = async (req, res) => {
+  let uploadedImage = null;
+
   try {
     const pageKey = getPageKey(req, res);
 
     if (!pageKey) return;
 
-    const section = await getOrCreateSection(pageKey);
+    const section = await HomeFeatureSection.findOne({ pageKey });
+
+    if (!section) {
+      return res.status(404).json({
+        success: false,
+        message: "Feature section not found",
+      });
+    }
 
     const card = section.items.id(req.params.itemId);
 
     if (!card) {
       return res.status(404).json({
         success: false,
-        message: "Card not found.",
+        message: "Feature card not found",
       });
     }
 
-    const fields = normalizeItem(
-      req.body,
-      card.toObject()
-    );
+    const fields = normalizeItem(req.body, card.toObject());
 
     if (!fields.title) {
       return res.status(400).json({
         success: false,
-        message: "Card title is required.",
+        message: "Card title is required",
       });
+    }
+
+    const oldPublicId = card.imagePublicId;
+
+    // Upload replacement image first.
+    if (req.file) {
+      uploadedImage = await uploadToCloudinary(
+        req.file.path,
+        `AIA-Project-Assets/Home-Features/${pageKey}`
+      );
     }
 
     Object.assign(card, fields);
 
-    if (req.file) {
-      card.imageUrl = `/uploads/home-features/${req.file.filename}`;
+    if (uploadedImage) {
+      card.imageUrl = uploadedImage.url;
+      card.imagePublicId = uploadedImage.publicId;
     }
 
-    await section.save();
+    try {
+      await section.save();
+    } catch (saveError) {
+      if (uploadedImage?.publicId) {
+        await deleteCloudinaryImage(uploadedImage.publicId);
+        uploadedImage = null;
+      }
 
-    return res.json({
+      throw saveError;
+    }
+
+    // Delete previous image only after successful database update.
+    if (uploadedImage && oldPublicId) {
+      await deleteCloudinaryImage(oldPublicId);
+    }
+
+    return res.status(200).json({
       success: true,
-      message: "Card updated successfully.",
+      message: "Feature card updated successfully",
       data: card,
     });
   } catch (error) {
-    console.error("Update Home Feature:", error);
+    console.error("Update home feature error:", error);
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Unable to update feature card",
     });
   }
 };
 
 // ==========================================
-// ADMIN: DELETE CARD
-// DELETE /api/home-features/admin/:pageKey/items/:itemId
+// ADMIN: DELETE FEATURE CARD
 // ==========================================
 
 export const deleteHomeFeature = async (req, res) => {
@@ -317,31 +359,45 @@ export const deleteHomeFeature = async (req, res) => {
 
     if (!pageKey) return;
 
-    const section = await getOrCreateSection(pageKey);
+    const section = await HomeFeatureSection.findOne({ pageKey });
+
+    if (!section) {
+      return res.status(404).json({
+        success: false,
+        message: "Feature section not found",
+      });
+    }
 
     const card = section.items.id(req.params.itemId);
 
     if (!card) {
       return res.status(404).json({
         success: false,
-        message: "Card not found.",
+        message: "Feature card not found",
       });
     }
+
+    const oldPublicId = card.imagePublicId;
 
     card.deleteOne();
 
     await section.save();
 
-    return res.json({
+    // Delete Cloudinary image after successful database save.
+    if (oldPublicId) {
+      await deleteCloudinaryImage(oldPublicId);
+    }
+
+    return res.status(200).json({
       success: true,
-      message: "Card deleted successfully.",
+      message: "Feature card deleted successfully",
     });
   } catch (error) {
-    console.error("Delete Home Feature:", error);
+    console.error("Delete home feature error:", error);
 
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Unable to delete feature card",
     });
   }
 };

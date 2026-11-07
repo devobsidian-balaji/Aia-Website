@@ -6,7 +6,7 @@ export default function EventsCatalogue() {
   const [selectedCategory, setSelectedCategory] = useState('All Events')
   const [loading, setLoading] = useState(true)
 
-  const categories = ['All Events', 'Conferences', 'Workshops', 'Webinars', 'Training Programs']
+  const categories = ['All Events', 'Conference', 'Workshops', 'Webinars', 'Training Programs']
 
   const defaultEvents = [
     {
@@ -16,7 +16,7 @@ export default function EventsCatalogue() {
       imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=1000&fit=crop',
       eventLink: 'https://himtex.in',
       date: '22 Aug',
-      category: 'Conferences',
+      category: 'Conference',
     },
     {
       _id: 'ev-2',
@@ -25,7 +25,7 @@ export default function EventsCatalogue() {
       imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=1000&fit=crop',
       eventLink: 'https://himtex.in',
       date: '24 Aug',
-      category: 'Conferences',
+      category: 'Conference',
     },
     {
       _id: 'ev-3',
@@ -34,7 +34,7 @@ export default function EventsCatalogue() {
       imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=1000&fit=crop',
       eventLink: 'https://himtex.in',
       date: '02 Sep',
-      category: 'Conferences',
+      category: 'Conference',
     },
     {
       _id: 'ev-4',
@@ -43,7 +43,7 @@ export default function EventsCatalogue() {
       imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=1000&fit=crop',
       eventLink: 'https://himtex.in',
       date: '22 Aug',
-      category: 'Conferences',
+      category: 'Conference',
     },
     {
       _id: 'ev-5',
@@ -52,7 +52,7 @@ export default function EventsCatalogue() {
       imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=1000&fit=crop',
       eventLink: 'https://himtex.in',
       date: '24 Aug',
-      category: 'Conferences',
+      category: 'Conference',
     },
     {
       _id: 'ev-6',
@@ -61,7 +61,7 @@ export default function EventsCatalogue() {
       imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=1000&fit=crop',
       eventLink: 'https://himtex.in',
       date: '02 Sep',
-      category: 'Conferences',
+      category: 'Conference',
     }
   ]
 
@@ -89,7 +89,7 @@ export default function EventsCatalogue() {
 
   const filteredEvents = selectedCategory === 'All Events'
     ? events
-    : events.filter(e => (e.category || 'Conferences').toLowerCase() === selectedCategory.toLowerCase())
+    : events.filter(e => (e.category || 'Conference').toLowerCase() === selectedCategory.toLowerCase())
 
   return (
     <section id="events-catalogue" className="py-20 bg-white font-sans relative overflow-hidden text-left select-none">

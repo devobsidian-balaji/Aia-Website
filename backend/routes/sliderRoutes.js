@@ -1,5 +1,5 @@
-
 import express from "express";
+
 import {
   getPublicSlider,
   getAdminSlider,
@@ -8,15 +8,15 @@ import {
   updateSliderCard,
   deleteSliderCard,
 } from "../controllers/sliderController.js";
+
 import { sliderImageUpload } from "../config/upload.js";
 
 export const sliderRouter = express.Router();
 
-// Public: published content only
+// Public
 sliderRouter.get("/:pageKey/:sectionKey", getPublicSlider);
 
-// Admin: all content, including hidden cards
-// IMPORTANT: Add your existing admin-auth middleware to these routes.
+// Admin
 sliderRouter.get("/admin/:pageKey/:sectionKey", getAdminSlider);
 
 sliderRouter.put(

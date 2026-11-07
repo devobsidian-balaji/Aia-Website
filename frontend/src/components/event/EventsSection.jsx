@@ -9,6 +9,7 @@ const categories = [
   "Workshops",
   "Webinars",
   "Training Program",
+  "Exhibitions",
 ];
 
 const normalizeCategory = (category = "") => {
@@ -22,6 +23,10 @@ const normalizeCategory = (category = "") => {
     return "Training Program";
   }
 
+  if (["exhibition", "exhibitions"].includes(value)) {
+    return "Exhibitions";
+  }
+
   return category;
 };
 
@@ -31,16 +36,15 @@ const introContent = {
     'Most AIA events are free to attend. Drop pricing fields from the card format entirely rather than showing "Free" everywhere. Only surface a price field on the rare occasion one applies.',
 };
 
-const EventCard = ({ event }) => {
-  const eventLink = event.eventLink || event.link || "";
-  const isInternal = eventLink.startsWith("/");
+import { Link } from "react-router-dom";
 
+const EventCard = ({ event }) => {
   return (
     <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-md bg-[#F7F8FA] transition-shadow duration-500 hover:shadow-lg">
-      <a
-        href={eventLink || "#"}
-        target={eventLink && !isInternal ? "_blank" : undefined}
-        rel={eventLink && !isInternal ? "noopener noreferrer" : undefined}
+
+      {/* Event Image */}
+      <Link
+        to={`/events/${event.slug}`}
         className="relative block aspect-[16/9] overflow-hidden bg-slate-200"
       >
         {event.imageUrl && (
@@ -57,8 +61,9 @@ const EventCard = ({ event }) => {
             {event.date}
           </span>
         )}
-      </a>
+      </Link>
 
+      {/* Event Content */}
       <div className="flex flex-1 flex-col p-4 sm:p-5">
         <span className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-[#E87568]">
           {normalizeCategory(event.category)}
@@ -72,16 +77,13 @@ const EventCard = ({ event }) => {
           {event.description || event.text}
         </p>
 
-        {eventLink && (
-          <a
-            href={eventLink}
-            target={!isInternal ? "_blank" : undefined}
-            rel={!isInternal ? "noopener noreferrer" : undefined}
-            className="mt-auto w-fit text-xs font-semibold text-[#D94F42] underline underline-offset-2 transition-colors hover:text-[#A92C20]"
-          >
-            Read More
-          </a>
-        )}
+        {/* Read More - Same Old Design */}
+        <Link
+          to={`/events/${event.slug}`}
+          className="mt-auto w-fit text-xs font-semibold text-[#D94F42] underline underline-offset-2 transition-colors hover:text-[#A92C20]"
+        >
+          Read More
+        </Link>
       </div>
     </article>
   );

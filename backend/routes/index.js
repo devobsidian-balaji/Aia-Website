@@ -18,7 +18,7 @@ import homeFeatureRoutes from "./homeFeatureRoutes.js";
 import stickyStackRoutes from "./stickyStackRoutes.js";
 import articleRoutes from "./articleRoutes.js";
 import newsRoutes from "./newsRoutes.js";
-import { pageHeroRouter } from './pageHeroRoutes.js';
+import pageHeroRouter from "./pageHeroRoutes.js";
 import { enquiryRouter } from './enquiryRoutes.js';
 
 

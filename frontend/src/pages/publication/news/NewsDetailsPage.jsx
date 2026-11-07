@@ -163,9 +163,7 @@ export default function NewsDetailsPage() {
           setNotFound(true);
         }
       } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+        if (mounted) setLoading(false);
       }
     };
 
@@ -188,25 +186,21 @@ export default function NewsDetailsPage() {
     return <Navigate to="/publication/news" replace />;
   }
 
-  // Sort news by CMS display order
   const sortedNews = [...allNews].sort(
     (a, b) => (a.order || 0) - (b.order || 0)
   );
 
-  // Find current news
   const currentIndex = sortedNews.findIndex(
     (item) =>
       item._id === news._id ||
       item.slug === news.slug
   );
 
-  // Previous news
   const previousNews =
     currentIndex > 0
       ? sortedNews[currentIndex - 1]
       : null;
 
-  // Next news
   const nextNews =
     currentIndex >= 0 &&
     currentIndex < sortedNews.length - 1
@@ -220,6 +214,7 @@ export default function NewsDetailsPage() {
       nextArticle={nextNews}
       backLink="/publication/news"
       backLabel="Back to all news"
+      basePath="/publication/news"
     />
   );
 }

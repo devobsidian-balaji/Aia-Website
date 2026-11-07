@@ -71,6 +71,42 @@
 
 import mongoose from "mongoose";
 
+const contentBlockSchema = new mongoose.Schema(
+  {
+    type: {
+      type: String,
+      enum: ["heading", "paragraph", "bulletList", "image"],
+      required: true,
+    },
+    text: {
+      type: String,
+      default: "",
+    },
+    items: {
+      type: [String],
+      default: [],
+    },
+    image: {
+      type: String,
+      default: "",
+    },
+    imagePublicId: {
+      type: String,
+      default: "",
+    },
+    imageAlt: {
+      type: String,
+      default: "",
+    },
+    caption: {
+      type: String,
+      default: "",
+    },
+  },
+  { _id: true }
+);
+
+// Legacy News sections
 const publicationSectionSchema = new mongoose.Schema(
   {
     heading: {
@@ -78,27 +114,26 @@ const publicationSectionSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
-
     paragraphs: {
       type: [String],
       default: [],
     },
-
     bullets: {
       type: [String],
       default: [],
     },
-
     image: {
       type: String,
       default: "",
     },
-
+    imagePublicId: {
+      type: String,
+      default: "",
+    },
     imageAlt: {
       type: String,
       default: "",
     },
-
     caption: {
       type: String,
       default: "",
@@ -115,7 +150,6 @@ const newsSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-
     slug: {
       type: String,
       required: true,
@@ -123,23 +157,23 @@ const newsSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
-
     image: {
       type: String,
       required: true,
     },
-
+    imagePublicId: {
+      type: String,
+      default: "",
+    },
     imageAlt: {
       type: String,
       default: "",
     },
-
     category: {
       type: String,
       default: "",
       trim: true,
     },
-
     categoryLink: {
       type: String,
       default: "",
@@ -150,17 +184,18 @@ const newsSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-
     detailHeroDescription: {
       type: String,
       default: "",
     },
-
     detailHeroImage: {
       type: String,
       default: "",
     },
-
+    detailHeroImagePublicId: {
+      type: String,
+      default: "",
+    },
     detailHeroImageAlt: {
       type: String,
       default: "",
@@ -171,35 +206,50 @@ const newsSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-
     detailSubtitle: {
       type: String,
       default: "",
     },
 
-    // Introduction
+    // Current introduction structure
     introductionTitle: {
       type: String,
       default: "Introduction",
     },
-
-    introduction: {
-      type: String,
-      default: "",
-    },
-
-    // Repeatable content sections
-    sections: {
-      type: [publicationSectionSchema],
+    introductionParagraphs: {
+      type: [String],
       default: [],
     },
 
-    // Closing content
+    // Current ordered content blocks
+    contentBlocks: {
+      type: [contentBlockSchema],
+      default: [],
+    },
+
+    // Current closing structure
     closingTitle: {
       type: String,
       default: "",
     },
+    closingParagraphs: {
+      type: [String],
+      default: [],
+    },
+    closingBullets: {
+      type: [String],
+      default: [],
+    },
 
+    // Legacy fields (preserved)
+    introduction: {
+      type: String,
+      default: "",
+    },
+    sections: {
+      type: [publicationSectionSchema],
+      default: [],
+    },
     closingContent: {
       type: String,
       default: "",
@@ -210,17 +260,14 @@ const newsSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-
     publishedAt: {
       type: String,
       default: "",
     },
-
     order: {
       type: Number,
       default: 0,
     },
-
     isActive: {
       type: Boolean,
       default: true,

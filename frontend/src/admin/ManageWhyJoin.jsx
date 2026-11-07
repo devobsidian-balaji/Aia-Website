@@ -936,12 +936,19 @@ export default function ManageWhyJoin({
     return `${origin}${url.startsWith("/") ? "" : "/"}${url}`;
   }, []);
 
-  const resetEditor = useCallback((order = 0) => {
-    setEditingId("");
-    setItem({ ...EMPTY_ITEM, order });
-    setImage(null);
-    setPreview("");
-  }, []);
+const resetEditor = useCallback((order = 0) => {
+  setEditingId("");
+  setItem({ ...EMPTY_ITEM, order });
+  setImage(null);
+
+  setPreview((previous) => {
+    if (previous.startsWith("blob:")) {
+      URL.revokeObjectURL(previous);
+    }
+
+    return "";
+  });
+}, []);
 
   const loadSection = useCallback(async () => {
     if (!pageKey || !sectionKey) {
@@ -993,6 +1000,14 @@ export default function ManageWhyJoin({
     loadSection();
   }, [loadSection]);
 
+  useEffect(() => {
+  return () => {
+    if (preview.startsWith("blob:")) {
+      URL.revokeObjectURL(preview);
+    }
+  };
+}, [preview]);
+
   const updateSectionField = (event) => {
     const { name, value, type, checked } = event.target;
     setSection((previous) => ({
@@ -1014,26 +1029,36 @@ export default function ManageWhyJoin({
     }));
   };
 
-  const handleImageChange = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+const handleImageChange = (event) => {
+  const file = event.target.files?.[0];
 
-    if (!file.type.startsWith("image/")) {
-      setError("Please select a valid image.");
-      event.target.value = "";
-      return;
+  if (!file) return;
+
+  setError("");
+  setMessage("");
+
+  if (!file.type.startsWith("image/")) {
+    setError("Please select a valid image.");
+    event.target.value = "";
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    setError("Image size must be 5 MB or less.");
+    event.target.value = "";
+    return;
+  }
+
+  setPreview((previous) => {
+    if (previous.startsWith("blob:")) {
+      URL.revokeObjectURL(previous);
     }
 
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Image size must be 5 MB or less.");
-      event.target.value = "";
-      return;
-    }
+    return URL.createObjectURL(file);
+  });
 
-    setImage(file);
-    setPreview(URL.createObjectURL(file));
-    setError("");
-  };
+  setImage(file);
+};
 
   const saveSettings = async (event) => {
     event.preventDefault();
@@ -1131,23 +1156,37 @@ export default function ManageWhyJoin({
   };
 
   const startEditing = (savedItem) => {
-    setEditingId(savedItem._id);
-    setItem({
-      title: savedItem.title || "",
-      description: savedItem.description || "",
-      imageUrl: savedItem.imageUrl || "",
-      imageAlt: savedItem.imageAlt || "",
-      link: savedItem.link || "",
-      linkText: savedItem.linkText || "Learn More",
-      order: savedItem.order ?? 0,
-      isActive: savedItem.isActive !== false,
-    });
-    setImage(null);
-    setPreview("");
-    setError("");
-    setMessage("");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  setEditingId(savedItem._id);
+
+  setItem({
+    title: savedItem.title || "",
+    description: savedItem.description || "",
+    imageUrl: savedItem.imageUrl || "",
+    imageAlt: savedItem.imageAlt || "",
+    link: savedItem.link || "",
+    linkText: savedItem.linkText || "Learn More",
+    order: savedItem.order ?? 0,
+    isActive: savedItem.isActive !== false,
+  });
+
+  setImage(null);
+
+  setPreview((previous) => {
+    if (previous.startsWith("blob:")) {
+      URL.revokeObjectURL(previous);
+    }
+
+    return "";
+  });
+
+  setError("");
+  setMessage("");
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
 
   const deleteItem = async (savedItem) => {
     if (
@@ -1371,12 +1410,38 @@ export default function ManageWhyJoin({
             </label>
 
             {(preview || item.imageUrl) && (
-              <img
-                src={preview || imageSrc(item.imageUrl)}
-                alt="Card preview"
-                className="aspect-video w-full max-w-md rounded-xl object-cover"
-              />
-            )}
+  <div className="mt-3">
+    <p className="mb-2 text-xs font-medium text-slate-500">
+      {image ? "New Image Preview" : "Current Image"}
+    </p>
+
+    <img
+      src={preview || imageSrc(item.imageUrl)}
+      alt={item.imageAlt || item.title || "Why Join preview"}
+      className="aspect-video w-full max-w-md rounded-xl object-cover"
+    />
+
+    {image && (
+      <button
+        type="button"
+        onClick={() => {
+          setImage(null);
+
+          setPreview((previous) => {
+            if (previous.startsWith("blob:")) {
+              URL.revokeObjectURL(previous);
+            }
+
+            return "";
+          });
+        }}
+        className="mt-2 text-xs font-semibold text-rose-600 hover:underline"
+      >
+        Cancel New Image
+      </button>
+    )}
+  </div>
+)}
 
             <label className="block text-sm font-medium">
               Image alt text

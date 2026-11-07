@@ -1,5 +1,6 @@
-
 import { SliderSection } from "../models/SliderSection.js";
+import uploadToCloudinary from "../utils/uploadToCloudinary.js";
+import cloudinary from "../config/cloudinary.js";
 
 const validKey = /^[a-z0-9_-]+$/;
 
@@ -15,12 +16,37 @@ function parseBoolean(value, fallback = true) {
   return value === true || value === "true";
 }
 
-function uploadedImageUrl(req) {
-  if (!req.file) return undefined;
-  return `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`;
+// ==========================================
+// CLOUDINARY HELPERS
+// ==========================================
+
+async function deleteCloudinaryImage(publicId) {
+  if (!publicId) return;
+
+  try {
+    const result = await cloudinary.uploader.destroy(publicId, {
+      resource_type: "image",
+      invalidate: true,
+    });
+
+    if (!["ok", "not found"].includes(result.result)) {
+      console.warn("Cloudinary deletion result:", result);
+    }
+
+    return result;
+  } catch (error) {
+    console.error("Cloudinary image deletion failed:", error);
+  }
 }
 
-// Public API: only published sections/cards
+function getSliderFolder(pageKey, sectionKey) {
+  return `AIA-Project-Assets/Sliders/${pageKey}/${sectionKey}`;
+}
+
+// ==========================================
+// PUBLIC: GET SLIDER
+// ==========================================
+
 export const getPublicSlider = async (req, res) => {
   try {
     const { pageKey, sectionKey } = req.params;
@@ -49,16 +75,24 @@ export const getPublicSlider = async (req, res) => {
       .filter((card) => card.isActive)
       .sort((a, b) => a.order - b.order);
 
-    res.json({ success: true, data: section });
+    return res.json({
+      success: true,
+      data: section,
+    });
   } catch (error) {
-    res.status(500).json({
+    console.error("Get public slider error:", error);
+
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-// Admin API: includes hidden cards
+// ==========================================
+// ADMIN: GET SLIDER
+// ==========================================
+
 export const getAdminSlider = async (req, res) => {
   try {
     const { pageKey, sectionKey } = req.params;
@@ -70,7 +104,10 @@ export const getAdminSlider = async (req, res) => {
       });
     }
 
-    let section = await SliderSection.findOne({ pageKey, sectionKey });
+    let section = await SliderSection.findOne({
+      pageKey,
+      sectionKey,
+    });
 
     if (!section) {
       section = await SliderSection.create({
@@ -82,16 +119,24 @@ export const getAdminSlider = async (req, res) => {
       });
     }
 
-    res.json({ success: true, data: section });
+    return res.json({
+      success: true,
+      data: section,
+    });
   } catch (error) {
-    res.status(500).json({
+    console.error("Get admin slider error:", error);
+
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-// Create or update section settings
+// ==========================================
+// ADMIN: SAVE SLIDER SETTINGS
+// ==========================================
+
 export const saveSliderSettings = async (req, res) => {
   try {
     const { pageKey, sectionKey } = req.params;
@@ -177,24 +222,40 @@ export const saveSliderSettings = async (req, res) => {
       }
     );
 
-    res.json({
+    return res.json({
       success: true,
       data: section,
       message: "Slider settings saved",
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Save slider settings error:", error);
+
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-// Add card
+// ==========================================
+// ADMIN: CREATE SLIDER CARD
+// ==========================================
+
 export const createSliderCard = async (req, res) => {
+  let uploadedImage = null;
+
   try {
     const { pageKey, sectionKey } = req.params;
-    const { title, description, imageAlt, link, linkText, order } = req.body;
+
+    const {
+      title,
+      description,
+      imageAlt,
+      link,
+      linkText,
+      order,
+      isActive,
+    } = req.body;
 
     if (!validateKeys(pageKey, sectionKey)) {
       return res.status(400).json({
@@ -203,12 +264,28 @@ export const createSliderCard = async (req, res) => {
       });
     }
 
-    const imageUrl = uploadedImageUrl(req) || req.body.imageUrl;
-
-    if (!title?.trim() || !imageUrl) {
+    if (!title?.trim()) {
       return res.status(400).json({
         success: false,
-        message: "Card title and image are required",
+        message: "Card title is required",
+      });
+    }
+
+    // New uploads go to Cloudinary.
+    if (req.file) {
+      uploadedImage = await uploadToCloudinary(
+        req.file.path,
+        getSliderFolder(pageKey, sectionKey)
+      );
+    }
+
+    // Legacy imageUrl support is retained for existing integrations.
+    const imageUrl = uploadedImage?.url || req.body.imageUrl;
+
+    if (!imageUrl) {
+      return res.status(400).json({
+        success: false,
+        message: "Card image is required",
       });
     }
 
@@ -228,32 +305,49 @@ export const createSliderCard = async (req, res) => {
       title: title.trim(),
       description: description || "",
       imageUrl,
+      imagePublicId: uploadedImage?.publicId || "",
       imageAlt: imageAlt || title,
       link: link || "",
       linkText: linkText || "Read More",
       order: Number.isFinite(Number(order))
         ? Number(order)
         : section.cards.length,
-      isActive: true,
+      isActive: parseBoolean(isActive),
     });
 
-    await section.save();
+    try {
+      await section.save();
+    } catch (saveError) {
+      if (uploadedImage?.publicId) {
+        await deleteCloudinaryImage(uploadedImage.publicId);
+        uploadedImage = null;
+      }
 
-    res.status(201).json({
+      throw saveError;
+    }
+
+    return res.status(201).json({
       success: true,
       data: section.cards[section.cards.length - 1],
       message: "Slider card created",
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Create slider card error:", error);
+
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-// Update card
+// ==========================================
+// ADMIN: UPDATE SLIDER CARD
+// ==========================================
+
 export const updateSliderCard = async (req, res) => {
+  let uploadedImage = null;
+
   try {
     const { pageKey, sectionKey, cardId } = req.params;
 
@@ -264,7 +358,10 @@ export const updateSliderCard = async (req, res) => {
       });
     }
 
-    const section = await SliderSection.findOne({ pageKey, sectionKey });
+    const section = await SliderSection.findOne({
+      pageKey,
+      sectionKey,
+    });
 
     if (!section) {
       return res.status(404).json({
@@ -282,10 +379,27 @@ export const updateSliderCard = async (req, res) => {
       });
     }
 
-    const { title, description, imageAlt, link, linkText, order, isActive } =
-      req.body;
+    const {
+      title,
+      description,
+      imageAlt,
+      link,
+      linkText,
+      order,
+      isActive,
+    } = req.body;
 
-    if (title !== undefined) card.title = title.trim();
+    if (title !== undefined) {
+      if (!title.trim()) {
+        return res.status(400).json({
+          success: false,
+          message: "Card title is required",
+        });
+      }
+
+      card.title = title.trim();
+    }
+
     if (description !== undefined) card.description = description;
     if (imageAlt !== undefined) card.imageAlt = imageAlt;
     if (link !== undefined) card.link = link;
@@ -299,31 +413,70 @@ export const updateSliderCard = async (req, res) => {
       card.isActive = parseBoolean(isActive);
     }
 
-    const imageUrl = uploadedImageUrl(req) || req.body.imageUrl;
+    const oldPublicId = card.imagePublicId;
 
-    if (imageUrl) card.imageUrl = imageUrl;
+    if (req.file) {
+      uploadedImage = await uploadToCloudinary(
+        req.file.path,
+        getSliderFolder(pageKey, sectionKey)
+      );
 
-    await section.save();
+      card.imageUrl = uploadedImage.url;
+      card.imagePublicId = uploadedImage.publicId;
+    } else if (req.body.imageUrl) {
+      card.imageUrl = req.body.imageUrl;
+    }
 
-    res.json({
+    try {
+      await section.save();
+    } catch (saveError) {
+      if (uploadedImage?.publicId) {
+        await deleteCloudinaryImage(uploadedImage.publicId);
+        uploadedImage = null;
+      }
+
+      throw saveError;
+    }
+
+    // Delete old Cloudinary asset only after DB update succeeds.
+    if (uploadedImage && oldPublicId) {
+      await deleteCloudinaryImage(oldPublicId);
+    }
+
+    return res.json({
       success: true,
       data: card,
       message: "Slider card updated",
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Update slider card error:", error);
+
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
 
-// Delete card
+// ==========================================
+// ADMIN: DELETE SLIDER CARD
+// ==========================================
+
 export const deleteSliderCard = async (req, res) => {
   try {
     const { pageKey, sectionKey, cardId } = req.params;
 
-    const section = await SliderSection.findOne({ pageKey, sectionKey });
+    if (!validateKeys(pageKey, sectionKey)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid page or section key",
+      });
+    }
+
+    const section = await SliderSection.findOne({
+      pageKey,
+      sectionKey,
+    });
 
     if (!section) {
       return res.status(404).json({
@@ -341,15 +494,24 @@ export const deleteSliderCard = async (req, res) => {
       });
     }
 
+    const oldPublicId = card.imagePublicId;
+
     card.deleteOne();
+
     await section.save();
 
-    res.json({
+    if (oldPublicId) {
+      await deleteCloudinaryImage(oldPublicId);
+    }
+
+    return res.json({
       success: true,
-      message: "Slider card deleted",
+      message: "Slider card and its Cloudinary image deleted",
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Delete slider card error:", error);
+
+    return res.status(500).json({
       success: false,
       message: error.message,
     });

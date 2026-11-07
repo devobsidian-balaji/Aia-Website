@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useState } from "react";
 
 const API_URL = (
@@ -23,7 +22,6 @@ const buttonClass =
 
 export default function ManageHomeFeatures({ pageKey = "home" }) {
   const isIAFSM = pageKey === "iafsm";
-
   const pageTitle = isIAFSM ? "IAFSM" : "Home";
 
   const [section, setSection] = useState({
@@ -77,9 +75,7 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        throw new Error(
-          result.message || "Unable to load CMS"
-        );
+        throw new Error(result.message || "Unable to load CMS");
       }
 
       const data = result.data || {};
@@ -133,19 +129,26 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
 
     if (!file) return;
 
+    setError("");
+
     if (!file.type.startsWith("image/")) {
       setError("Please select a valid image.");
+      event.target.value = "";
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
       setError("Image must be 5 MB or less.");
+      event.target.value = "";
       return;
+    }
+
+    if (preview.startsWith("blob:")) {
+      URL.revokeObjectURL(preview);
     }
 
     setImage(file);
     setPreview(URL.createObjectURL(file));
-    setError("");
   };
 
   // ==========================================
@@ -153,6 +156,10 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
   // ==========================================
 
   const resetForm = () => {
+    if (preview.startsWith("blob:")) {
+      URL.revokeObjectURL(preview);
+    }
+
     setEditingId("");
     setItem({
       ...emptyItem,
@@ -160,13 +167,17 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
     });
 
     setImage(null);
-
-    if (preview.startsWith("blob:")) {
-      URL.revokeObjectURL(preview);
-    }
-
     setPreview("");
   };
+
+  // Cleanup preview URL on unmount.
+  useEffect(() => {
+    return () => {
+      if (preview.startsWith("blob:")) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
 
   // ==========================================
   // SAVE SECTION SETTINGS
@@ -194,9 +205,7 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        throw new Error(
-          result.message || "Unable to save settings"
-        );
+        throw new Error(result.message || "Unable to save settings");
       }
 
       setMessage("Section settings saved successfully.");
@@ -256,17 +265,16 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        throw new Error(
-          result.message || "Unable to save card"
-        );
+        throw new Error(result.message || "Unable to save card");
       }
 
-      await loadSection();
+      const wasEditing = Boolean(editingId);
 
       resetForm();
+      await loadSection();
 
       setMessage(
-        editingId
+        wasEditing
           ? "Card updated successfully."
           : "Card created successfully."
       );
@@ -282,6 +290,10 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
   // ==========================================
 
   const editCard = (savedItem) => {
+    if (preview.startsWith("blob:")) {
+      URL.revokeObjectURL(preview);
+    }
+
     setEditingId(savedItem._id);
 
     setItem({
@@ -329,9 +341,7 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
       const result = await response.json();
 
       if (!response.ok || !result.success) {
-        throw new Error(
-          result.message || "Unable to delete card"
-        );
+        throw new Error(result.message || "Unable to delete card");
       }
 
       if (editingId === savedItem._id) {
@@ -340,7 +350,7 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
 
       await loadSection();
 
-      setMessage("Card deleted successfully.");
+      setMessage("Card and its Cloudinary image deleted successfully.");
     } catch (err) {
       setError(err.message || "Unable to delete card");
     }
@@ -370,14 +380,12 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
           </p>
 
           <h1 className="mt-2 text-3xl font-bold text-slate-900">
-            {isIAFSM
-              ? "IAFSM Features CMS"
-              : "Home Feature CMS"}
+            {isIAFSM ? "IAFSM Features CMS" : "Home Feature CMS"}
           </h1>
 
           <p className="mt-2 text-sm text-slate-500">
-            Manage the alternating image and content section
-            on the {pageTitle} Page.
+            Manage the alternating image and content section on the{" "}
+            {pageTitle} Page.
           </p>
         </header>
 
@@ -400,15 +408,11 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
         {/* SECTION SETTINGS */}
 
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-
           <h2 className="mb-4 text-lg font-semibold text-slate-900">
             Section Settings
           </h2>
 
-          <form
-            onSubmit={saveSettings}
-            className="space-y-4"
-          >
+          <form onSubmit={saveSettings} className="space-y-4">
             <label className="block text-sm font-medium text-slate-700">
               Heading
 
@@ -471,9 +475,7 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
         {/* ADD / EDIT CARD */}
 
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-
             <div>
               <h2 className="text-lg font-semibold text-slate-900">
                 {editingId
@@ -497,15 +499,11 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
             )}
           </div>
 
-          <form
-            onSubmit={saveCard}
-            className="space-y-4"
-          >
+          <form onSubmit={saveCard} className="space-y-4">
 
             {/* TITLE & ORDER */}
 
             <div className="grid gap-4 md:grid-cols-2">
-
               <label className="text-sm font-medium text-slate-700">
                 Card Title
 
@@ -531,7 +529,6 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
                   className={fieldClass}
                 />
               </label>
-
             </div>
 
             {/* DESCRIPTION */}
@@ -551,22 +548,30 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
 
             {/* IMAGE */}
 
-            <label className="block text-sm font-medium text-slate-700">
-              Upload Image
+            <div>
+              <label className="block text-sm font-medium text-slate-700">
+                {editingId ? "Replace Image (Optional)" : "Upload Image"}
 
-              <input
-                type="file"
-                accept="image/*"
-                onChange={selectImage}
-                required={!editingId}
-                className="mt-2 block w-full text-sm"
-              />
-            </label>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={selectImage}
+                  required={!editingId}
+                  className="mt-2 block w-full text-sm"
+                />
+              </label>
+
+              <p className="mt-1 text-xs text-slate-500">
+                JPG, PNG, WEBP or GIF. Maximum file size: 5 MB.
+              </p>
+            </div>
+
+            {/* IMAGE PREVIEW */}
 
             {(preview || item.imageUrl) && (
               <div>
                 <p className="mb-2 text-xs font-medium text-slate-500">
-                  Image Preview
+                  {preview ? "New Image Preview" : "Current Cloudinary Image"}
                 </p>
 
                 <img
@@ -574,6 +579,23 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
                   alt="Feature preview"
                   className="aspect-video w-full max-w-sm rounded-xl object-cover"
                 />
+
+                {preview && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (preview.startsWith("blob:")) {
+                        URL.revokeObjectURL(preview);
+                      }
+
+                      setPreview("");
+                      setImage(null);
+                    }}
+                    className="mt-2 text-xs font-semibold text-red-600 hover:underline"
+                  >
+                    Cancel New Image
+                  </button>
+                )}
               </div>
             )}
 
@@ -594,7 +616,6 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
             {/* BUTTON DETAILS */}
 
             <div className="grid gap-4 md:grid-cols-2">
-
               <label className="text-sm font-medium text-slate-700">
                 Button URL
 
@@ -618,7 +639,6 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
                   className={fieldClass}
                 />
               </label>
-
             </div>
 
             {/* ACTIVE STATUS */}
@@ -648,35 +668,29 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
                   ? "Update Card"
                   : "Add Card"}
             </button>
-
           </form>
         </section>
 
         {/* EXISTING CARDS */}
 
         <section className="mt-6">
-
           <h2 className="mb-4 text-lg font-semibold text-slate-900">
             Existing {pageTitle} Feature Cards
           </h2>
 
           {loading ? (
-            <p className="text-sm text-slate-500">
-              Loading cards...
-            </p>
+            <p className="text-sm text-slate-500">Loading cards...</p>
           ) : sortedItems.length === 0 ? (
             <div className="rounded-xl border border-dashed border-slate-300 bg-white p-10 text-center text-sm text-slate-500">
               No cards added yet. Create the first card above.
             </div>
           ) : (
             <div className="grid gap-5 md:grid-cols-2">
-
               {sortedItems.map((savedItem) => (
                 <article
                   key={savedItem._id}
                   className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md"
                 >
-
                   {/* CARD IMAGE */}
 
                   {savedItem.imageUrl && (
@@ -688,9 +702,7 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
                   )}
 
                   <div className="p-5">
-
                     <div className="flex items-start justify-between gap-3">
-
                       <h3 className="font-semibold text-slate-900">
                         {savedItem.title}
                       </h3>
@@ -698,7 +710,6 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
                       <span className="shrink-0 text-xs text-slate-500">
                         Order: {savedItem.order ?? 0}
                       </span>
-
                     </div>
 
                     <p className="mt-2 line-clamp-3 text-sm leading-6 text-slate-600">
@@ -706,15 +717,12 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
                     </p>
 
                     <p className="mt-3 text-xs text-slate-500">
-                      {savedItem.isActive
-                        ? "Published"
-                        : "Unpublished"}
+                      {savedItem.isActive ? "Published" : "Unpublished"}
                     </p>
 
                     {/* ACTIONS */}
 
                     <div className="mt-4 flex gap-2">
-
                       <button
                         type="button"
                         onClick={() => editCard(savedItem)}
@@ -730,18 +738,13 @@ export default function ManageHomeFeatures({ pageKey = "home" }) {
                       >
                         Delete
                       </button>
-
                     </div>
-
                   </div>
                 </article>
               ))}
-
             </div>
           )}
-
         </section>
-
       </div>
     </main>
   );

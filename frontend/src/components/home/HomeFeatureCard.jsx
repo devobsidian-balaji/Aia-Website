@@ -79,6 +79,12 @@ export default function HomeFeatureCard({ item, index }) {
 
       <div className="overflow-hidden rounded-md border-4 border-white shadow-lg">
         <img
+        src={getImageUrl(item.imageUrl)}
+        alt={item.imageAlt || item.title}
+        loading="lazy"
+        className="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+        />
+        {/* <img
           src={getImageUrl(item.imageUrl)}
           alt={item.imageAlt || item.title}
           loading="lazy"
@@ -89,7 +95,7 @@ export default function HomeFeatureCard({ item, index }) {
             );
           }}
           className="aspect-[16/9] w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-        />
+        /> */}
       </div>
 
       {/* CONTENT */}

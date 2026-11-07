@@ -1,4 +1,3 @@
-
 import mongoose from "mongoose";
 
 const whyJoinItemSchema = new mongoose.Schema(
@@ -16,6 +15,10 @@ const whyJoinItemSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
       required: true,
+    },
+    imagePublicId: {
+      type: String,
+      default: "",
     },
     imageAlt: {
       type: String,

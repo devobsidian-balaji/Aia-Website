@@ -101,5 +101,3 @@ bannerRouter.delete(
   "/:id",
   deleteBanner
 );
-
-

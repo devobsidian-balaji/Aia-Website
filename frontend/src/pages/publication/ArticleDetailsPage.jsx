@@ -234,6 +234,7 @@ export default function ArticleDetailsPage() {
       nextArticle={nextArticle}
       backLink="/publication/articles"
       backLabel="Back to all articles"
+      basePath="/publication/articles"
     />
   );
 }

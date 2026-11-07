@@ -837,6 +837,15 @@ const [sectionKey, setSectionKey] = useState(defaultSectionKey);
     loadSlider();
   }, [loadSlider]);
 
+useEffect(() => {
+  return () => {
+    if (preview.startsWith("blob:")) {
+      URL.revokeObjectURL(preview);
+    }
+  };
+}, [preview]);
+
+
   function updateSetting(name, value) {
     setSettings((previous) => ({
       ...previous,
@@ -854,29 +863,32 @@ const [sectionKey, setSectionKey] = useState(defaultSectionKey);
     }));
   }
 
-  function selectImage(file) {
-    setError("");
-    setMessage("");
+function selectImage(file) {
+  setError("");
+  setMessage("");
 
-    if (!file) {
-      setImage(null);
-      setPreview("");
-      return;
-    }
+  if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      setError("Please select a valid image.");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Image must be 5 MB or smaller.");
-      return;
-    }
-
-    setImage(file);
-    setPreview(URL.createObjectURL(file));
+  if (!file.type.startsWith("image/")) {
+    setError("Please select a valid image.");
+    return;
   }
+
+  if (file.size > 5 * 1024 * 1024) {
+    setError("Image must be 5 MB or smaller.");
+    return;
+  }
+
+  setPreview((previous) => {
+    if (previous.startsWith("blob:")) {
+      URL.revokeObjectURL(previous);
+    }
+
+    return URL.createObjectURL(file);
+  });
+
+  setImage(file);
+}
 
   async function saveSettings(event) {
     event.preventDefault();
@@ -913,29 +925,51 @@ const [sectionKey, setSectionKey] = useState(defaultSectionKey);
     }
   }
 
-  function startEdit(item) {
-    setEditingId(item._id);
-    setCard({
-      title: item.title || "",
-      description: item.description || "",
-      imageAlt: item.imageAlt || "",
-      link: item.link || "",
-      linkText: item.linkText || "Read More",
-      order: item.order ?? 0,
-      isActive: item.isActive !== false,
-    });
-    setImage(null);
-    setPreview(item.imageUrl || "");
-    setError("");
-    setMessage("");
-  }
+function startEdit(item) {
+  setEditingId(item._id);
 
-  function resetCardForm() {
-    setEditingId("");
-    setCard({ ...initialCard, order: cards.length });
-    setImage(null);
-    setPreview("");
-  }
+  setCard({
+    title: item.title || "",
+    description: item.description || "",
+    imageAlt: item.imageAlt || "",
+    link: item.link || "",
+    linkText: item.linkText || "Read More",
+    order: item.order ?? 0,
+    isActive: item.isActive !== false,
+  });
+
+  setImage(null);
+
+  setPreview((previous) => {
+    if (previous.startsWith("blob:")) {
+      URL.revokeObjectURL(previous);
+    }
+
+    return item.imageUrl || "";
+  });
+
+  setError("");
+  setMessage("");
+}
+
+ function resetCardForm() {
+  setEditingId("");
+
+  setCard({
+    ...initialCard,
+    order: cards.length,
+  });
+
+  setImage(null);
+
+  setPreview((previous) => {
+    if (previous.startsWith("blob:")) {
+      URL.revokeObjectURL(previous);
+    }
+
+    return "";
+  });
+}
 
   async function saveCard(event) {
     event.preventDefault();
@@ -1259,12 +1293,40 @@ const [sectionKey, setSectionKey] = useState(defaultSectionKey);
                 />
 
                 {preview && (
-                  <img
-                    src={preview}
-                    alt="Card preview"
-                    className="mt-3 aspect-video w-full rounded-lg object-cover"
-                  />
-                )}
+  <div className="mt-3">
+    <p className="mb-2 text-xs font-medium text-slate-500">
+      {image ? "New Image Preview" : "Current Slider Image"}
+    </p>
+
+    <img
+      src={preview}
+      alt="Card preview"
+      className="aspect-video w-full rounded-lg object-cover"
+    />
+
+    {image && (
+      <button
+        type="button"
+        onClick={() => {
+          setImage(null);
+
+          setPreview((previous) => {
+            if (previous.startsWith("blob:")) {
+              URL.revokeObjectURL(previous);
+            }
+
+            return editingId
+              ? cards.find((item) => item._id === editingId)?.imageUrl || ""
+              : "";
+          });
+        }}
+        className="mt-2 text-xs font-semibold text-red-600 hover:underline"
+      >
+        Cancel New Image
+      </button>
+    )}
+  </div>
+)}
               </div>
 
               <div>

@@ -1,63 +1,47 @@
-
 import multer from "multer";
 import path from "path";
-import { uploadsDir } from "../config/uploadPaths.js";
 
-// Video storage configuration
-const storage = multer.diskStorage({
-  destination: (_req, _file, callback) => {
-    callback(null, uploadsDir);
-  },
+// Allowed video extensions
+const allowedExtensions = [
+  ".mp4",
+  ".webm",
+  ".ogg",
+  ".mov",
+  ".m4v",
+];
 
-  filename: (_req, file, callback) => {
-    const extension = path.extname(file.originalname).toLowerCase();
-
-    const allowedExtensions = [
-      ".mp4",
-      ".webm",
-      ".ogg",
-      ".mov",
-      ".m4v",
-    ];
-
-    if (!allowedExtensions.includes(extension)) {
-      return callback(
-        new Error(
-          "Only MP4, WebM, OGG, MOV and M4V videos are allowed"
-        )
-      );
-    }
-
-    const filename = `${Date.now()}-${Math.round(
-      Math.random() * 1e9
-    )}${extension}`;
-
-    callback(null, filename);
-  },
-});
+// Allowed video MIME types
+const allowedTypes = [
+  "video/mp4",
+  "video/webm",
+  "video/ogg",
+  "video/quicktime",
+  "video/x-m4v",
+];
 
 // Video file validation
 const fileFilter = (_req, file, callback) => {
-  const allowedTypes = [
-    "video/mp4",
-    "video/webm",
-    "video/ogg",
-    "video/quicktime",
-    "video/x-m4v",
-  ];
+  const extension = path
+    .extname(file.originalname)
+    .toLowerCase();
 
-  if (!allowedTypes.includes(file.mimetype)) {
+  const validExtension = allowedExtensions.includes(extension);
+  const validMimeType = allowedTypes.includes(file.mimetype);
+
+  if (!validExtension || !validMimeType) {
     return callback(
-      new Error("Invalid video format")
+      new Error(
+        "Only MP4, WebM, OGG, MOV and M4V videos are allowed."
+      )
     );
   }
 
   callback(null, true);
 };
 
-// Export video upload middleware
+// Memory storage: file will be uploaded directly to Cloudinary
 const bannerUpload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   fileFilter,
 
   limits: {

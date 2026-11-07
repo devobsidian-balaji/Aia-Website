@@ -73,27 +73,26 @@ const contentBlockSchema = new mongoose.Schema(
       enum: ["heading", "paragraph", "bulletList", "image"],
       required: true,
     },
-
     text: {
       type: String,
       default: "",
     },
-
     items: {
       type: [String],
       default: [],
     },
-
     image: {
       type: String,
       default: "",
     },
-
+    imagePublicId: {
+      type: String,
+      default: "",
+    },
     imageAlt: {
       type: String,
       default: "",
     },
-
     caption: {
       type: String,
       default: "",
@@ -110,7 +109,6 @@ const articleSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-
     slug: {
       type: String,
       required: true,
@@ -118,44 +116,45 @@ const articleSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
     },
-
     image: {
       type: String,
       required: true,
     },
-
+    imagePublicId: {
+      type: String,
+      default: "",
+    },
     imageAlt: {
       type: String,
       default: "",
     },
-
     category: {
       type: String,
       default: "",
       trim: true,
     },
-
     categoryLink: {
       type: String,
       default: "",
     },
 
-    // SplitFeatureCard hero
+    // Detail hero
     detailHeroTitle: {
       type: String,
       default: "",
     },
-
     detailHeroDescription: {
       type: String,
       default: "",
     },
-
     detailHeroImage: {
       type: String,
       default: "",
     },
-
+    detailHeroImagePublicId: {
+      type: String,
+      default: "",
+    },
     detailHeroImageAlt: {
       type: String,
       default: "",
@@ -166,7 +165,6 @@ const articleSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-
     detailSubtitle: {
       type: String,
       default: "",
@@ -177,7 +175,6 @@ const articleSchema = new mongoose.Schema(
       type: String,
       default: "Introduction",
     },
-
     introductionParagraphs: {
       type: [String],
       default: [],
@@ -189,38 +186,47 @@ const articleSchema = new mongoose.Schema(
       default: [],
     },
 
-    // Final section
+    // Closing section
     closingTitle: {
       type: String,
       default: "",
     },
-
     closingParagraphs: {
       type: [String],
       default: [],
     },
-
     closingBullets: {
       type: [String],
       default: [],
     },
 
-    // Author
+    // Legacy fields (keep compatibility with older data)
+    introduction: {
+      type: String,
+      default: "",
+    },
+    detailCoverImage: {
+      type: String,
+      default: "",
+    },
+    sections: {
+      type: [mongoose.Schema.Types.Mixed],
+      default: [],
+    },
+
+    // Author and publication
     author: {
       type: String,
       default: "",
     },
-
     publishedAt: {
       type: String,
       default: "",
     },
-
     order: {
       type: Number,
       default: 0,
     },
-
     isActive: {
       type: Boolean,
       default: true,

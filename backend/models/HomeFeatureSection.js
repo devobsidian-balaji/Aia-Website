@@ -1,11 +1,13 @@
-
 import mongoose from "mongoose";
 
 const homeFeatureItemSchema = new mongoose.Schema(
   {
     title: { type: String, required: true, trim: true },
     description: { type: String, default: "" },
+
     imageUrl: { type: String, required: true },
+    imagePublicId: { type: String, default: "" },
+
     imageAlt: { type: String, default: "" },
     link: { type: String, default: "" },
     linkText: { type: String, default: "Learn More" },

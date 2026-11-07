@@ -1,17 +1,134 @@
 
+// // // import multer from "multer";
+// // // import path from "path";
+// // // import fs from "fs";
+
+// // // const uploadDirectory = path.resolve("uploads");
+
+// // // if (!fs.existsSync(uploadDirectory)) {
+// // //   fs.mkdirSync(uploadDirectory, { recursive: true });
+// // // }
+
+// // // const storage = multer.diskStorage({
+// // //   destination: (_req, _file, callback) => {
+// // //     callback(null, uploadDirectory);
+// // //   },
+
+// // //   filename: (_req, file, callback) => {
+// // //     const extension = path.extname(file.originalname).toLowerCase();
+
+// // //     const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+
+// // //     if (!allowedExtensions.includes(extension)) {
+// // //       return callback(new Error("Unsupported image extension"));
+// // //     }
+
+// // //     callback(
+// // //       null,
+// // //       `${Date.now()}-${Math.round(Math.random() * 1e9)}${extension}`
+// // //     );
+// // //   },
+// // // });
+
+// // // const fileFilter = (_req, file, callback) => {
+// // //   const allowedTypes = [
+// // //     "image/jpeg",
+// // //     "image/png",
+// // //     "image/webp",
+// // //     "image/gif",
+// // //   ];
+
+// // //   if (!allowedTypes.includes(file.mimetype)) {
+// // //     return callback(new Error("Only JPG, PNG, WebP and GIF are allowed"));
+// // //   }
+
+// // //   callback(null, true);
+// // // };
+
+// // // export const sliderImageUpload = multer({
+// // //   storage,
+// // //   fileFilter,
+// // //   limits: {
+// // //     fileSize: 5 * 1024 * 1024,
+// // //     files: 1,
+// // //   },
+// // // });
+
+
+
+// // import multer from "multer";
+// // import path from "path";
+// // import { uploadsDir } from "./uploadPaths.js";
+
+// // // Image storage configuration
+// // const storage = multer.diskStorage({
+// //   destination: (_req, _file, callback) => {
+// //     callback(null, uploadsDir);
+// //   },
+
+// //   filename: (_req, file, callback) => {
+// //     const extension = path.extname(file.originalname).toLowerCase();
+
+// //     const allowedExtensions = [
+// //       ".jpg",
+// //       ".jpeg",
+// //       ".png",
+// //       ".webp",
+// //       ".gif",
+// //     ];
+
+// //     if (!allowedExtensions.includes(extension)) {
+// //       return callback(
+// //         new Error("Unsupported image extension")
+// //       );
+// //     }
+
+// //     const filename = `${Date.now()}-${Math.round(
+// //       Math.random() * 1e9
+// //     )}${extension}`;
+
+// //     callback(null, filename);
+// //   },
+// // });
+
+// // // Image file validation
+// // const fileFilter = (_req, file, callback) => {
+// //   const allowedTypes = [
+// //     "image/jpeg",
+// //     "image/png",
+// //     "image/webp",
+// //     "image/gif",
+// //   ];
+
+// //   if (!allowedTypes.includes(file.mimetype)) {
+// //     return callback(
+// //       new Error("Only JPG, PNG, WebP and GIF are allowed")
+// //     );
+// //   }
+
+// //   callback(null, true);
+// // };
+
+// // // Export image upload middleware
+// // export const sliderImageUpload = multer({
+// //   storage,
+// //   fileFilter,
+
+// //   limits: {
+// //     fileSize: 5 * 1024 * 1024,
+// //     files: 1,
+// //   },
+// // });
+
+
+
 // import multer from "multer";
 // import path from "path";
-// import fs from "fs";
-
-// const uploadDirectory = path.resolve("uploads");
-
-// if (!fs.existsSync(uploadDirectory)) {
-//   fs.mkdirSync(uploadDirectory, { recursive: true });
-// }
+// import { uploadsDir } from "./uploadPaths.js";
 
 // const storage = multer.diskStorage({
 //   destination: (_req, _file, callback) => {
-//     callback(null, uploadDirectory);
+//     callback(null, uploadsDir);
 //   },
 
 //   filename: (_req, file, callback) => {
@@ -39,7 +156,9 @@
 //   ];
 
 //   if (!allowedTypes.includes(file.mimetype)) {
-//     return callback(new Error("Only JPG, PNG, WebP and GIF are allowed"));
+//     return callback(
+//       new Error("Only JPG, PNG, WebP and GIF images are allowed")
+//     );
 //   }
 
 //   callback(null, true);
@@ -50,7 +169,7 @@
 //   fileFilter,
 //   limits: {
 //     fileSize: 5 * 1024 * 1024,
-//     files: 1,
+//     files: 30,
 //   },
 // });
 
@@ -60,62 +179,84 @@ import multer from "multer";
 import path from "path";
 import { uploadsDir } from "./uploadPaths.js";
 
-// Image storage configuration
+const allowedExtensions = [
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".webp",
+  ".gif",
+];
+
+const allowedMimeTypes = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+];
+
 const storage = multer.diskStorage({
-  destination: (_req, _file, callback) => {
-    callback(null, uploadsDir);
+  destination: (_req, _file, cb) => {
+    cb(null, uploadsDir);
   },
 
-  filename: (_req, file, callback) => {
+  filename: (_req, file, cb) => {
     const extension = path.extname(file.originalname).toLowerCase();
 
-    const allowedExtensions = [
-      ".jpg",
-      ".jpeg",
-      ".png",
-      ".webp",
-      ".gif",
-    ];
-
     if (!allowedExtensions.includes(extension)) {
-      return callback(
-        new Error("Unsupported image extension")
-      );
+      return cb(new Error("Unsupported image extension."));
     }
 
-    const filename = `${Date.now()}-${Math.round(
+    const safeName = `${Date.now()}-${Math.round(
       Math.random() * 1e9
     )}${extension}`;
 
-    callback(null, filename);
+    cb(null, safeName);
   },
 });
 
-// Image file validation
-const fileFilter = (_req, file, callback) => {
-  const allowedTypes = [
-    "image/jpeg",
-    "image/png",
-    "image/webp",
-    "image/gif",
-  ];
-
-  if (!allowedTypes.includes(file.mimetype)) {
-    return callback(
-      new Error("Only JPG, PNG, WebP and GIF are allowed")
+const fileFilter = (_req, file, cb) => {
+  if (!allowedMimeTypes.includes(file.mimetype)) {
+    return cb(
+      new Error("Only JPG, PNG, WebP and GIF images are allowed.")
     );
   }
 
-  callback(null, true);
+  cb(null, true);
 };
 
-// Export image upload middleware
-export const sliderImageUpload = multer({
-  storage,
-  fileFilter,
+const createImageUpload = ({
+  maxFiles = 1,
+  maxFileSize = 5 * 1024 * 1024,
+  maxFieldSize = 1 * 1024 * 1024,
+} = {}) => {
+  return multer({
+    storage,
+    fileFilter,
 
-  limits: {
-    fileSize: 5 * 1024 * 1024,
-    files: 1,
-  },
+    limits: {
+      fileSize: maxFileSize,
+      files: maxFiles,
+
+      // Maximum text/JSON field size
+      fieldSize: maxFieldSize,
+    },
+  });
+};
+
+// Existing slider upload — unchanged
+export const sliderImageUpload = createImageUpload({
+  maxFiles: 1,
+});
+
+// Existing event upload — unchanged
+export const eventImageUpload = createImageUpload({
+  maxFiles: 30,
+  maxFileSize: 5 * 1024 * 1024,
+});
+
+// Articles and News — multiple images + large JSON content
+export const publicationImageUpload = createImageUpload({
+  maxFiles: 32,
+  maxFileSize: 5 * 1024 * 1024,
+  maxFieldSize: 20 * 1024 * 1024,
 });

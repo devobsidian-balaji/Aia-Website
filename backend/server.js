@@ -43,11 +43,11 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Static Uploads Serving
-app.use('/uploads', express.static(uploadsDir, {
-  maxAge: '30d',
-  immutable: true,
-}));
+// // Static Uploads Serving
+// app.use('/uploads', express.static(uploadsDir, {
+//   maxAge: '30d',
+//   immutable: true,
+// }));
 
 // Master API Routing
 app.use('/api', apiRouter);
@@ -125,71 +125,71 @@ async function seedInitialData() {
 
     // 3. Seed Default Events matching Image 1
     const eventCount = await Event.countDocuments();
-    if (eventCount < 3) {
-      await Event.deleteMany({});
-      await Event.create([
-        {
-          title: 'Smart Automation for Manufacturing...',
-          description: "AIA participates in several industry conferences on the topic of smart automation for SMEs, in the context of 'Make In India' movement.",
-          imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=1000&fit=crop',
-          eventLink: 'https://himtex.in',
-          date: '22 Aug',
-          category: 'Conferences',
-          order: 1,
-          isActive: true,
-        },
-        {
-          title: 'ANUTEC – International FoodTEC India Mumbai...',
-          description: 'AIA is proud to voice messages across industry forums. Members and team from AIA helped host over a part of several such delegations.',
-          imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=1000&fit=crop',
-          eventLink: 'https://himtex.in',
-          date: '24 Aug',
-          category: 'Conferences',
-          order: 2,
-          isActive: true,
-        },
-        {
-          title: 'Smart Automation for Manufacturing : Hosur',
-          description: "AIA participates in several industry conferences on the topic of smart automation for SMEs, in the context of 'Make In India' movement.",
-          imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=1000&fit=crop',
-          eventLink: 'https://himtex.in',
-          date: '02 Sep',
-          category: 'Conferences',
-          order: 3,
-          isActive: true,
-        },
-        {
-          title: 'Smart Automation for Manufacturing...',
-          description: "AIA participates in several industry conferences on the topic of smart automation for SMEs, in the context of 'Make In India' movement.",
-          imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=1000&fit=crop',
-          eventLink: 'https://himtex.in',
-          date: '22 Aug',
-          category: 'Conferences',
-          order: 4,
-          isActive: true,
-        },
-        {
-          title: 'ANUTEC – International FoodTEC India Mumbai...',
-          description: 'AIA is proud to voice messages across industry forums. Members and team from AIA helped host over a part of several such delegations.',
-          imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=1000&fit=crop',
-          eventLink: 'https://himtex.in',
-          date: '24 Aug',
-          category: 'Conferences',
-          order: 5,
-          isActive: true,
-        },
-        {
-          title: 'Smart Automation for Manufacturing : Hosur',
-          description: "AIA participates in several industry conferences on the topic of smart automation for SMEs, in the context of 'Make In India' movement.",
-          imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=1000&fit=crop',
-          eventLink: 'https://himtex.in',
-          date: '02 Sep',
-          category: 'Conferences',
-          order: 6,
-          isActive: true,
-        }
-      ]);
-    }
+    // if (eventCount < 3) {
+    //   await Event.deleteMany({});
+    //   await Event.create([
+    //     {
+    //       title: 'Smart Automation for Manufacturing...',
+    //       description: "AIA participates in several industry conferences on the topic of smart automation for SMEs, in the context of 'Make In India' movement.",
+    //       imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=1000&fit=crop',
+    //       eventLink: 'https://himtex.in',
+    //       date: '22 Aug',
+    //       category: 'Conference',
+    //       order: 1,
+    //       isActive: true,
+    //     },
+    //     {
+    //       title: 'ANUTEC – International FoodTEC India Mumbai...',
+    //       description: 'AIA is proud to voice messages across industry forums. Members and team from AIA helped host over a part of several such delegations.',
+    //       imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=1000&fit=crop',
+    //       eventLink: 'https://himtex.in',
+    //       date: '24 Aug',
+    //       category: 'Conference',
+    //       order: 2,
+    //       isActive: true,
+    //     },
+    //     {
+    //       title: 'Smart Automation for Manufacturing : Hosur',
+    //       description: "AIA participates in several industry conferences on the topic of smart automation for SMEs, in the context of 'Make In India' movement.",
+    //       imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=1000&fit=crop',
+    //       eventLink: 'https://himtex.in',
+    //       date: '02 Sep',
+    //       category: 'Conference',
+    //       order: 3,
+    //       isActive: true,
+    //     },
+    //     {
+    //       title: 'Smart Automation for Manufacturing...',
+    //       description: "AIA participates in several industry conferences on the topic of smart automation for SMEs, in the context of 'Make In India' movement.",
+    //       imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=1000&fit=crop',
+    //       eventLink: 'https://himtex.in',
+    //       date: '22 Aug',
+    //       category: 'Conference',
+    //       order: 4,
+    //       isActive: true,
+    //     },
+    //     {
+    //       title: 'ANUTEC – International FoodTEC India Mumbai...',
+    //       description: 'AIA is proud to voice messages across industry forums. Members and team from AIA helped host over a part of several such delegations.',
+    //       imageUrl: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&h=1000&fit=crop',
+    //       eventLink: 'https://himtex.in',
+    //       date: '24 Aug',
+    //       category: 'Conference',
+    //       order: 5,
+    //       isActive: true,
+    //     },
+    //     {
+    //       title: 'Smart Automation for Manufacturing : Hosur',
+    //       description: "AIA participates in several industry conferences on the topic of smart automation for SMEs, in the context of 'Make In India' movement.",
+    //       imageUrl: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&h=1000&fit=crop',
+    //       eventLink: 'https://himtex.in',
+    //       date: '02 Sep',
+    //       category: 'Conference',
+    //       order: 6,
+    //       isActive: true,
+    //     }
+    //   ]);
+    // }
 
     // 4. Seed Default Initiatives
     const initiativeCount = await Initiative.countDocuments();

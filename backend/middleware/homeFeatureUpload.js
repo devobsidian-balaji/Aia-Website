@@ -1,53 +1,52 @@
-
 import multer from "multer";
-import path from "path";
-import fs from "fs";
-import { fileURLToPath } from "url";
-import crypto from "crypto";
+import path from "node:path";
+import fs from "node:fs";
+import { randomUUID } from "node:crypto";
 
-const currentFile = fileURLToPath(import.meta.url);
-const currentDir = path.dirname(currentFile);
-
-const uploadDir = path.resolve(
-  currentDir,
-  "../uploads/home-features"
+const uploadDirectory = path.join(
+  process.cwd(),
+  "uploads",
+  "home-features"
 );
 
-fs.mkdirSync(uploadDir, { recursive: true });
+if (!fs.existsSync(uploadDirectory)) {
+  fs.mkdirSync(uploadDirectory, { recursive: true });
+}
 
 const storage = multer.diskStorage({
-  destination: (_req, _file, callback) => {
-    callback(null, uploadDir);
+  destination: (req, file, cb) => {
+    cb(null, uploadDirectory);
   },
 
-  filename: (_req, file, callback) => {
+  filename: (req, file, cb) => {
     const extension = path.extname(file.originalname).toLowerCase();
-    const safeName = `${crypto.randomUUID()}${extension}`;
 
-    callback(null, safeName);
+    cb(null, `${randomUUID()}${extension}`);
   },
 });
 
-const allowedTypes = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-]);
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif",
+  ];
+
+  if (!allowedTypes.includes(file.mimetype)) {
+    return cb(
+      new Error("Only JPG, PNG, WEBP and GIF images are allowed")
+    );
+  }
+
+  cb(null, true);
+};
 
 const upload = multer({
   storage,
+  fileFilter,
   limits: {
     fileSize: 5 * 1024 * 1024,
-  },
-  fileFilter: (_req, file, callback) => {
-    if (!allowedTypes.has(file.mimetype)) {
-      return callback(
-        new Error("Only JPG, PNG, WEBP and GIF images are allowed.")
-      );
-    }
-
-    callback(null, true);
   },
 });
 

@@ -1,7 +1,9 @@
-
 import PageHero from "../models/PageHero.js";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
+
+import cloudinary from "../config/cloudinary.js";
+import uploadToCloudinary from "../utils/uploadToCloudinary.js";
 
 const ALLOWED_PAGES = {
   "about-aia": "About AIA",
@@ -13,23 +15,64 @@ const ALLOWED_PAGES = {
   iafsm: "IAFSM",
 };
 
-// Generate image URL
-const getImageUrl = (req, filename) => {
-  return `${req.protocol}://${req.get("host")}/uploads/${filename}`;
+// Get Cloudinary public ID from existing Cloudinary URL
+const getCloudinaryPublicId = (imageUrl = "") => {
+  try {
+    const parsedUrl = new URL(imageUrl);
+
+    if (!parsedUrl.hostname.endsWith("cloudinary.com")) {
+      return "";
+    }
+
+    const uploadIndex = parsedUrl.pathname.indexOf("/upload/");
+
+    if (uploadIndex === -1) return "";
+
+    let assetPath = parsedUrl.pathname.slice(uploadIndex + 8);
+
+    // Remove transformations if present
+    const segments = assetPath.split("/");
+    if (segments[0]?.includes(",")) {
+      segments.shift();
+    }
+
+    // Remove version number
+    assetPath = segments.join("/").replace(/^v\d+\//, "");
+
+    // Remove extension
+    assetPath = assetPath.replace(/\.[^/.]+$/, "");
+
+    return decodeURIComponent(assetPath);
+  } catch (error) {
+    console.error("Public ID extraction error:", error.message);
+    return "";
+  }
 };
 
-// Safely delete an image uploaded by this CMS
-const deleteUploadedImage = (imageUrl) => {
+// Delete Cloudinary image
+const deleteCloudinaryImage = async (publicId) => {
+  if (!publicId) return;
+
+  const result = await cloudinary.uploader.destroy(publicId, {
+    resource_type: "image",
+    invalidate: true,
+  });
+
+  if (!["ok", "not found"].includes(result.result)) {
+    throw new Error(`Cloudinary deletion failed: ${result.result}`);
+  }
+};
+
+// Delete old local uploads, if any
+const deleteLocalImage = (imageUrl) => {
   if (!imageUrl) return;
 
   try {
     const parsedUrl = new URL(imageUrl);
 
-    // Only clean images from our local uploads endpoint
     if (!parsedUrl.pathname.startsWith("/uploads/")) return;
 
     const filename = path.basename(parsedUrl.pathname);
-
     if (!filename) return;
 
     const uploadDirectory = path.resolve("uploads");
@@ -41,8 +84,20 @@ const deleteUploadedImage = (imageUrl) => {
       fs.unlinkSync(filePath);
     }
   } catch (error) {
-    console.error("Image cleanup error:", error.message);
+    console.error("Local image cleanup error:", error.message);
   }
+};
+
+// Delete either Cloudinary or legacy local image
+const deleteStoredImage = async (imageUrl, publicId = "") => {
+  const cloudinaryId = publicId || getCloudinaryPublicId(imageUrl);
+
+  if (cloudinaryId) {
+    await deleteCloudinaryImage(cloudinaryId);
+    return;
+  }
+
+  deleteLocalImage(imageUrl);
 };
 
 // GET ALL PAGE HEROES
@@ -106,7 +161,7 @@ export const getPageHero = async (req, res) => {
 
 // CREATE / UPDATE PAGE HERO
 export const savePageHero = async (req, res) => {
-  const uploadedFile = req.file;
+  let newPublicId = "";
 
   try {
     const {
@@ -116,7 +171,6 @@ export const savePageHero = async (req, res) => {
       isActive,
     } = req.body;
 
-    // Validate page
     if (!ALLOWED_PAGES[pageKey]) {
       return res.status(400).json({
         success: false,
@@ -142,11 +196,22 @@ export const savePageHero = async (req, res) => {
       });
     }
 
-    // New image or existing image
     let bannerImage = existingHero?.bannerImage || "";
 
-    if (uploadedFile) {
-      bannerImage = getImageUrl(req, uploadedFile.filename);
+    let bannerImagePublicId =
+      existingHero?.bannerImagePublicId ||
+      getCloudinaryPublicId(existingHero?.bannerImage);
+
+    // Upload new image to Cloudinary
+    if (req.file) {
+      const uploaded = await uploadToCloudinary(
+        req.file.path,
+        `AIA-Project-Assets/Page-Heroes/${pageKey}`
+      );
+
+      bannerImage = uploaded.url;
+      bannerImagePublicId = uploaded.publicId;
+      newPublicId = uploaded.publicId;
     }
 
     if (!bannerImage) {
@@ -164,6 +229,7 @@ export const savePageHero = async (req, res) => {
           ? heading.trim()
           : existingHero?.heading || "",
       bannerImage,
+      bannerImagePublicId,
       overlayOpacity: parsedOpacity,
       isActive:
         isActive !== undefined
@@ -182,13 +248,26 @@ export const savePageHero = async (req, res) => {
       }
     );
 
-    // Delete previous image only after successful DB save
+    // Delete old image only after successful database update
+    const oldPublicId =
+      existingHero?.bannerImagePublicId ||
+      getCloudinaryPublicId(existingHero?.bannerImage);
+
     if (
-      uploadedFile &&
-      existingHero?.bannerImage &&
-      existingHero.bannerImage !== bannerImage
+      req.file &&
+      oldPublicId &&
+      oldPublicId !== newPublicId
     ) {
-      deleteUploadedImage(existingHero.bannerImage);
+      try {
+        await deleteStoredImage(
+          existingHero.bannerImage,
+          oldPublicId
+        );
+      } catch (cleanupError) {
+        console.error("Old image cleanup failed:", cleanupError);
+      }
+    } else if (req.file && existingHero?.bannerImage) {
+      deleteLocalImage(existingHero.bannerImage);
     }
 
     return res.status(200).json({
@@ -197,9 +276,13 @@ export const savePageHero = async (req, res) => {
       data: hero,
     });
   } catch (error) {
-    // Remove newly uploaded file if DB save fails
-    if (uploadedFile?.path && fs.existsSync(uploadedFile.path)) {
-      fs.unlinkSync(uploadedFile.path);
+    // Remove newly uploaded Cloudinary image if DB save fails
+    if (newPublicId) {
+      try {
+        await deleteCloudinaryImage(newPublicId);
+      } catch (cleanupError) {
+        console.error("New image cleanup failed:", cleanupError);
+      }
     }
 
     console.error("Save page hero error:", error);
@@ -212,7 +295,78 @@ export const savePageHero = async (req, res) => {
   }
 };
 
-// DELETE PAGE HERO
+// REMOVE ONLY HERO IMAGE
+export const removePageHeroImage = async (req, res) => {
+  try {
+    const { pageKey } = req.params;
+
+    if (!ALLOWED_PAGES[pageKey]) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid page key.",
+      });
+    }
+
+    const hero = await PageHero.findOne({ pageKey });
+
+    if (!hero) {
+      return res.status(404).json({
+        success: false,
+        message: "Page hero not found.",
+      });
+    }
+
+    if (!hero.bannerImage) {
+      return res.status(400).json({
+        success: false,
+        message: "No hero image available to remove.",
+      });
+    }
+
+    const oldImageUrl = hero.bannerImage;
+
+    const oldPublicId =
+      hero.bannerImagePublicId ||
+      getCloudinaryPublicId(oldImageUrl);
+
+    // First clear DB image fields
+    hero.bannerImage = "";
+    hero.bannerImagePublicId = "";
+
+    await hero.save();
+
+    // Then remove stored image
+    try {
+      await deleteStoredImage(oldImageUrl, oldPublicId);
+    } catch (cleanupError) {
+      console.error("Cloudinary image removal failed:", cleanupError);
+
+      return res.status(200).json({
+        success: true,
+        message:
+          "Image removed from CMS, but Cloudinary cleanup needs attention.",
+        warning: cleanupError.message,
+        data: hero,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Hero image removed successfully.",
+      data: hero,
+    });
+  } catch (error) {
+    console.error("Remove page hero image error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to remove hero image.",
+      error: error.message,
+    });
+  }
+};
+
+// DELETE COMPLETE PAGE HERO
 export const deletePageHero = async (req, res) => {
   try {
     const { pageKey } = req.params;
@@ -224,7 +378,7 @@ export const deletePageHero = async (req, res) => {
       });
     }
 
-    const hero = await PageHero.findOneAndDelete({ pageKey });
+    const hero = await PageHero.findOne({ pageKey });
 
     if (!hero) {
       return res.status(404).json({
@@ -233,7 +387,18 @@ export const deletePageHero = async (req, res) => {
       });
     }
 
-    deleteUploadedImage(hero.bannerImage);
+    // Delete DB document
+    await PageHero.deleteOne({ _id: hero._id });
+
+    // Cleanup image
+    try {
+      await deleteStoredImage(
+        hero.bannerImage,
+        hero.bannerImagePublicId
+      );
+    } catch (cleanupError) {
+      console.error("Hero image cleanup failed:", cleanupError);
+    }
 
     return res.status(200).json({
       success: true,
