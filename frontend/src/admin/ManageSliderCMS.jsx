@@ -1332,7 +1332,7 @@ function startEdit(item) {
               <div>
                 <label className="mb-1 block text-sm font-medium">Title</label>
                 <input
-                  required
+                  // required
                   className={inputClass}
                   value={card.title}
                   onChange={(e) =>
