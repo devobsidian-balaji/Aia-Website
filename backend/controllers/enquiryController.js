@@ -1,5 +1,6 @@
 
 import Enquiry from "../models/Enquiry.js";
+import FormSubmission from "../models/FormSubmission.js";
 
 // =====================================================
 // CATEGORY OPTIONS
@@ -203,6 +204,23 @@ export const createEnquiry = async (req, res) => {
       phoneNumber: normalizedPhone,
       message: message?.trim() || "",
     });
+
+    await FormSubmission.create({
+  formType: "general-inquiry",
+  sourcePage: req.headers.referer || "",
+  data: {
+    category: category.trim(),
+    selectedOption: selectedOption.trim(),
+    ecosystem: category.trim(),
+    manufacturingSector: selectedOption.trim(),
+    fullName: fullName.trim(),
+    email: email.trim().toLowerCase(),
+    companyName: companyName.trim(),
+    website: normalizedWebsite,
+    phoneNumber: normalizedPhone,
+    message: message?.trim() || "",
+  },
+});
 
     return res.status(201).json({
       success: true,

@@ -56,9 +56,18 @@ import AddNews from "./AddNews.jsx";
 import AllNews from "./AllNews.jsx";
 import AddArticle from "./AddArticle.jsx";
 import ManagePageHero from "./ManagePageHero.jsx";
+import { logoutAdmin } from "../services/adminAuth.js";
+import FormSubmissionsCMS from "./FormSubmissionsCMS.jsx";
 
 export default function AdminLayout({ onExitAdmin }) {
   const navigate = useNavigate();
+
+const handleViewWebsite = () => {
+  navigate("/", { replace: true });
+};
+
+
+
   const { tab: urlTab } = useParams();
   const [currentTab, setCurrentTab] = useState(urlTab || "dashboard");
   const [editingArticle, setEditingArticle] = useState(null);
@@ -174,11 +183,24 @@ export default function AdminLayout({ onExitAdmin }) {
     setMobileSidebarOpen(false);
   };
 
-  const handleExitAdmin = () => {
-    if (onExitAdmin) onExitAdmin();
-    navigate("/");
-  };
+  // const handleExitAdmin = () => {
+  //   if (onExitAdmin) onExitAdmin();
+  //   navigate("/");
+  // };
+//   const handleExitAdmin = async () => {
+//   await logoutAdmin();
+//   navigate("/admin", { replace: true });
+// };
 
+const handleExitAdmin = async () => {
+  try {
+    await logoutAdmin();
+  } catch (error) {
+    console.error("Logout error:", error);
+  } finally {
+    navigate("/admin/login", { replace: true });
+  }
+};
   const sidebarWidthClass = sidebarCollapsed ? "w-20" : "w-64";
   const contentMarginClass = sidebarCollapsed ? "md:ml-20" : "md:ml-64";
 
@@ -248,6 +270,18 @@ export default function AdminLayout({ onExitAdmin }) {
               <LayoutDashboard className="w-4 h-4 shrink-0" />
               {!sidebarCollapsed && <span>Dashboard</span>}
             </button>
+
+            <button
+  onClick={() => handleNavigate("form-submissions")}
+  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition ${
+    currentTab === "form-submissions"
+      ? "bg-[#E25238] text-white shadow-md"
+      : "text-gray-500 hover:bg-white/5 hover:text-[#FF6B55]"
+  }`}
+>
+  <Users className="w-4 h-4 shrink-0" />
+  {!sidebarCollapsed && <span>Form Submissions</span>}
+</button>
             <button
               onClick={() => handleNavigate("page-hero-cms")}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
@@ -1009,7 +1043,7 @@ export default function AdminLayout({ onExitAdmin }) {
         {/* Footer Link */}
         <div className="p-4 border-t border-white/10">
           <button
-            onClick={handleExitAdmin}
+            onClick={handleViewWebsite}
             className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-[#E25238] transition shadow-sm"
           >
             <Globe className="w-4 h-4 text-white shrink-0" />
@@ -1047,7 +1081,7 @@ export default function AdminLayout({ onExitAdmin }) {
 
           <div className="flex items-center gap-4">
             <button
-              onClick={handleExitAdmin}
+              onClick={handleViewWebsite}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition"
             >
               <Globe className="w-3.5 h-3.5 text-[#E25238]" />
@@ -1276,6 +1310,7 @@ export default function AdminLayout({ onExitAdmin }) {
               <AllNews onNavigate={handleNavigate} />
             )}
           </div>
+          {currentTab === "form-submissions" && <FormSubmissionsCMS />}
         </main>
       </div>
     </div>

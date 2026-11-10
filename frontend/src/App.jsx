@@ -35,6 +35,9 @@ import NewsDetailsPage from "./pages/publication/news/NewsDetailsPage.jsx";
 import ArticlesPage from "./pages/publication/ArticlesPage.jsx";
 import NewsPage from "./pages/publication/news/NewsPage.jsx";
 import GeneralInquiryPopup from "./components/GeneralInquiryPopup.jsx";
+import AdminLogin from "./admin/AdminLogin.jsx";
+import ProtectedAdminRoute from "./admin/ProtectedAdminRoute.jsx";
+import AdminLoginRoute from "./admin/AdminLoginRoute.jsx";
 
 // Helper to scroll to top automatically on route changes
 function ScrollToTop() {
@@ -162,7 +165,7 @@ export default function App() {
         />
 
         <Route
-          path="/membership/technology-providers"
+          path="/technology-providers-signup"
           element={
             <PublicLayout>
               <TechnologyProvidersPage />
@@ -171,7 +174,7 @@ export default function App() {
         />
 
         <Route
-          path="/membership/system-integrators"
+          path="/system-integrators-signup"
           element={
             <PublicLayout>
               <SystemIntegratorsPage />
@@ -381,11 +384,23 @@ export default function App() {
         />
 
         {/* Admin CMS Routes */}
-        <Route path="/admin" element={<AdminLayout />} />
-        <Route path="/admin/:tab" element={<AdminLayout />} />
+        {/* <Route path="/admin" element={<AdminLayout />} />
+        <Route path="/admin/:tab" element={<AdminLayout />} /> */}
+
+        {/* Admin Login */}
+        <Route path="/admin/login" element={<AdminLoginRoute />} />
+
+        {/* Protected Admin CMS */}
+        <Route path="/admin" element={<ProtectedAdminRoute />}>
+        {/* <Route path="/admin/dashboard" element={<AdminLayout />} /> */}
+        <Route
+        index
+        element={<Navigate to="/admin/dashboard" replace />}
+        />
+        <Route path="/admin/:tab" element={<AdminLayout />} /></Route>
 
         {/* Fallback Catch-all Route */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+         <Route path=":tab" element={<AdminLayout />} />
       </Routes>
     </BrowserRouter>
     

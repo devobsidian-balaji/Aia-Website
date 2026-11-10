@@ -1,5 +1,6 @@
 
 import React from "react";
+import ViewSampleButton from "./common/ViewSampleButton";
 
 const BlendedLearning = ({ sampleUrl = "#" }) => {
   return (
@@ -11,14 +12,17 @@ const BlendedLearning = ({ sampleUrl = "#" }) => {
             Blended learning
           </h2>
 
-          <a
+          {/* <a
             href={sampleUrl}
             target={sampleUrl !== "#" ? "_blank" : undefined}
             rel={sampleUrl !== "#" ? "noopener noreferrer" : undefined}
             className="shrink-0 text-[10px] font-medium text-[#D94F42] underline underline-offset-2 transition-colors hover:text-[#A92F25] sm:text-xs"
           >
             View Sample
-          </a>
+          </a> */}
+          <ViewSampleButton
+           href="/aims-objectives/campus+connect+sampler.pdf"
+          label="View Sample" />
         </div>
 
         {/* Content */}

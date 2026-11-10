@@ -20,6 +20,8 @@ import articleRoutes from "./articleRoutes.js";
 import newsRoutes from "./newsRoutes.js";
 import pageHeroRouter from "./pageHeroRoutes.js";
 import { enquiryRouter } from './enquiryRoutes.js';
+import { formSubmissionRouter } from './formSubmissionRoutes.js';
+import { adminAuthRouter } from './adminAuthRoutes.js';
 
 
 const apiRouter = Router();
@@ -46,5 +48,7 @@ apiRouter.use("/articles", articleRoutes);
 apiRouter.use("/news", newsRoutes);
 apiRouter.use("/page-heroes", pageHeroRouter);
 apiRouter.use("/enquiries", enquiryRouter);
+apiRouter.use("/form-submissions", formSubmissionRouter);
+apiRouter.use("/admin-auth", adminAuthRouter);
 
 export default apiRouter;

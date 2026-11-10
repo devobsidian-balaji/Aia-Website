@@ -396,8 +396,8 @@ const navigation = [
     to: "/membership",
     children: [
       { label: "Member Directory", to: "/membership/member-directory" },
-      { label: "Technology Providers", to: "/membership/technology-providers" },
-      { label: "System Integrators", to: "/membership/system-integrators" },
+      { label: "Technology Providers", to: "/technology-providers-signup" },
+      { label: "System Integrators", to: "/system-integrators-signup" },
     ],
   },
   {

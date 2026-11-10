@@ -9,10 +9,12 @@ import {
   FormSelect,
   FormTextarea,
 } from "../../components/RequestForms/FormFields";
+import { submitFormSubmission } from "../../services/formSubmissionApi";
 
-const API_URL = (
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api"
-).replace(/\/$/, "");
+// const API_URL = (
+//   import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+// ).replace(/\/$/, "");
+
 
 const membershipClasses = [
   {
@@ -289,49 +291,43 @@ export default function RequestFormPage() {
     }));
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setError("");
 
-    if (!formData.membershipClass) {
-      setError("Please select a membership class.");
-      return;
-    }
+const handleSubmit = async (event) => {
+  event.preventDefault();
+  setError("");
 
-    try {
-      setSubmitting(true);
+  if (!formData.membershipClass) {
+    setError("Please select a membership class.");
+    return;
+  }
 
-      const payload = {
-        requestType: type,
-        ...formData,
-      };
+  try {
+    setSubmitting(true);
 
-      // Replace this endpoint with your actual backend endpoint.
-      const response = await fetch(`${API_URL}/membership-requests`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+    const payload = {
+      requestType: type,
+      ...formData,
+    };
 
-      const result = await response.json().catch(() => ({}));
+    const result = await submitFormSubmission({
+      formType: "aia-membership",
+      data: payload,
+    });
 
-      if (!response.ok) {
-        throw new Error(result.message || "Unable to submit application.");
-      }
+    console.log("Membership submission successful:", result);
 
-      setSubmitted(true);
-    } catch (err) {
-      console.error("Request submission error:", err);
-      setError(
-        err.message ||
-          "Something went wrong. Please try again."
-      );
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    setSubmitted(true);
+  } catch (err) {
+    console.error("Request submission error:", err);
+
+    setError(
+      err.message || "Something went wrong. Please try again."
+    );
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   if (!pageTitle) {
     return (
