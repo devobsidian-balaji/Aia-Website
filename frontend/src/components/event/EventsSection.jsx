@@ -82,7 +82,7 @@ const EventCard = ({ event }) => {
           to={`/events/${event.slug}`}
           className="mt-auto w-fit text-xs font-semibold text-[#D94F42] underline underline-offset-2 transition-colors hover:text-[#A92C20]"
         >
-          Read More
+          Event Details
         </Link>
       </div>
     </article>
@@ -224,7 +224,7 @@ export default function EventsSection() {
                 {introContent.eyebrow}
               </span>
 
-              <p className="max-w-sm text-lg font-medium leading-[1.5] sm:text-xl">
+              <p className="relative z-10 max-w-[300px] text-[23px] font-medium leading-[1.18] tracking-[-0.025em] sm:text-[26px] md:text-[20px] lg:text-[24px] xl:text-[24px]">
                 {introContent.description}
               </p>
             </div>

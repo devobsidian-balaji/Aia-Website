@@ -815,10 +815,10 @@ export default function AddEvent({ onEventAdded, onNavigate, eventToEdit = null 
       return;
     }
 
-    if (!eventToEdit && !selectedFile) {
-      setErrorMsg("Please upload an event card image.");
-      return;
-    }
+   if (!eventToEdit && !selectedFile && !previewUrl) {
+  setErrorMsg("Please upload an event card image.");
+  return;
+}
 
     if (!detailPage.hero.title.trim()) {
       setErrorMsg("Detail page hero title is required.");
@@ -849,7 +849,11 @@ export default function AddEvent({ onEventAdded, onNavigate, eventToEdit = null 
       formData.append("slug", createSlug(heading));
 
       // Only send newly selected files. Existing Cloudinary URLs remain untouched.
-      if (selectedFile) formData.append("image", selectedFile);
+      if (selectedFile) {
+  formData.append("image", selectedFile);
+} else if (previewUrl && !previewUrl.startsWith("blob:")) {
+  formData.append("imageUrl", previewUrl);
+}
       if (heroImageFile) formData.append("heroImage", heroImageFile);
 
       // Optional agenda image

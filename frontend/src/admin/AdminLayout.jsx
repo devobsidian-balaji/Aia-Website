@@ -358,7 +358,7 @@ export default function AdminLayout({ onExitAdmin }) {
                     All What AIA Cards
                   </button>
 
-                  <button
+                  {/* <button
                     onClick={() => handleNavigate("slider-cms")}
                     className={`w-full rounded-lg px-2.5 py-1.5 text-left text-xs transition ${
                       currentTab === "slider-cms"
@@ -367,7 +367,7 @@ export default function AdminLayout({ onExitAdmin }) {
                     }`}
                   >
                     Slider CMS
-                  </button>
+                  </button> */}
 
                   <button
                     onClick={() => handleNavigate("home-why-join-cms")}
@@ -1091,13 +1091,13 @@ export default function AdminLayout({ onExitAdmin }) {
               <AllWhatAIADoes onNavigate={handleNavigate} />
             )}
 
-            {currentTab === "slider-cms" && (
+            {/* {currentTab === "slider-cms" && (
               <ManageSliderCMS
                 key="home-slider-cms"
                 defaultPageKey="home"
                 defaultSectionKey="home-slider"
               />
-            )}
+            )} */}
 
             {/* Page-specific slider CMS instances */}
             {currentTab === "membership-slider-cms" && (
