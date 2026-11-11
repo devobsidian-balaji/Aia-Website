@@ -1,9 +1,20 @@
-import express from 'express';
-import { getAboutContents, createAboutContent, updateAboutContent, deleteAboutContent } from '../controllers/aboutController.js';
+
+import express from "express";
+import { adminAuth } from "../middleware/adminAuth.js";
+
+import {
+  getAboutContents,
+  createAboutContent,
+  updateAboutContent,
+  deleteAboutContent,
+} from "../controllers/aboutController.js";
 
 export const aboutRouter = express.Router();
 
-aboutRouter.get('/', getAboutContents);
-aboutRouter.post('/', createAboutContent);
-aboutRouter.put('/:id', updateAboutContent);
-aboutRouter.delete('/:id', deleteAboutContent);
+// Public
+aboutRouter.get("/", getAboutContents);
+
+// Admin only
+aboutRouter.post("/", adminAuth, createAboutContent);
+aboutRouter.put("/:id", adminAuth, updateAboutContent);
+aboutRouter.delete("/:id", adminAuth, deleteAboutContent);

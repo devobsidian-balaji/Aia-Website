@@ -1,16 +1,22 @@
-import express from 'express';
-import { 
-  getPublications, 
+
+import express from "express";
+import { adminAuth } from "../middleware/adminAuth.js";
+
+import {
+  getPublications,
   getPublicationById,
-  createPublication, 
-  updatePublication, 
-  deletePublication 
-} from '../controllers/publicationController.js';
+  createPublication,
+  updatePublication,
+  deletePublication,
+} from "../controllers/publicationController.js";
 
 export const publicationRouter = express.Router();
 
-publicationRouter.get('/', getPublications);
-publicationRouter.get('/:id', getPublicationById);
-publicationRouter.post('/', createPublication);
-publicationRouter.put('/:id', updatePublication);
-publicationRouter.delete('/:id', deletePublication);
+// Public
+publicationRouter.get("/", getPublications);
+publicationRouter.get("/:id", getPublicationById);
+
+// Admin only
+publicationRouter.post("/", adminAuth, createPublication);
+publicationRouter.put("/:id", adminAuth, updatePublication);
+publicationRouter.delete("/:id", adminAuth, deletePublication);

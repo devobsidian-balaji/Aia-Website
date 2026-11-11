@@ -1,4 +1,6 @@
+
 import express from "express";
+import { adminAuth } from "../middleware/adminAuth.js";
 
 import upload from "../middleware/homeFeatureUpload.js";
 
@@ -13,28 +15,31 @@ import {
 
 const router = express.Router();
 
-// Public routes
+// Public route
 router.get("/:pageKey", getHomeFeatures);
 
-// Admin routes
-router.get("/admin/:pageKey", getAdminHomeFeatures);
+// Admin only routes
+router.get("/admin/:pageKey", adminAuth, getAdminHomeFeatures);
 
-router.put("/admin/:pageKey", saveHomeFeatureSettings);
+router.put("/admin/:pageKey", adminAuth, saveHomeFeatureSettings);
 
 router.post(
   "/admin/:pageKey/items",
+  adminAuth,
   upload.single("image"),
   createHomeFeature
 );
 
 router.put(
   "/admin/:pageKey/items/:itemId",
+  adminAuth,
   upload.single("image"),
   updateHomeFeature
 );
 
 router.delete(
   "/admin/:pageKey/items/:itemId",
+  adminAuth,
   deleteHomeFeature
 );
 

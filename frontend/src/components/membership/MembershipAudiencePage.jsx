@@ -507,33 +507,7 @@ export default function MembershipAudiencePage({ data }) {
             <div className="mt-7">
               <MembershipFeeTable rows={data.feeStructure} />
             </div>
-          </div>
-
-          {/* Right Sidebar */}
-          <aside className="space-y-5 lg:col-span-5">
-            <MembershipRegistrationForm
-              onSubmit={handleRegistration}
-            />
-
-            <div className="flex flex-col">
-              <h1 className="capitalize">
-                Join Our {data.slug}
-              </h1>
-
-              <Link
-                to="/request-form/membership"
-                className="mt-3 w-fit rounded-lg bg-gradient-to-r from-[#D92716] via-[#E83D2B] to-[#F17C6D] py-3 px-4 text-sm font-semibold text-white transition hover:brightness-95"
-              >
-                Explore Membership
-              </Link>
-            </div>
-
-            <MembershipPartners partners={data.partners} />
-          </aside>
-
-        </div>
-
-        {/* Benefits */}
+            {/* Benefits */}
         <section className="mt-12 max-w-4xl sm:mt-16">
           <h2 className="mb-7 text-xl font-black text-[#263247]">
             {data.benefitsTitle}
@@ -553,6 +527,33 @@ export default function MembershipAudiencePage({ data }) {
             ))}
           </div>
         </section>
+          </div>
+
+          {/* Right Sidebar */}
+          <aside className="space-y-5 lg:col-span-5">
+            <MembershipRegistrationForm
+              onSubmit={handleRegistration}
+            />
+
+            {/* <div className="flex flex-col">
+              <h1 className="capitalize">
+                Join Our {data.slug}
+              </h1>
+
+              <Link
+                to="/request-form/membership"
+                className="mt-3 w-fit rounded-lg bg-gradient-to-r from-[#D92716] via-[#E83D2B] to-[#F17C6D] py-3 px-4 text-sm font-semibold text-white transition hover:brightness-95"
+              >
+                Explore Membership
+              </Link>
+            </div> */}
+
+            <MembershipPartners partners={data.partners} />
+          </aside>
+
+        </div>
+
+        
 
         {/* FAQ */}
         <MembershipFAQ faqs={data.faqs} />

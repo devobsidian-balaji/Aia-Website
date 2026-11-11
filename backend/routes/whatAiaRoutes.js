@@ -1,4 +1,6 @@
+
 import express from "express";
+import { adminAuth } from "../middleware/adminAuth.js";
 
 import {
   getWhatAia,
@@ -11,14 +13,16 @@ import {
 
 export const whatAiaRouter = express.Router();
 
+// Public
 whatAiaRouter.get("/", getWhatAia);
 
-whatAiaRouter.get("/admin", getAdminWhatAia);
+// Admin only
+whatAiaRouter.get("/admin", adminAuth, getAdminWhatAia);
 
-whatAiaRouter.put("/", updateWhatAiaSection);
+whatAiaRouter.put("/", adminAuth, updateWhatAiaSection);
 
-whatAiaRouter.post("/cards", createWhatAiaCard);
+whatAiaRouter.post("/cards", adminAuth, createWhatAiaCard);
 
-whatAiaRouter.put("/cards/:cardId", updateWhatAiaCard);
+whatAiaRouter.put("/cards/:cardId", adminAuth, updateWhatAiaCard);
 
-whatAiaRouter.delete("/cards/:cardId", deleteWhatAiaCard);
+whatAiaRouter.delete("/cards/:cardId", adminAuth, deleteWhatAiaCard);

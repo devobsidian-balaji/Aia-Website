@@ -67,8 +67,10 @@
 
 
 
+
 import express from "express";
 import bannerUpload from "../middleware/bannerUpload.js";
+import { adminAuth } from "../middleware/adminAuth.js";
 
 import {
   getBanners,
@@ -79,25 +81,28 @@ import {
 
 export const bannerRouter = express.Router();
 
-// Get all banners
+// Public: Website can fetch banners without login
 bannerRouter.get("/", getBanners);
 
-// Create Home Hero
+// Admin only: Create Home Hero
 bannerRouter.post(
   "/",
+  adminAuth,
   bannerUpload.single("video"),
   createBanner
 );
 
-// Update Home Hero
+// Admin only: Update Home Hero
 bannerRouter.put(
   "/:id",
+  adminAuth,
   bannerUpload.single("video"),
   updateBanner
 );
 
-// Delete Home Hero
+// Admin only: Delete Home Hero
 bannerRouter.delete(
   "/:id",
+  adminAuth,
   deleteBanner
 );

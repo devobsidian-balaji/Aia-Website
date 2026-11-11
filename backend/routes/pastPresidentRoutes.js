@@ -1,14 +1,20 @@
-import express from 'express';
-import { 
-  getPastPresidents, 
-  createPastPresident, 
-  updatePastPresident, 
-  deletePastPresident 
-} from '../controllers/pastPresidentController.js';
+
+import express from "express";
+import { adminAuth } from "../middleware/adminAuth.js";
+
+import {
+  getPastPresidents,
+  createPastPresident,
+  updatePastPresident,
+  deletePastPresident,
+} from "../controllers/pastPresidentController.js";
 
 export const pastPresidentRouter = express.Router();
 
-pastPresidentRouter.get('/', getPastPresidents);
-pastPresidentRouter.post('/', createPastPresident);
-pastPresidentRouter.put('/:id', updatePastPresident);
-pastPresidentRouter.delete('/:id', deletePastPresident);
+// Public
+pastPresidentRouter.get("/", getPastPresidents);
+
+// Admin only
+pastPresidentRouter.post("/", adminAuth, createPastPresident);
+pastPresidentRouter.put("/:id", adminAuth, updatePastPresident);
+pastPresidentRouter.delete("/:id", adminAuth, deletePastPresident);

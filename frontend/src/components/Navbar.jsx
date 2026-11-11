@@ -508,13 +508,13 @@ const isDropdownActive = (item) => {
 
           <div className="flex items-center gap-3 sm:gap-4">
 
-            <Link
+            {/* <Link
               to="/admin"
               className="inline-flex items-center gap-1.5 rounded-full border border-blue-400/40 bg-blue-600/20 px-3 py-1 text-[10px] font-semibold text-blue-200 transition hover:bg-blue-600 hover:text-white"
             >
               <ShieldCheck size={13} />
               Admin CMS
-            </Link>
+            </Link> */}
 
             <div className="flex items-center gap-2">
               <a

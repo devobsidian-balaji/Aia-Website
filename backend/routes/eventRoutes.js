@@ -31,7 +31,9 @@
 
 
 
+
 import express from "express";
+import { adminAuth } from "../middleware/adminAuth.js";
 
 import {
   getEvents,
@@ -46,12 +48,27 @@ import { eventImageUpload } from "../config/upload.js";
 
 export const eventRouter = express.Router();
 
+// Public website routes
 eventRouter.get("/", getEvents);
-eventRouter.get("/admin", getAdminEvents);
 eventRouter.get("/slug/:slug", getEventBySlug);
 
-eventRouter.post("/", eventImageUpload.any(), createEvent);
-eventRouter.put("/:id", eventImageUpload.any(), updateEvent);
-eventRouter.delete("/:id", deleteEvent);
+// Admin only
+eventRouter.get("/admin", adminAuth, getAdminEvents);
+
+eventRouter.post(
+  "/",
+  adminAuth,
+  eventImageUpload.any(),
+  createEvent
+);
+
+eventRouter.put(
+  "/:id",
+  adminAuth,
+  eventImageUpload.any(),
+  updateEvent
+);
+
+eventRouter.delete("/:id", adminAuth, deleteEvent);
 
 export default eventRouter;

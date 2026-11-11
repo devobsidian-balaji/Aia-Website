@@ -1,9 +1,20 @@
-import express from 'express';
-import { getServices, createService, updateService, deleteService } from '../controllers/serviceController.js';
+
+import express from "express";
+import { adminAuth } from "../middleware/adminAuth.js";
+
+import {
+  getServices,
+  createService,
+  updateService,
+  deleteService,
+} from "../controllers/serviceController.js";
 
 export const serviceRouter = express.Router();
 
-serviceRouter.get('/', getServices);
-serviceRouter.post('/', createService);
-serviceRouter.put('/:id', updateService);
-serviceRouter.delete('/:id', deleteService);
+// Public
+serviceRouter.get("/", getServices);
+
+// Admin only
+serviceRouter.post("/", adminAuth, createService);
+serviceRouter.put("/:id", adminAuth, updateService);
+serviceRouter.delete("/:id", adminAuth, deleteService);

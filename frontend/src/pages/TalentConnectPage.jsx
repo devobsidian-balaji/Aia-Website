@@ -17,7 +17,7 @@ import DynamicPageHero from "../components/common/DynamicPageHero";
 
 
 export default function TalentConnectPage() {
-  console.log(talentprograms)
+  // console.log(talentprograms)
   return (
     <div className="w-full font-sans bg-white">
       {/* 1. Full-Bleed Membership Hero */}

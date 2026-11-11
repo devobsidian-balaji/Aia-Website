@@ -485,6 +485,11 @@ export default function MembershipRegistrationForm({
     "mt-1.5 block text-xs text-red-600";
 
   return (
+     <div className="w-full rounded-xl border border-[#F16B5D] bg-white p-4 shadow-[0_10px_35px_rgba(231,111,98,0.08)] sm:p-5">
+       <h3 className="mb-2 text-lg font-bold text-[#F16B5D] sm:text-xl">
+         Registration form
+       </h3>
+       <p className="mb-5">Fill the form below and our team will get you started.</p>
     <form onSubmit={handleSubmit} noValidate className="w-full">
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
 
@@ -717,14 +722,15 @@ export default function MembershipRegistrationForm({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="mt-6 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#E52B18] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#C92313] disabled:cursor-not-allowed disabled:opacity-60"
+        className="w-full mt-6 inline-flex min-h-[48px] items-center justify-center gap-2 rounded-lg bg-[#E52B18] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#C92313] disabled:cursor-not-allowed disabled:opacity-60"
       >
         {isSubmitting && (
           <Loader2 size={17} className="animate-spin" />
         )}
 
-        {isSubmitting ? "Submitting..." : "Submit Registration"}
+        {isSubmitting ? "Submitting..." : "Submit"}
       </button>
     </form>
+    </div>
   );
 }

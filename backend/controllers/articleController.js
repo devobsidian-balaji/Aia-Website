@@ -675,11 +675,11 @@ const deleteCloudinaryImage = async (publicId) => {
       invalidate: true,
     });
 
-    console.log(
-      "Cloudinary image deletion:",
-      publicId,
-      result.result
-    );
+    // console.log(
+    //   "Cloudinary image deletion:",
+    //   publicId,
+    //   result.result
+    // );
   } catch (error) {
     console.error(
       `Cloudinary deletion failed for ${publicId}:`,
@@ -720,19 +720,19 @@ const collectArticlePublicIds = (article) => {
 const uploadFile = async (file, folder) => {
   if (!file) return null;
 
-  console.log("=================================");
-  console.log("ARTICLE CLOUDINARY UPLOAD");
-  console.log("File:", file.originalname);
-  console.log("Folder:", folder);
-  console.log("=================================");
+  // console.log("=================================");
+  // console.log("ARTICLE CLOUDINARY UPLOAD");
+  // console.log("File:", file.originalname);
+  // console.log("Folder:", folder);
+  // console.log("=================================");
 
   const result = await uploadToCloudinary(
     file.path,
     folder
   );
 
-  console.log("ARTICLE IMAGE UPLOADED:", result.url);
-  console.log("ARTICLE PUBLIC ID:", result.publicId);
+  // console.log("ARTICLE IMAGE UPLOADED:", result.url);
+  // console.log("ARTICLE PUBLIC ID:", result.publicId);
 
   return result;
 };
@@ -1025,17 +1025,17 @@ export const getArticles = async (req, res) => {
   const startTime = Date.now();
 
   try {
-    console.log("\n========== GET ARTICLES ==========");
-    console.log("MongoDB State:", mongoose.connection.readyState);
-    console.log("Request Query:", req.query);
+    // console.log("\n========== GET ARTICLES ==========");
+    // console.log("MongoDB State:", mongoose.connection.readyState);
+    // console.log("Request Query:", req.query);
 
     const filter =
       req.query.admin === "true"
         ? {}
         : { isActive: { $ne: false } };
 
-    console.log("MongoDB Filter:", filter);
-    console.log("Starting Article.find()...");
+    // console.log("MongoDB Filter:", filter);
+    // console.log("Starting Article.find()...");
 
     const articles = await Article.find(filter)
       .sort({
@@ -1045,9 +1045,9 @@ export const getArticles = async (req, res) => {
       .lean()
       .maxTimeMS(15000);
 
-    console.log("Articles fetched:", articles.length);
-    console.log("Query duration:", Date.now() - startTime, "ms");
-    console.log("==================================\n");
+    // console.log("Articles fetched:", articles.length);
+    // console.log("Query duration:", Date.now() - startTime, "ms");
+    // console.log("==================================\n");
 
     return res.json({
       success: true,
@@ -1168,10 +1168,10 @@ export const createArticle = async (req, res) => {
 
     const article = await Article.create(payload);
 
-    console.log(
-      "Article created successfully:",
-      article._id
-    );
+    // console.log(
+    //   "Article created successfully:",
+    //   article._id
+    // );
 
     return res.status(201).json({
       success: true,
@@ -1333,10 +1333,10 @@ export const updateArticle = async (req, res) => {
       )
     );
 
-    console.log(
-      "Article updated successfully:",
-      article._id
-    );
+    // console.log(
+    //   "Article updated successfully:",
+    //   article._id
+    // );
 
     return res.json({
       success: true,

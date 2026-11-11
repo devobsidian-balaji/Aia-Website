@@ -1,14 +1,20 @@
-import express from 'express';
-import { 
-  getInitiatives, 
-  createInitiative, 
-  updateInitiative, 
-  deleteInitiative 
-} from '../controllers/initiativeController.js';
+
+import express from "express";
+import { adminAuth } from "../middleware/adminAuth.js";
+
+import {
+  getInitiatives,
+  createInitiative,
+  updateInitiative,
+  deleteInitiative,
+} from "../controllers/initiativeController.js";
 
 export const initiativeRouter = express.Router();
 
-initiativeRouter.get('/', getInitiatives);
-initiativeRouter.post('/', createInitiative);
-initiativeRouter.put('/:id', updateInitiative);
-initiativeRouter.delete('/:id', deleteInitiative);
+// Public
+initiativeRouter.get("/", getInitiatives);
+
+// Admin only
+initiativeRouter.post("/", adminAuth, createInitiative);
+initiativeRouter.put("/:id", adminAuth, updateInitiative);
+initiativeRouter.delete("/:id", adminAuth, deleteInitiative);

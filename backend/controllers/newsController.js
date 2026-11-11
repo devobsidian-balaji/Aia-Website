@@ -85,11 +85,11 @@ const deleteCloudinaryImage = async (publicId) => {
       invalidate: true,
     });
 
-    console.log(
-      "Cloudinary image deletion:",
-      publicId,
-      result.result
-    );
+    // console.log(
+    //   "Cloudinary image deletion:",
+    //   publicId,
+    //   result.result
+    // );
   } catch (error) {
     console.error(
       `Cloudinary deletion failed for ${publicId}:`,
@@ -126,19 +126,19 @@ const collectNewsPublicIds = (news) => {
 const uploadFile = async (file, folder) => {
   if (!file) return null;
 
-  console.log("---------------------------------");
-  console.log("NEWS CLOUDINARY UPLOAD");
-  console.log("File:", file.originalname);
-  console.log("Folder:", folder);
-  console.log("---------------------------------");
+  // console.log("---------------------------------");
+  // console.log("NEWS CLOUDINARY UPLOAD");
+  // console.log("File:", file.originalname);
+  // console.log("Folder:", folder);
+  // console.log("---------------------------------");
 
   const result = await uploadToCloudinary(
     file.path,
     folder
   );
 
-  console.log("NEWS IMAGE UPLOADED:", result.url);
-  console.log("NEWS PUBLIC ID:", result.publicId);
+  // console.log("NEWS IMAGE UPLOADED:", result.url);
+  // console.log("NEWS PUBLIC ID:", result.publicId);
 
   return result;
 };
@@ -523,10 +523,10 @@ export const createNews = async (req, res) => {
 
     const news = await News.create(payload);
 
-    console.log(
-      "News created successfully:",
-      news._id
-    );
+    // console.log(
+    //   "News created successfully:",
+    //   news._id
+    // );
 
     return res.status(201).json({
       success: true,
@@ -702,10 +702,10 @@ export const updateNews = async (req, res) => {
       )
     );
 
-    console.log(
-      "News updated successfully:",
-      news._id
-    );
+    // console.log(
+    //   "News updated successfully:",
+    //   news._id
+    // );
 
     return res.json({
       success: true,

@@ -1,4 +1,6 @@
+
 import express from "express";
+import { adminAuth } from "../middleware/adminAuth.js";
 
 import {
   getPublicWhyJoin,
@@ -16,28 +18,32 @@ const router = express.Router();
 // Public
 router.get("/:pageKey/:sectionKey", getPublicWhyJoin);
 
-// Admin
-router.get("/admin/:pageKey/:sectionKey", getAdminWhyJoin);
+// Admin only
+router.get("/admin/:pageKey/:sectionKey", adminAuth, getAdminWhyJoin);
 
 router.put(
   "/admin/:pageKey/:sectionKey",
+  adminAuth,
   saveWhyJoinSettings
 );
 
 router.post(
   "/admin/:pageKey/:sectionKey/items",
+  adminAuth,
   sliderImageUpload.single("image"),
   createWhyJoinItem
 );
 
 router.put(
   "/admin/:pageKey/:sectionKey/items/:itemId",
+  adminAuth,
   sliderImageUpload.single("image"),
   updateWhyJoinItem
 );
 
 router.delete(
   "/admin/:pageKey/:sectionKey/items/:itemId",
+  adminAuth,
   deleteWhyJoinItem
 );
 

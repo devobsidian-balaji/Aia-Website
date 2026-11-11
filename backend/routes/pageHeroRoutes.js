@@ -1,4 +1,6 @@
+
 import express from "express";
+import { adminAuth } from "../middleware/adminAuth.js";
 
 import {
   getAllPageHeroes,
@@ -12,65 +14,30 @@ import { sliderImageUpload } from "../config/upload.js";
 
 const pageHeroRouter = express.Router();
 
-/* =========================================
-   GET ALL PAGE HEROES
-   GET /api/page-heroes
-========================================= */
-
+// Public routes
 pageHeroRouter.get("/", getAllPageHeroes);
-
-
-/* =========================================
-   GET SINGLE PAGE HERO
-   GET /api/page-heroes/:pageKey
-========================================= */
-
 pageHeroRouter.get("/:pageKey", getPageHero);
 
-
-/* =========================================
-   CREATE / UPDATE PAGE HERO
-   POST /api/page-heroes
-   FormData field: image
-========================================= */
-
+// Admin only: Create / Update Page Hero
 pageHeroRouter.post(
   "/",
+  adminAuth,
   sliderImageUpload.single("image"),
   savePageHero
 );
 
-
-/* =========================================
-   REMOVE ONLY HERO IMAGE
-   DELETE /api/page-heroes/:pageKey/image
-
-   - Removes image from MongoDB
-   - Removes image from Cloudinary
-   - Preserves heading and other settings
-========================================= */
-
+// Admin only: Remove Hero Image
 pageHeroRouter.delete(
   "/:pageKey/image",
+  adminAuth,
   removePageHeroImage
 );
 
-
-/* =========================================
-   DELETE COMPLETE PAGE HERO
-   DELETE /api/page-heroes/:pageKey
-
-   - Deletes complete hero document
-========================================= */
-
+// Admin only: Delete Complete Page Hero
 pageHeroRouter.delete(
   "/:pageKey",
+  adminAuth,
   deletePageHero
 );
-
-
-/* =========================================
-   DEFAULT EXPORT
-========================================= */
 
 export default pageHeroRouter;
