@@ -15,24 +15,19 @@ const sectorList = [
     id: 'pharma',
     title: 'Pharma',
     image: '/industry-pharma.png',
-  },
-  {
-    id: 'pharmaa',
-    title: 'Pharmaz',
-    image: '/industry-pharma.png',
-  },
+  }
 ]
 
 export default function IndustrySectors() {
   const [startIndex, setStartIndex] = useState(0)
 
-  const handlePrev = () => {
-    setStartIndex((prev) => (prev === 0 ? sectorList.length - 1 : prev - 1))
-  }
+  // const handlePrev = () => {
+  //   setStartIndex((prev) => (prev === 0 ? sectorList.length - 1 : prev - 1))
+  // }
 
-  const handleNext = () => {
-    setStartIndex((prev) => (prev === sectorList.length - 1 ? 0 : prev + 1))
-  }
+  // const handleNext = () => {
+  //   setStartIndex((prev) => (prev === sectorList.length - 1 ? 0 : prev + 1))
+  // }
 
   return (
     <section id="sectors" className="py-20 bg-white font-sans relative overflow-hidden">
@@ -49,7 +44,7 @@ export default function IndustrySectors() {
           </h2>
 
           {/* Carousel Arrows on the far right */}
-          <div className="absolute right-0 flex items-center gap-3">
+          {/* <div className="absolute right-0 flex items-center gap-3">
             <button 
               onClick={handlePrev}
               aria-label="Previous Industry"
@@ -71,7 +66,7 @@ export default function IndustrySectors() {
                 <path d="M20 9H9.5A5.5 5.5 0 0 0 4 14.5V16" />
               </svg>
             </button>
-          </div>
+          </div> */}
         </div>
 
         {/* 3 Industry Cards Grid matching Image 1 exactly without duplicate labels */}
