@@ -38,6 +38,8 @@ import GeneralInquiryPopup from "./components/GeneralInquiryPopup.jsx";
 import AdminLogin from "./admin/AdminLogin.jsx";
 import ProtectedAdminRoute from "./admin/ProtectedAdminRoute.jsx";
 import AdminLoginRoute from "./admin/AdminLoginRoute.jsx";
+import SearchPage from "./pages/SearchPage.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 // Helper to scroll to top automatically on route changes
 function ScrollToTop() {
@@ -319,6 +321,15 @@ export default function App() {
             </PublicLayout>
           }
         />
+        {/* Global Website Search */}
+<Route
+  path="/search"
+  element={
+    <PublicLayout>
+      <SearchPage />
+    </PublicLayout>
+  }
+/>
 
         {/* /membership-directory /membership-directory */}
 
@@ -400,7 +411,8 @@ export default function App() {
         <Route path="/admin/:tab" element={<AdminLayout />} /></Route>
 
         {/* Fallback Catch-all Route */}
-         <Route path=":tab" element={<AdminLayout />} />
+         {/* <Route path=":tab" element={<AdminLayout />} /> */}
+         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
     

@@ -23,6 +23,7 @@ import { enquiryRouter } from './enquiryRoutes.js';
 import { formSubmissionRouter } from './formSubmissionRoutes.js';
 import { adminAuthRouter } from './adminAuthRoutes.js';
 import memberRoutes from "./memberRoutes.js";
+import searchRouter from './searchRoutes.js';
 
 
 const apiRouter = Router();
@@ -52,5 +53,6 @@ apiRouter.use("/enquiries", enquiryRouter);
 apiRouter.use("/form-submissions", formSubmissionRouter);
 apiRouter.use("/admin-auth", adminAuthRouter);
 apiRouter.use("/members", memberRoutes);
+apiRouter.use("/search", searchRouter);
 
 export default apiRouter;
