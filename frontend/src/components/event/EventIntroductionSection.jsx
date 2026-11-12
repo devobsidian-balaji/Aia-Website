@@ -323,6 +323,7 @@
 // }
 
 
+
 import React from "react";
 import {
   CalendarDays,
@@ -353,16 +354,87 @@ function SidebarCard({ title, children }) {
   );
 }
 
+// Google Calendar expects YYYYMMDDTHHmmss format.
+// datetime-local values are interpreted in Asia/Kolkata.
+function formatGoogleCalendarDate(value) {
+  if (!value) return "";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+
+  const values = {};
+
+  parts.forEach((part) => {
+    values[part.type] = part.value;
+  });
+
+  return (
+    `${values.year}${values.month}${values.day}` +
+    `T${values.hour}${values.minute}${values.second}`
+  );
+}
+
+function getGoogleCalendarLink(event = {}) {
+  if (!event.startDateTime || !event.endDateTime) {
+    return "";
+  }
+
+  const start = formatGoogleCalendarDate(event.startDateTime);
+  const end = formatGoogleCalendarDate(event.endDateTime);
+
+  if (!start || !end) return "";
+
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: event.title || "AIA Event",
+    dates: `${start}/${end}`,
+    details: event.description || "",
+    location: event.venue || "",
+    ctz: "Asia/Kolkata",
+  });
+
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+function getGoogleMapsLink(event = {}) {
+  if (event.locationLink) {
+    return event.locationLink;
+  }
+
+  if (event.venue) {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+      event.venue
+    )}`;
+  }
+
+  return "";
+}
+
 function EventInformation({ event = {} }) {
   const hasInfo =
     event.date ||
     event.venue ||
     event.time ||
-    event.saveDateLink ||
     event.registrationLink ||
-    event.locationLink;
+    event.locationLink ||
+    (event.startDateTime && event.endDateTime);
 
   if (!hasInfo) return null;
+
+  const calendarLink = getGoogleCalendarLink(event);
+  const mapsLink = getGoogleMapsLink(event);
 
   return (
     <div className="rounded-[9px] border border-[#F16B5C] bg-[#FFFBFA] p-5 shadow-[0_8px_25px_rgba(231,107,92,0.06)] sm:p-7">
@@ -377,6 +449,7 @@ function EventInformation({ event = {} }) {
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#D92315] to-[#F16B5C] text-white">
             <MapPin size={16} />
           </div>
+
           <p className="pt-0.5 text-sm leading-relaxed text-[#263247]">
             {event.venue}
           </p>
@@ -388,18 +461,22 @@ function EventInformation({ event = {} }) {
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#D92315] to-[#F16B5C] text-white">
             <Clock3 size={19} />
           </div>
-          <p className="text-sm text-[#263247]">{event.time}</p>
+
+          <p className="text-sm text-[#263247]">
+            {event.time}
+          </p>
         </div>
       )}
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {event.saveDateLink && (
+        {calendarLink && (
           <a
-            href={event.saveDateLink}
+            href={calendarLink}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="flex min-h-[44px] items-center justify-center rounded-[9px] border border-[#F5C8C1] bg-white px-2 py-2 text-center text-sm font-medium text-[#E87565] transition hover:bg-[#FFF1EE]"
           >
+            <CalendarDays size={15} className="mr-2 shrink-0" />
             Save The Date
           </a>
         )}
@@ -408,7 +485,7 @@ function EventInformation({ event = {} }) {
           <a
             href={event.registrationLink}
             target="_blank"
-            rel="noreferrer"
+            rel="noopener noreferrer"
             className="flex min-h-[44px] items-center justify-center rounded-[9px] bg-gradient-to-r from-[#D92315] via-[#E43C2D] to-[#F17B6D] px-2 py-2 text-center text-sm font-medium text-white transition hover:brightness-95"
           >
             Register Now
@@ -416,13 +493,14 @@ function EventInformation({ event = {} }) {
         )}
       </div>
 
-      {event.locationLink && (
+      {mapsLink && (
         <a
-          href={event.locationLink}
+          href={mapsLink}
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="mt-5 flex min-h-[44px] w-full items-center justify-center rounded-[9px] border border-[#F5C8C1] bg-white px-3 py-2 text-center text-sm font-medium text-[#E87565] transition hover:bg-[#FFF1EE]"
         >
+          <MapPin size={15} className="mr-2 shrink-0" />
           Directions to reach the venue
         </a>
       )}
@@ -431,14 +509,22 @@ function EventInformation({ event = {} }) {
 }
 
 function PartnerCard({ partners = [] }) {
-  if (!partners.length) return null;
+  const validPartners = partners.filter(
+    (partner) =>
+      partner &&
+      (partner.logo || partner.logoUrl || partner.imageUrl)
+  );
+
+  if (!validPartners.length) return null;
 
   return (
     <SidebarCard title="Contributing Partners">
       <div className="grid grid-cols-2 gap-3">
-        {partners.map((partner, index) => {
-          const logo = partner.logo || partner.logoUrl || partner.imageUrl;
-          if (!logo) return null;
+        {validPartners.map((partner, index) => {
+          const logo =
+            partner.logo ||
+            partner.logoUrl ||
+            partner.imageUrl;
 
           return (
             <div
@@ -461,11 +547,18 @@ function PartnerCard({ partners = [] }) {
 }
 
 function SupportedByCard({ supporters = [], contact = {} }) {
-  const hasSupporters = supporters.some(
-    (item) => item.logo || item.logoUrl || item.imageUrl
+  const validSupporters = supporters.filter(
+    (item) =>
+      item &&
+      (item.logo || item.logoUrl || item.imageUrl)
   );
 
-  const hasContact = contact.email || contact.phone || contact.website;
+  const hasSupporters = validSupporters.length > 0;
+
+  const hasContact =
+    contact.email ||
+    contact.phone ||
+    contact.website;
 
   if (!hasSupporters && !hasContact) return null;
 
@@ -473,13 +566,11 @@ function SupportedByCard({ supporters = [], contact = {} }) {
     <SidebarCard title="Supported by">
       {hasSupporters && (
         <div className="flex flex-wrap items-center gap-3">
-          {supporters.map((supporter, index) => {
+          {validSupporters.map((supporter, index) => {
             const logo =
               supporter.logo ||
               supporter.logoUrl ||
               supporter.imageUrl;
-
-            if (!logo) return null;
 
             return (
               <img
@@ -505,7 +596,7 @@ function SupportedByCard({ supporters = [], contact = {} }) {
             {contact.email && (
               <a
                 href={`mailto:${contact.email}`}
-                aria-label="Email"
+                aria-label={`Email ${contact.email}`}
                 className="transition hover:text-[#E87565]"
               >
                 <Mail size={17} />
@@ -515,7 +606,7 @@ function SupportedByCard({ supporters = [], contact = {} }) {
             {contact.phone && (
               <a
                 href={`tel:${contact.phone}`}
-                aria-label="Phone"
+                aria-label={`Call ${contact.phone}`}
                 className="transition hover:text-[#E87565]"
               >
                 <Phone size={17} />
@@ -526,7 +617,7 @@ function SupportedByCard({ supporters = [], contact = {} }) {
               <a
                 href={contact.website}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 aria-label="Website"
                 className="transition hover:text-[#E87565]"
               >
@@ -604,7 +695,11 @@ function IntroductionBlocks({ blocks = [] }) {
           );
         }
 
-        if (type === "list" || type === "bullet" || type === "bullets") {
+        if (
+          type === "list" ||
+          type === "bullet" ||
+          type === "bullets"
+        ) {
           const items = Array.isArray(block.items)
             ? block.items
             : [];
@@ -647,6 +742,7 @@ function IntroductionBlocks({ blocks = [] }) {
                       : ""
                 }`}
               />
+
               {block.caption && (
                 <figcaption className="text-xs text-gray-500">
                   {block.caption}
@@ -681,7 +777,9 @@ export default function EventIntroductionSection({
   contact = {},
   className = "",
 }) {
-  const hasNewBlocks = Array.isArray(blocks) && blocks.length > 0;
+  const hasNewBlocks =
+    Array.isArray(blocks) && blocks.length > 0;
+
   const hasLegacySections =
     Array.isArray(sections) && sections.length > 0;
 
@@ -712,14 +810,21 @@ export default function EventIntroductionSection({
           {hasNewBlocks ? (
             <IntroductionBlocks blocks={blocks} />
           ) : (
-            <LegacySections sections={hasLegacySections ? sections : []} />
+            <LegacySections
+              sections={hasLegacySections ? sections : []}
+            />
           )}
         </article>
 
         <aside className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:sticky lg:top-24 lg:grid-cols-1">
           <EventInformation event={event} />
+
           <PartnerCard partners={partners} />
-          <SupportedByCard supporters={supporters} contact={contact} />
+
+          <SupportedByCard
+            supporters={supporters}
+            contact={contact}
+          />
         </aside>
       </div>
     </section>

@@ -114,10 +114,11 @@ live there too.
 
             <div className="pt-2">
               <a 
-                href="#build-factory"
+                href="/contact-us"
                 className="inline-flex items-center justify-center px-7 py-3 rounded-xl border border-[#1F2937] bg-white text-[#1F2937] hover:bg-[#1F2937] hover:text-white font-bold text-sm transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 active:scale-95"
               >
-                Explore the Resource Center
+                {/* Explore the Resource Center */}
+                Contact Us
               </a>
             </div>
           </div>

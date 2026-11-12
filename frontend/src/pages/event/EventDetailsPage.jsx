@@ -266,6 +266,295 @@
 
 
 
+// import React, { useEffect, useState } from "react";
+// import { useParams, Link } from "react-router-dom";
+
+// import { getEventBySlug } from "../../services/api";
+
+// import EventIntroductionSection from "../../components/event/EventIntroductionSection";
+// import EventAgendaSection from "../../components/event/EventAgendaSection";
+// import DynamicContentSection from "../../components/DynamicContentSection";
+// import WhatShouldAttendData from "../../data/eventdata/WhatShouldAttendData";
+
+// function getEventData(response) {
+//   return response?.data?.data || response?.data || response;
+// }
+
+// export default function EventDetailsPage() {
+//   const { slug } = useParams();
+
+//   const [event, setEvent] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState("");
+
+//   useEffect(() => {
+//     let isMounted = true;
+
+//     const fetchEvent = async () => {
+//       try {
+//         setLoading(true);
+//         setError("");
+
+//         const response = await getEventBySlug(slug);
+//         const eventData = getEventData(response);
+
+//         if (!eventData) {
+//           throw new Error("Event not found.");
+//         }
+
+//         if (isMounted) {
+//           setEvent(eventData);
+//         }
+//       } catch (err) {
+//         console.error("Event detail fetch error:", err);
+
+//         if (isMounted) {
+//           setError(
+//             err.response?.data?.message ||
+//               err.message ||
+//               "Unable to load event details."
+//           );
+//         }
+//       } finally {
+//         if (isMounted) {
+//           setLoading(false);
+//         }
+//       }
+//     };
+
+//     if (slug) {
+//       fetchEvent();
+//     }
+
+//     return () => {
+//       isMounted = false;
+//     };
+//   }, [slug]);
+
+//   if (loading) {
+//     return (
+//       <main className="flex min-h-[60vh] items-center justify-center bg-white px-5">
+//         <div className="text-center">
+//           <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-[#FCE5DF] border-t-[#E25238]" />
+//           <p className="mt-4 text-sm text-gray-500">
+//             Loading event details...
+//           </p>
+//         </div>
+//       </main>
+//     );
+//   }
+
+//   if (error || !event) {
+//     return (
+//       <main className="flex min-h-[60vh] items-center justify-center bg-white px-5">
+//         <div className="max-w-md text-center">
+//           <h1 className="text-2xl font-bold text-[#263247]">
+//             Event not found
+//           </h1>
+
+//           <p className="mt-3 text-sm leading-6 text-gray-500">
+//             {error || "This event may have been removed or is unavailable."}
+//           </p>
+
+//           <Link
+//             to="/events"
+//             className="mt-6 inline-flex rounded-xl bg-[#E25238] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#c9442d]"
+//           >
+//             Back to Events
+//           </Link>
+//         </div>
+//       </main>
+//     );
+//   }
+
+//   const detailPage = event.detailPage || {};
+//   const hero = detailPage.hero || {};
+//   const introduction = detailPage.introduction || {};
+//   const agenda = detailPage.agenda || {};
+
+//   const heroImage =
+//     hero.imageUrl ||
+//     hero.image ||
+//     event.imageUrl ||
+//     "";
+
+//   const introductionSections =
+//     introduction.sections || [];
+
+//   const eventInfo = introduction.eventInfo || {};
+
+// const eventVenue =
+//   eventInfo.venue || eventInfo.location || "";
+
+// const eventDate = eventInfo.date || event.date || "";
+
+// const eventTime = eventInfo.time || "";
+
+// const registrationLink = eventInfo.registrationLink || "";
+
+// const locationLink =
+//   eventInfo.locationLink ||
+//   (eventVenue
+//     ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(eventVenue)}`
+//     : "");
+
+//   const agendaItems = agenda.items || [];
+
+//   const contentSections = detailPage.contentSections || [];
+
+//   return (
+//     <main className="min-h-screen overflow-hidden bg-white">
+//       {/* HERO SECTION */}
+//       <section
+//         className={`relative overflow-hidden ${
+//           hero.background === "light"
+//             ? "bg-[#FFF9F7] text-[#263247]"
+//             : "bg-[#172033] text-white"
+//         }`}
+//       >
+//         <div className="mx-auto grid min-h-[480px] max-w-[1440px] grid-cols-1 items-center gap-10 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-2 lg:px-12">
+//           <div className="relative z-10">
+//             {hero.eyebrow && (
+//               <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#E87565]">
+//                 {hero.eyebrow}
+//               </p>
+//             )}
+
+//             <h1 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+//               {hero.title || event.title}
+//             </h1>
+
+//             {hero.subtitle && (
+//               <h2 className="mt-5 text-lg font-semibold leading-relaxed text-[#E87565] sm:text-xl">
+//                 {hero.subtitle}
+//               </h2>
+//             )}
+
+//             {(hero.description || event.description) && (
+//               <p
+//                 className={`mt-5 max-w-2xl text-sm leading-7 sm:text-base ${
+//                   hero.background === "light"
+//                     ? "text-[#596579]"
+//                     : "text-white/70"
+//                 }`}
+//               >
+//                 {hero.description || event.description}
+//               </p>
+//             )}
+
+//             {event.date && (
+//               <p className="mt-7 inline-flex rounded-full bg-[#E87565] px-5 py-2.5 text-xs font-bold text-white">
+//                 {event.date}
+//               </p>
+//             )}
+//           </div>
+
+//           {heroImage && (
+//             <div className="relative">
+//               <div className="absolute -inset-3 rounded-3xl bg-[#E87565]/15 blur-2xl" />
+//               <img
+//                 src={heroImage}
+//                 alt={hero.imageAlt || hero.title || event.title}
+//                 fetchPriority="high"
+//                 decoding="async"
+//                 className="relative max-h-[580px] min-h-[280px] w-full rounded-2xl object-cover shadow-2xl"
+//               />
+//             </div>
+//           )}
+//         </div>
+//       </section>
+
+//       {/* INTRODUCTION */}
+//       {(introduction.title ||
+//         introduction.description ||
+//         introduction.blocks?.length ||
+//         introductionSections.length ||
+//         eventInfo.date ||
+//         introduction.partners?.length ||
+//         introduction.supporters?.length) && (
+//         <EventIntroductionSection
+//           eyebrow={introduction.eyebrow}
+//   title={introduction.title || "Introduction"}
+//   description={introduction.description}
+//   blocks={introduction.blocks || []}
+//   sections={introductionSections}
+//   event={{
+//   date: eventInfo.date || event.date || "",
+//   title: eventInfo.title || event.title || "",
+//   time: eventInfo.time || "",
+//   venue: eventInfo.venue || "",
+//   startDateTime: eventInfo.startDateTime || "",
+//   endDateTime: eventInfo.endDateTime || "",
+//   registrationLink: eventInfo.registrationLink || "",
+//   locationLink: eventInfo.locationLink || "",
+//   description: introduction.description || event.description || "",
+// }}
+//   partners={introduction.partners || []}
+//   supporters={introduction.supporters || []}
+//   contact={introduction.contact || {}}
+//         />
+//       )}
+
+//       {/* AGENDA */}
+//       {(agenda.title ||
+//         agenda.description ||
+//         agendaItems.length ||
+//         agenda.imageUrl ||
+//         agenda.image) && (
+//         <EventAgendaSection
+//           eyebrow={agenda.eyebrow}
+//           title={agenda.title || "Event Agenda"}
+//           description={agenda.description}
+//           image={agenda.imageUrl || agenda.image || ""}
+//           imageAlt={agenda.imageAlt || "Event agenda"}
+//           agenda={agendaItems}
+//         />
+//       )}
+
+//       <DynamicContentSection
+//   id="who-should-attend"
+//   title="Who should attend?"
+//   paragraph="Participants from the following Industry segments will find this workshop extremely relevant."
+//   {...WhatShouldAttendData}
+// />
+
+//       {/* EVENT FOOTER CTA */}
+//       {event.eventLink && (
+//         <section className="bg-[#172033] px-5 py-12 text-center text-white sm:px-8 sm:py-16">
+//           <div className="mx-auto max-w-3xl">
+//             <h2 className="text-2xl font-bold sm:text-3xl">
+//               Be a part of this event
+//             </h2>
+
+//             <p className="mt-3 text-sm leading-7 text-white/65">
+//               Explore the event and connect with the AIA community.
+//             </p>
+
+//             <a
+//               href={event.eventLink}
+//               target={
+//                 event.eventLink.startsWith("http")
+//                   ? "_blank"
+//                   : undefined
+//               }
+//               rel={
+//                 event.eventLink.startsWith("http")
+//                   ? "noreferrer"
+//                   : undefined
+//               }
+//               className="mt-7 inline-flex rounded-xl bg-[#E87565] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#d85f50]"
+//             >
+//               Learn More
+//             </a>
+//           </div>
+//         </section>
+//       )}
+//     </main>
+//   );
+// }
+
+
+
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
@@ -324,6 +613,9 @@ export default function EventDetailsPage() {
 
     if (slug) {
       fetchEvent();
+    } else {
+      setLoading(false);
+      setError("Event slug is missing.");
     }
 
     return () => {
@@ -372,20 +664,89 @@ export default function EventDetailsPage() {
   const introduction = detailPage.introduction || {};
   const agenda = detailPage.agenda || {};
 
+  // HERO IMAGE
   const heroImage =
     hero.imageUrl ||
     hero.image ||
     event.imageUrl ||
     "";
 
-  const introductionSections =
-    introduction.sections || [];
+  // INTRODUCTION DATA
+  const introductionSections = introduction.sections || [];
+  const introductionBlocks = introduction.blocks || [];
 
+  // EVENT INFORMATION FROM CMS
   const eventInfo = introduction.eventInfo || {};
 
+  const eventDate =
+    eventInfo.date ||
+    event.date ||
+    "";
+
+  const eventTitle =
+    eventInfo.title ||
+    event.title ||
+    "";
+
+  const eventTime =
+    eventInfo.time ||
+    "";
+
+  const eventVenue =
+    eventInfo.venue ||
+    eventInfo.location ||
+    "";
+
+  const registrationLink =
+    eventInfo.registrationLink ||
+    "";
+
+  const locationLink =
+    eventInfo.locationLink ||
+    (eventVenue
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+          eventVenue
+        )}`
+      : "");
+
+  const startDateTime =
+    eventInfo.startDateTime ||
+    "";
+
+  const endDateTime =
+    eventInfo.endDateTime ||
+    "";
+
+  const contact = introduction.contact || {};
+  const partners = introduction.partners || [];
+  const supporters = introduction.supporters || [];
+
+  // AGENDA DATA
   const agendaItems = agenda.items || [];
 
+  // ADDITIONAL CONTENT SECTIONS
   const contentSections = detailPage.contentSections || [];
+
+  // SHOW INTRODUCTION WHEN ANY INTRODUCTION OR EVENT DATA EXISTS
+  const hasIntroductionContent =
+    introduction.title ||
+    introduction.eyebrow ||
+    introduction.description ||
+    introductionBlocks.length > 0 ||
+    introductionSections.length > 0 ||
+    eventDate ||
+    eventTitle ||
+    eventTime ||
+    eventVenue ||
+    registrationLink ||
+    locationLink ||
+    startDateTime ||
+    endDateTime ||
+    partners.length > 0 ||
+    supporters.length > 0 ||
+    contact.email ||
+    contact.phone ||
+    contact.website;
 
   return (
     <main className="min-h-screen overflow-hidden bg-white">
@@ -437,6 +798,7 @@ export default function EventDetailsPage() {
           {heroImage && (
             <div className="relative">
               <div className="absolute -inset-3 rounded-3xl bg-[#E87565]/15 blur-2xl" />
+
               <img
                 src={heroImage}
                 alt={hero.imageAlt || hero.title || event.title}
@@ -449,37 +811,35 @@ export default function EventDetailsPage() {
         </div>
       </section>
 
-      {/* INTRODUCTION */}
-      {(introduction.title ||
-        introduction.description ||
-        introduction.blocks?.length ||
-        introductionSections.length ||
-        eventInfo.date ||
-        introduction.partners?.length ||
-        introduction.supporters?.length) && (
+      {/* INTRODUCTION + EVENT INFORMATION + PARTNERS + SUPPORTERS */}
+      {hasIntroductionContent && (
         <EventIntroductionSection
           eyebrow={introduction.eyebrow}
           title={introduction.title || "Introduction"}
           description={introduction.description}
-          blocks={introduction.blocks || []}
+          blocks={introductionBlocks}
           sections={introductionSections}
           event={{
-            date: eventInfo.date || event.date || "",
-            title: eventInfo.title || event.title || "",
-            time: eventInfo.time || "",
-            venue: eventInfo.venue || "",
-            saveDateLink: eventInfo.saveDateLink || "",
-            registrationLink:
-              eventInfo.registrationLink || "",
-            locationLink: eventInfo.locationLink || "",
+            date: eventDate,
+            title: eventTitle,
+            time: eventTime,
+            venue: eventVenue,
+            startDateTime,
+            endDateTime,
+            registrationLink,
+            locationLink,
+            description:
+              introduction.description ||
+              event.description ||
+              "",
           }}
-          partners={introduction.partners || []}
-          supporters={introduction.supporters || []}
-          contact={introduction.contact || {}}
+          partners={partners}
+          supporters={supporters}
+          contact={contact}
         />
       )}
 
-      {/* AGENDA */}
+      {/* EVENT AGENDA */}
       {(agenda.title ||
         agenda.description ||
         agendaItems.length ||
@@ -495,12 +855,21 @@ export default function EventDetailsPage() {
         />
       )}
 
+      {/* WHO SHOULD ATTEND */}
       <DynamicContentSection
-  id="who-should-attend"
-  title="Who should attend?"
-  paragraph="Participants from the following Industry segments will find this workshop extremely relevant."
-  {...WhatShouldAttendData}
-/>
+        id="who-should-attend"
+        title="Who should attend?"
+        paragraph="Participants from the following Industry segments will find this workshop extremely relevant."
+        {...WhatShouldAttendData}
+      />
+
+      {/* ADDITIONAL CMS CONTENT SECTIONS */}
+      {contentSections.map((section, index) => (
+        <DynamicContentSection
+          key={section._id || section.id || index}
+          {...section}
+        />
+      ))}
 
       {/* EVENT FOOTER CTA */}
       {event.eventLink && (
@@ -523,7 +892,7 @@ export default function EventDetailsPage() {
               }
               rel={
                 event.eventLink.startsWith("http")
-                  ? "noreferrer"
+                  ? "noopener noreferrer"
                   : undefined
               }
               className="mt-7 inline-flex rounded-xl bg-[#E87565] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#d85f50]"

@@ -13,6 +13,7 @@ import CmsSliderSection from "../../components/sliders/CmsSliderSection";
 import WhyJoinCmsSection from "../../components/why-join/WhyJoinCmsSection";
 import DynamicPageHero from "../../components/common/DynamicPageHero";
 import MemberDirectory from "../../components/membership/MemberDirectory";
+import { Link } from "react-router-dom";
 
 // import AboutHero from '../components/AboutHero.jsx'
 // import AboutAIAOverview from '../components/AboutAIAOverview.jsx'
@@ -32,6 +33,7 @@ export default function MemberShipPage() {
         fallbackHeading="Membership"
         scrollTarget="#membership-content"
       />
+      
 
       {/* 2. Dynamic 3-Card Membership Overview */}
       {/* <MemberShipPara /> */}
@@ -45,6 +47,20 @@ export default function MemberShipPage() {
 
       {/* <MemberShipObjectives /> */}
       <MemberDirectory />
+
+        <div className="flex flex-col relative w-full justify-center items-center py-10 md:py-8">
+              <h1 className="capitalize font-bold text-xl md:text-2xl">
+                Join Our Membership 
+              </h1>
+
+              <Link
+                to="/request-form/membership"
+                className="mt-3 w-fit rounded-lg bg-gradient-to-r from-[#D92716] via-[#E83D2B] to-[#F17C6D] py-3 px-4 text-sm font-semibold text-white transition hover:brightness-95"
+              >
+                Explore Membership
+              </Link>
+            </div>
+
       <FAQSections />
 
       {/* 3. Dynamic Vision, Mission, Objectives with Dotted Curves */}

@@ -15,7 +15,12 @@ const sectorList = [
     id: 'pharma',
     title: 'Pharma',
     image: '/industry-pharma.png',
-  }
+  },
+  {
+    id: 'pharmaa',
+    title: 'Pharmaz',
+    image: '/industry-pharma.png',
+  },
 ]
 
 export default function IndustrySectors() {

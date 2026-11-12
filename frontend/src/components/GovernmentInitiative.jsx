@@ -46,7 +46,7 @@ accelerate digital transformation. 
             <div className="pt-2">
               <Link 
                 to="/learn-more"
-                className="inline-flex items-center justify-center px-7 py-2.5 rounded-xl border border-[#E37263] bg-white text-[#E37263] hover:bg-[#E37263] hover:text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 active:scale-95"
+                className="pointer-events-none inline-flex items-center justify-center px-7 py-2.5 rounded-xl border border-[#E37263] bg-white text-[#E37263] hover:bg-[#E37263] hover:text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md hover:scale-105 active:scale-95"
               >
                 Learn More
               </Link>

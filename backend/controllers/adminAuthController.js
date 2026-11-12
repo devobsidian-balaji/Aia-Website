@@ -1,16 +1,6 @@
 import jwt from "jsonwebtoken";
 import Admin from "../models/Admin.js";
 
-// const generateToken = (admin) => {
-//   return jwt.sign(
-//     {
-//       id: admin._id.toString(),
-//       role: admin.role,
-//     },
-//     process.env.ADMIN_JWT_SECRET,
-//     { expiresIn: "8h" }
-//   );
-// };
 
 const generateToken = (admin) => {
   return jwt.sign(

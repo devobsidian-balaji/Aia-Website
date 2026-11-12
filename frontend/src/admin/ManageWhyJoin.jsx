@@ -861,11 +861,778 @@
 
 
 
+// import { useCallback, useEffect, useMemo, useState } from "react";
+
+// const API_URL = (
+//   import.meta.env.VITE_API_URL || "http://localhost:5000/api"
+// ).replace(/\/$/, "");
+
+// const EMPTY_ITEM = {
+//   title: "",
+//   description: "",
+//   imageAlt: "",
+//   link: "",
+//   linkText: "Learn More",
+//   order: 0,
+//   isActive: true,
+// };
+
+// const EMPTY_SECTION = {
+//   heading: "Why Join",
+//   subtitle: "",
+//   lineColor: "#FF6B5F",
+//   isActive: true,
+// };
+
+// const inputClass =
+//   "mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100";
+
+// const buttonClass =
+//   "rounded-lg px-4 py-2.5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-50";
+
+// const PAGE_LABELS = {
+//   home: "Home Page",
+//   "about-aia": "About AIA",
+//   membership: "Membership",
+//   "industry-insight": "Industry Insight",
+//   "talent-connect": "Talent Connect",
+// };
+
+// export default function ManageWhyJoin({
+//   defaultPageKey,
+//   defaultSectionKey = "why-join",
+// }) {
+//   const pageKey = defaultPageKey;
+//   const sectionKey = defaultSectionKey;
+
+//   const [section, setSection] = useState({ ...EMPTY_SECTION });
+//   const [items, setItems] = useState([]);
+//   const [item, setItem] = useState({ ...EMPTY_ITEM });
+//   const [editingId, setEditingId] = useState("");
+//   const [image, setImage] = useState(null);
+//   const [preview, setPreview] = useState("");
+//   const [search, setSearch] = useState("");
+
+//   const [loading, setLoading] = useState(false);
+//   const [savingSettings, setSavingSettings] = useState(false);
+//   const [savingItem, setSavingItem] = useState(false);
+//   const [deletingId, setDeletingId] = useState("");
+
+//   const [error, setError] = useState("");
+//   const [message, setMessage] = useState("");
+
+//   const basePath = useMemo(() => {
+//     if (!pageKey || !sectionKey) return "";
+//     return `${API_URL}/why-join/admin/${encodeURIComponent(
+//       pageKey
+//     )}/${encodeURIComponent(sectionKey)}`;
+//   }, [pageKey, sectionKey]);
+
+//   const imageSrc = useCallback((url) => {
+//     if (!url) return "";
+//     if (/^(https?:|data:|blob:)/i.test(url)) return url;
+
+//     const origin = API_URL.replace(/\/api\/?$/, "");
+//     return `${origin}${url.startsWith("/") ? "" : "/"}${url}`;
+//   }, []);
+
+// const resetEditor = useCallback((order = 0) => {
+//   setEditingId("");
+//   setItem({ ...EMPTY_ITEM, order });
+//   setImage(null);
+
+//   setPreview((previous) => {
+//     if (previous.startsWith("blob:")) {
+//       URL.revokeObjectURL(previous);
+//     }
+
+//     return "";
+//   });
+// }, []);
+
+//   const loadSection = useCallback(async () => {
+//     if (!pageKey || !sectionKey) {
+//       setError("This CMS page is missing its page configuration.");
+//       return;
+//     }
+
+//     setLoading(true);
+//     setError("");
+//     setMessage("");
+
+//     try {
+//       const response = await fetch(basePath);
+//       const result = await response.json();
+
+//       if (!response.ok || !result.success) {
+//         throw new Error(result.message || "Unable to load section.");
+//       }
+
+//       const data = result.data || {};
+//       const savedItems = Array.isArray(data.items) ? data.items : [];
+
+//       setSection({
+//         ...EMPTY_SECTION,
+//         ...data,
+//       });
+
+//       setItems(
+//         [...savedItems].sort(
+//           (a, b) => (a.order ?? 0) - (b.order ?? 0)
+//         )
+//       );
+
+//       resetEditor(savedItems.length);
+//       setSearch("");
+//       setMessage(
+//         `Loaded ${savedItems.length} card(s) for ${
+//           PAGE_LABELS[pageKey] || pageKey
+//         }.`
+//       );
+//     } catch (err) {
+//       setError(err.message || "Unable to load section.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   }, [basePath, pageKey, sectionKey, resetEditor]);
+
+//   useEffect(() => {
+//     loadSection();
+//   }, [loadSection]);
+
+//   useEffect(() => {
+//   return () => {
+//     if (preview.startsWith("blob:")) {
+//       URL.revokeObjectURL(preview);
+//     }
+//   };
+// }, [preview]);
+
+//   const updateSectionField = (event) => {
+//     const { name, value, type, checked } = event.target;
+//     setSection((previous) => ({
+//       ...previous,
+//       [name]: type === "checkbox" ? checked : value,
+//     }));
+//   };
+
+//   const updateItemField = (event) => {
+//     const { name, value, type, checked } = event.target;
+//     setItem((previous) => ({
+//       ...previous,
+//       [name]:
+//         type === "checkbox"
+//           ? checked
+//           : name === "order"
+//             ? Number(value)
+//             : value,
+//     }));
+//   };
+
+// const handleImageChange = (event) => {
+//   const file = event.target.files?.[0];
+
+//   if (!file) return;
+
+//   setError("");
+//   setMessage("");
+
+//   if (!file.type.startsWith("image/")) {
+//     setError("Please select a valid image.");
+//     event.target.value = "";
+//     return;
+//   }
+
+//   if (file.size > 5 * 1024 * 1024) {
+//     setError("Image size must be 5 MB or less.");
+//     event.target.value = "";
+//     return;
+//   }
+
+//   setPreview((previous) => {
+//     if (previous.startsWith("blob:")) {
+//       URL.revokeObjectURL(previous);
+//     }
+
+//     return URL.createObjectURL(file);
+//   });
+
+//   setImage(file);
+// };
+
+//   const saveSettings = async (event) => {
+//     event.preventDefault();
+//     setSavingSettings(true);
+//     setError("");
+//     setMessage("");
+
+//     try {
+//       const response = await fetch(basePath, {
+//         method: "PUT",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(section),
+//       });
+
+//       const result = await response.json();
+
+//       if (!response.ok || !result.success) {
+//         throw new Error(result.message || "Unable to save settings.");
+//       }
+
+//       setSection((previous) => ({
+//         ...previous,
+//         ...(result.data || {}),
+//       }));
+
+//       setMessage("Section settings saved successfully.");
+//     } catch (err) {
+//       setError(err.message || "Unable to save settings.");
+//     } finally {
+//       setSavingSettings(false);
+//     }
+//   };
+
+//   const saveItem = async (event) => {
+//     event.preventDefault();
+
+//     if (!item.title.trim()) {
+//       setError("Card title is required.");
+//       return;
+//     }
+
+//     if (!editingId && !image) {
+//       setError("Please select an image for the new card.");
+//       return;
+//     }
+
+//     if (editingId && !image && !item.imageUrl) {
+//       setError("Please select a card image.");
+//       return;
+//     }
+
+//     setSavingItem(true);
+//     setError("");
+//     setMessage("");
+
+//     try {
+//       const formData = new FormData();
+
+//       formData.append("title", item.title.trim());
+//       formData.append("description", item.description || "");
+//       formData.append("imageAlt", item.imageAlt || item.title);
+//       formData.append("link", item.link || "");
+//       formData.append("linkText", item.linkText || "Learn More");
+//       formData.append("order", String(Number(item.order) || 0));
+//       formData.append("isActive", String(item.isActive !== false));
+
+//       if (image) formData.append("image", image);
+
+//       const url = editingId
+//         ? `${basePath}/items/${encodeURIComponent(editingId)}`
+//         : `${basePath}/items`;
+
+//       const response = await fetch(url, {
+//         method: editingId ? "PUT" : "POST",
+//         body: formData,
+//       });
+
+//       const result = await response.json();
+
+//       if (!response.ok || !result.success) {
+//         throw new Error(result.message || "Unable to save card.");
+//       }
+
+//       await loadSection();
+//       setMessage(
+//         editingId
+//           ? "Card updated successfully."
+//           : "Card created successfully."
+//       );
+//     } catch (err) {
+//       setError(err.message || "Unable to save card.");
+//     } finally {
+//       setSavingItem(false);
+//     }
+//   };
+
+//   const startEditing = (savedItem) => {
+//   setEditingId(savedItem._id);
+
+//   setItem({
+//     title: savedItem.title || "",
+//     description: savedItem.description || "",
+//     imageUrl: savedItem.imageUrl || "",
+//     imageAlt: savedItem.imageAlt || "",
+//     link: savedItem.link || "",
+//     linkText: savedItem.linkText || "Learn More",
+//     order: savedItem.order ?? 0,
+//     isActive: savedItem.isActive !== false,
+//   });
+
+//   setImage(null);
+
+//   setPreview((previous) => {
+//     if (previous.startsWith("blob:")) {
+//       URL.revokeObjectURL(previous);
+//     }
+
+//     return "";
+//   });
+
+//   setError("");
+//   setMessage("");
+
+//   window.scrollTo({
+//     top: 0,
+//     behavior: "smooth",
+//   });
+// };
+
+//   const deleteItem = async (savedItem) => {
+//     if (
+//       !window.confirm(`Delete "${savedItem.title}"? This cannot be undone.`)
+//     ) {
+//       return;
+//     }
+
+//     setDeletingId(savedItem._id);
+//     setError("");
+//     setMessage("");
+
+//     try {
+//       const response = await fetch(
+//         `${basePath}/items/${encodeURIComponent(savedItem._id)}`,
+//         { method: "DELETE" }
+//       );
+
+//       const result = await response.json();
+
+//       if (!response.ok || !result.success) {
+//         throw new Error(result.message || "Unable to delete card.");
+//       }
+
+//       await loadSection();
+//       setMessage("Card deleted successfully.");
+//     } catch (err) {
+//       setError(err.message || "Unable to delete card.");
+//     } finally {
+//       setDeletingId("");
+//     }
+//   };
+
+//   const toggleItem = async (savedItem) => {
+//     try {
+//       const formData = new FormData();
+//       formData.append("isActive", String(savedItem.isActive === false));
+
+//       const response = await fetch(
+//         `${basePath}/items/${encodeURIComponent(savedItem._id)}`,
+//         { method: "PUT", body: formData }
+//       );
+
+//       const result = await response.json();
+
+//       if (!response.ok || !result.success) {
+//         throw new Error(result.message || "Unable to change card status.");
+//       }
+
+//       await loadSection();
+//       setMessage("Card visibility updated.");
+//     } catch (err) {
+//       setError(err.message || "Unable to change card status.");
+//     }
+//   };
+
+//   const filteredItems = items.filter((savedItem) => {
+//     const query = search.trim().toLowerCase();
+//     return (
+//       !query ||
+//       savedItem.title?.toLowerCase().includes(query) ||
+//       savedItem.description?.toLowerCase().includes(query)
+//     );
+//   });
+
+//   return (
+//     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
+//       <div className="mx-auto max-w-7xl">
+//         <header className="mb-8">
+//           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-600">
+//             AIA Website CMS
+//           </p>
+//           <h1 className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">
+//             {PAGE_LABELS[pageKey] || pageKey} — Why Join CMS
+//           </h1>
+//           <p className="mt-2 text-sm text-slate-500">
+//             Manage Why Join content for this page only. Other pages have
+//             separate content.
+//           </p>
+//         </header>
+
+//         {error && (
+//           <div role="alert" className="mb-5 rounded-xl bg-rose-50 p-4 text-sm text-rose-700">
+//             {error}
+//           </div>
+//         )}
+
+//         {message && (
+//           <div role="status" className="mb-5 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-700">
+//             {message}
+//           </div>
+//         )}
+
+//         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+//           <h2 className="text-lg font-semibold text-slate-900">
+//             Page Content Settings
+//           </h2>
+//           <p className="mt-2 text-sm text-slate-600">
+//             Page: <strong>{PAGE_LABELS[pageKey] || pageKey}</strong>
+//           </p>
+//           <p className="mt-1 text-sm text-slate-600">
+//             Section: <strong>{sectionKey}</strong>
+//           </p>
+//           <button
+//             type="button"
+//             onClick={loadSection}
+//             disabled={loading}
+//             className={`${buttonClass} mt-4 bg-slate-900 text-white`}
+//           >
+//             {loading ? "Loading..." : "Reload Section"}
+//           </button>
+//         </section>
+
+//         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+//           <h2 className="mb-5 text-lg font-semibold">Section Settings</h2>
+//           <form onSubmit={saveSettings} className="space-y-4">
+//             <label className="block text-sm font-medium">
+//               Section heading
+//               <input
+//                 name="heading"
+//                 value={section.heading}
+//                 onChange={updateSectionField}
+//                 className={inputClass}
+//                 required
+//               />
+//             </label>
+
+//             <label className="block text-sm font-medium">
+//               Subtitle
+//               <textarea
+//                 name="subtitle"
+//                 value={section.subtitle}
+//                 onChange={updateSectionField}
+//                 rows={3}
+//                 className={inputClass}
+//               />
+//             </label>
+
+//             <label className="block text-sm font-medium">
+//               Line color
+//               <div className="flex gap-3">
+//                 <input
+//                   type="color"
+//                   name="lineColor"
+//                   value={section.lineColor}
+//                   onChange={updateSectionField}
+//                   className="mt-2 h-11 w-14 rounded border"
+//                 />
+//                 <input
+//                   value={section.lineColor}
+//                   onChange={(event) =>
+//                     setSection((previous) => ({
+//                       ...previous,
+//                       lineColor: event.target.value,
+//                     }))
+//                   }
+//                   className={inputClass}
+//                   pattern="^#[0-9a-fA-F]{6}$"
+//                   required
+//                 />
+//               </div>
+//             </label>
+
+//             <label className="flex items-center gap-2 text-sm">
+//               <input
+//                 type="checkbox"
+//                 name="isActive"
+//                 checked={section.isActive}
+//                 onChange={updateSectionField}
+//               />
+//               Publish entire section
+//             </label>
+
+//             <button
+//               type="submit"
+//               disabled={savingSettings || loading}
+//               className={`${buttonClass} bg-slate-900 text-white`}
+//             >
+//               {savingSettings ? "Saving..." : "Save Section Settings"}
+//             </button>
+//           </form>
+//         </section>
+
+//         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+//           <h2 className="mb-5 text-lg font-semibold">
+//             {editingId ? "Edit Card" : "Create New Card"}
+//           </h2>
+
+//           <form onSubmit={saveItem} className="space-y-4">
+//             <label className="block text-sm font-medium">
+//               Card title
+//               <input
+//                 name="title"
+//                 value={item.title}
+//                 onChange={updateItemField}
+//                 className={inputClass}
+//                 required
+//               />
+//             </label>
+
+//             <label className="block text-sm font-medium">
+//               Description
+//               <textarea
+//                 name="description"
+//                 value={item.description}
+//                 onChange={updateItemField}
+//                 rows={4}
+//                 className={inputClass}
+//               />
+//             </label>
+
+//             <label className="block text-sm font-medium">
+//               Card image {editingId && "(optional — keep existing image)"}
+//               <input
+//                 type="file"
+//                 accept="image/*"
+//                 onChange={handleImageChange}
+//                 className="mt-2 block w-full text-sm"
+//                 required={!editingId}
+//               />
+//             </label>
+
+//             {(preview || item.imageUrl) && (
+//   <div className="mt-3">
+//     <p className="mb-2 text-xs font-medium text-slate-500">
+//       {image ? "New Image Preview" : "Current Image"}
+//     </p>
+
+//     <img
+//       src={preview || imageSrc(item.imageUrl)}
+//       alt={item.imageAlt || item.title || "Why Join preview"}
+//       className="aspect-video w-full max-w-md rounded-xl object-cover"
+//     />
+
+//     {image && (
+//       <button
+//         type="button"
+//         onClick={() => {
+//           setImage(null);
+
+//           setPreview((previous) => {
+//             if (previous.startsWith("blob:")) {
+//               URL.revokeObjectURL(previous);
+//             }
+
+//             return "";
+//           });
+//         }}
+//         className="mt-2 text-xs font-semibold text-rose-600 hover:underline"
+//       >
+//         Cancel New Image
+//       </button>
+//     )}
+//   </div>
+// )}
+
+//             <label className="block text-sm font-medium">
+//               Image alt text
+//               <input
+//                 name="imageAlt"
+//                 value={item.imageAlt}
+//                 onChange={updateItemField}
+//                 className={inputClass}
+//               />
+//             </label>
+
+//             <label className="block text-sm font-medium">
+//               Link URL
+//               <input
+//                 name="link"
+//                 value={item.link}
+//                 onChange={updateItemField}
+//                 className={inputClass}
+//                 placeholder="/membership"
+//               />
+//             </label>
+
+//             <label className="block text-sm font-medium">
+//               Link text
+//               <input
+//                 name="linkText"
+//                 value={item.linkText}
+//                 onChange={updateItemField}
+//                 className={inputClass}
+//               />
+//             </label>
+
+//             <label className="block text-sm font-medium">
+//               Display order
+//               <input
+//                 name="order"
+//                 type="number"
+//                 min="0"
+//                 value={item.order}
+//                 onChange={updateItemField}
+//                 className={inputClass}
+//               />
+//             </label>
+
+//             <label className="flex items-center gap-2 text-sm">
+//               <input
+//                 name="isActive"
+//                 type="checkbox"
+//                 checked={item.isActive !== false}
+//                 onChange={updateItemField}
+//               />
+//               Publish this card
+//             </label>
+
+//             <div className="flex flex-wrap gap-3">
+//               <button
+//                 type="submit"
+//                 disabled={savingItem || loading}
+//                 className={`${buttonClass} bg-rose-600 text-white`}
+//               >
+//                 {savingItem
+//                   ? "Saving..."
+//                   : editingId
+//                     ? "Save Changes"
+//                     : "Create Card"}
+//               </button>
+
+//               {editingId && (
+//                 <button
+//                   type="button"
+//                   onClick={() => resetEditor(items.length)}
+//                   className={`${buttonClass} border border-slate-300`}
+//                 >
+//                   Cancel Edit
+//                 </button>
+//               )}
+//             </div>
+//           </form>
+//         </section>
+
+//         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+//           <div className="flex flex-wrap items-center justify-between gap-4">
+//             <div>
+//               <h2 className="text-lg font-semibold">Existing Cards</h2>
+//               <p className="mt-1 text-sm text-slate-500">
+//                 {items.length} card(s) for {PAGE_LABELS[pageKey] || pageKey}
+//               </p>
+//             </div>
+
+//             <input
+//               value={search}
+//               onChange={(event) => setSearch(event.target.value)}
+//               className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm sm:w-64"
+//               placeholder="Search cards..."
+//             />
+//           </div>
+
+//           {loading ? (
+//             <p className="py-8 text-sm text-slate-500">Loading cards...</p>
+//           ) : filteredItems.length === 0 ? (
+//             <div className="mt-5 rounded-xl border border-dashed p-10 text-center">
+//               No cards in this section yet.
+//             </div>
+//           ) : (
+//             <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+//               {filteredItems.map((savedItem) => (
+//                 <article
+//                   key={savedItem._id}
+//                   className="overflow-hidden rounded-xl border border-slate-200"
+//                 >
+//                   {savedItem.imageUrl && (
+//                     <img
+//                       src={imageSrc(savedItem.imageUrl)}
+//                       alt={savedItem.imageAlt || savedItem.title}
+//                       className="aspect-video w-full object-cover"
+//                     />
+//                   )}
+
+//                   <div className="p-4">
+//                     <h3 className="font-semibold">{savedItem.title}</h3>
+//                     <p className="mt-2 line-clamp-3 text-sm text-slate-600">
+//                       {savedItem.description || "No description"}
+//                     </p>
+
+//                     <p className="mt-3 text-xs text-slate-500">
+//                       Order: {savedItem.order ?? 0} ·{" "}
+//                       {savedItem.isActive === false ? "Draft" : "Published"}
+//                     </p>
+
+//                     <div className="mt-4 flex flex-wrap gap-2">
+//                       <button
+//                         type="button"
+//                         onClick={() => startEditing(savedItem)}
+//                         className={`${buttonClass} border border-slate-300`}
+//                       >
+//                         Edit
+//                       </button>
+
+//                       <button
+//                         type="button"
+//                         onClick={() => toggleItem(savedItem)}
+//                         className={`${buttonClass} border border-slate-300`}
+//                       >
+//                         {savedItem.isActive === false ? "Publish" : "Hide"}
+//                       </button>
+
+//                       <button
+//                         type="button"
+//                         onClick={() => deleteItem(savedItem)}
+//                         disabled={deletingId === savedItem._id}
+//                         className={`${buttonClass} border border-rose-200 text-rose-600`}
+//                       >
+//                         {deletingId === savedItem._id ? "Deleting..." : "Delete"}
+//                       </button>
+//                     </div>
+//                   </div>
+//                 </article>
+//               ))}
+//             </div>
+//           )}
+//         </section>
+//       </div>
+//     </main>
+//   );
+// }
+
+
+
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 const API_URL = (
   import.meta.env.VITE_API_URL || "http://localhost:5000/api"
 ).replace(/\/$/, "");
+
+// ==========================================
+// AUTH HELPERS
+// ==========================================
+
+const getAdminToken = () => {
+  return sessionStorage.getItem("aia_admin_token");
+};
+
+const getAuthHeaders = (headers = {}) => {
+  const token = getAdminToken();
+
+  return {
+    ...headers,
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+};
 
 const EMPTY_ITEM = {
   title: "",
@@ -898,6 +1665,10 @@ const PAGE_LABELS = {
   "talent-connect": "Talent Connect",
 };
 
+// ==========================================
+// COMPONENT
+// ==========================================
+
 export default function ManageWhyJoin({
   defaultPageKey,
   defaultSectionKey = "why-join",
@@ -908,6 +1679,7 @@ export default function ManageWhyJoin({
   const [section, setSection] = useState({ ...EMPTY_SECTION });
   const [items, setItems] = useState([]);
   const [item, setItem] = useState({ ...EMPTY_ITEM });
+
   const [editingId, setEditingId] = useState("");
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState("");
@@ -921,38 +1693,66 @@ export default function ManageWhyJoin({
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
+  // ==========================================
+  // API PATH
+  // ==========================================
+
   const basePath = useMemo(() => {
     if (!pageKey || !sectionKey) return "";
+
     return `${API_URL}/why-join/admin/${encodeURIComponent(
       pageKey
     )}/${encodeURIComponent(sectionKey)}`;
   }, [pageKey, sectionKey]);
 
+  // ==========================================
+  // IMAGE URL HELPER
+  // ==========================================
+
   const imageSrc = useCallback((url) => {
     if (!url) return "";
-    if (/^(https?:|data:|blob:)/i.test(url)) return url;
+
+    if (/^(https?:|data:|blob:)/i.test(url)) {
+      return url;
+    }
 
     const origin = API_URL.replace(/\/api\/?$/, "");
+
     return `${origin}${url.startsWith("/") ? "" : "/"}${url}`;
   }, []);
 
-const resetEditor = useCallback((order = 0) => {
-  setEditingId("");
-  setItem({ ...EMPTY_ITEM, order });
-  setImage(null);
+  // ==========================================
+  // RESET EDITOR
+  // ==========================================
 
-  setPreview((previous) => {
-    if (previous.startsWith("blob:")) {
-      URL.revokeObjectURL(previous);
-    }
+  const resetEditor = useCallback((order = 0) => {
+    setEditingId("");
+    setItem({ ...EMPTY_ITEM, order });
+    setImage(null);
 
-    return "";
-  });
-}, []);
+    setPreview((previous) => {
+      if (previous.startsWith("blob:")) {
+        URL.revokeObjectURL(previous);
+      }
+
+      return "";
+    });
+  }, []);
+
+  // ==========================================
+  // LOAD SECTION
+  // ==========================================
 
   const loadSection = useCallback(async () => {
     if (!pageKey || !sectionKey) {
       setError("This CMS page is missing its page configuration.");
+      return;
+    }
+
+    const token = getAdminToken();
+
+    if (!token) {
+      setError("Admin session not found. Please login again.");
       return;
     }
 
@@ -961,8 +1761,16 @@ const resetEditor = useCallback((order = 0) => {
     setMessage("");
 
     try {
-      const response = await fetch(basePath);
+      const response = await fetch(basePath, {
+        method: "GET",
+        headers: getAuthHeaders(),
+      });
+
       const result = await response.json();
+
+      if (response.status === 401) {
+        throw new Error("Admin authentication required. Please login again.");
+      }
 
       if (!response.ok || !result.success) {
         throw new Error(result.message || "Unable to load section.");
@@ -984,6 +1792,7 @@ const resetEditor = useCallback((order = 0) => {
 
       resetEditor(savedItems.length);
       setSearch("");
+
       setMessage(
         `Loaded ${savedItems.length} card(s) for ${
           PAGE_LABELS[pageKey] || pageKey
@@ -1000,24 +1809,38 @@ const resetEditor = useCallback((order = 0) => {
     loadSection();
   }, [loadSection]);
 
+  // ==========================================
+  // CLEANUP IMAGE PREVIEW
+  // ==========================================
+
   useEffect(() => {
-  return () => {
-    if (preview.startsWith("blob:")) {
-      URL.revokeObjectURL(preview);
-    }
-  };
-}, [preview]);
+    return () => {
+      if (preview.startsWith("blob:")) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
+
+  // ==========================================
+  // UPDATE SECTION FIELD
+  // ==========================================
 
   const updateSectionField = (event) => {
     const { name, value, type, checked } = event.target;
+
     setSection((previous) => ({
       ...previous,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
 
+  // ==========================================
+  // UPDATE ITEM FIELD
+  // ==========================================
+
   const updateItemField = (event) => {
     const { name, value, type, checked } = event.target;
+
     setItem((previous) => ({
       ...previous,
       [name]:
@@ -1029,39 +1852,61 @@ const resetEditor = useCallback((order = 0) => {
     }));
   };
 
-const handleImageChange = (event) => {
-  const file = event.target.files?.[0];
+  // ==========================================
+  // IMAGE CHANGE
+  // ==========================================
 
-  if (!file) return;
+  const handleImageChange = (event) => {
+    const file = event.target.files?.[0];
 
-  setError("");
-  setMessage("");
+    if (!file) return;
 
-  if (!file.type.startsWith("image/")) {
-    setError("Please select a valid image.");
-    event.target.value = "";
-    return;
-  }
+    setError("");
+    setMessage("");
 
-  if (file.size > 5 * 1024 * 1024) {
-    setError("Image size must be 5 MB or less.");
-    event.target.value = "";
-    return;
-  }
+    const allowedTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+      "image/gif",
+    ];
 
-  setPreview((previous) => {
-    if (previous.startsWith("blob:")) {
-      URL.revokeObjectURL(previous);
+    if (!allowedTypes.includes(file.type)) {
+      setError("Please select a JPG, PNG, WEBP or GIF image.");
+      event.target.value = "";
+      return;
     }
 
-    return URL.createObjectURL(file);
-  });
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Image size must be 5 MB or less.");
+      event.target.value = "";
+      return;
+    }
 
-  setImage(file);
-};
+    setPreview((previous) => {
+      if (previous.startsWith("blob:")) {
+        URL.revokeObjectURL(previous);
+      }
+
+      return URL.createObjectURL(file);
+    });
+
+    setImage(file);
+  };
+
+  // ==========================================
+  // SAVE SECTION SETTINGS
+  // ==========================================
 
   const saveSettings = async (event) => {
     event.preventDefault();
+
+    if (!getAdminToken()) {
+      setError("Admin session not found. Please login again.");
+      return;
+    }
+
     setSavingSettings(true);
     setError("");
     setMessage("");
@@ -1069,11 +1914,17 @@ const handleImageChange = (event) => {
     try {
       const response = await fetch(basePath, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: getAuthHeaders({
+          "Content-Type": "application/json",
+        }),
         body: JSON.stringify(section),
       });
 
       const result = await response.json();
+
+      if (response.status === 401) {
+        throw new Error("Admin authentication required. Please login again.");
+      }
 
       if (!response.ok || !result.success) {
         throw new Error(result.message || "Unable to save settings.");
@@ -1092,8 +1943,17 @@ const handleImageChange = (event) => {
     }
   };
 
+  // ==========================================
+  // CREATE / UPDATE ITEM
+  // ==========================================
+
   const saveItem = async (event) => {
     event.preventDefault();
+
+    if (!getAdminToken()) {
+      setError("Admin session not found. Please login again.");
+      return;
+    }
 
     if (!item.title.trim()) {
       setError("Card title is required.");
@@ -1125,7 +1985,9 @@ const handleImageChange = (event) => {
       formData.append("order", String(Number(item.order) || 0));
       formData.append("isActive", String(item.isActive !== false));
 
-      if (image) formData.append("image", image);
+      if (image) {
+        formData.append("image", image);
+      }
 
       const url = editingId
         ? `${basePath}/items/${encodeURIComponent(editingId)}`
@@ -1133,18 +1995,26 @@ const handleImageChange = (event) => {
 
       const response = await fetch(url, {
         method: editingId ? "PUT" : "POST",
+        headers: getAuthHeaders(),
         body: formData,
       });
 
       const result = await response.json();
 
+      if (response.status === 401) {
+        throw new Error("Admin authentication required. Please login again.");
+      }
+
       if (!response.ok || !result.success) {
         throw new Error(result.message || "Unable to save card.");
       }
 
+      const wasEditing = Boolean(editingId);
+
       await loadSection();
+
       setMessage(
-        editingId
+        wasEditing
           ? "Card updated successfully."
           : "Card created successfully."
       );
@@ -1155,40 +2025,53 @@ const handleImageChange = (event) => {
     }
   };
 
+  // ==========================================
+  // START EDITING
+  // ==========================================
+
   const startEditing = (savedItem) => {
-  setEditingId(savedItem._id);
+    setEditingId(savedItem._id);
 
-  setItem({
-    title: savedItem.title || "",
-    description: savedItem.description || "",
-    imageUrl: savedItem.imageUrl || "",
-    imageAlt: savedItem.imageAlt || "",
-    link: savedItem.link || "",
-    linkText: savedItem.linkText || "Learn More",
-    order: savedItem.order ?? 0,
-    isActive: savedItem.isActive !== false,
-  });
+    setItem({
+      title: savedItem.title || "",
+      description: savedItem.description || "",
+      imageUrl: savedItem.imageUrl || "",
+      imageAlt: savedItem.imageAlt || "",
+      link: savedItem.link || "",
+      linkText: savedItem.linkText || "Learn More",
+      order: savedItem.order ?? 0,
+      isActive: savedItem.isActive !== false,
+    });
 
-  setImage(null);
+    setImage(null);
 
-  setPreview((previous) => {
-    if (previous.startsWith("blob:")) {
-      URL.revokeObjectURL(previous);
-    }
+    setPreview((previous) => {
+      if (previous.startsWith("blob:")) {
+        URL.revokeObjectURL(previous);
+      }
 
-    return "";
-  });
+      return "";
+    });
 
-  setError("");
-  setMessage("");
+    setError("");
+    setMessage("");
 
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth",
-  });
-};
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // ==========================================
+  // DELETE ITEM
+  // ==========================================
 
   const deleteItem = async (savedItem) => {
+    if (!getAdminToken()) {
+      setError("Admin session not found. Please login again.");
+      return;
+    }
+
     if (
       !window.confirm(`Delete "${savedItem.title}"? This cannot be undone.`)
     ) {
@@ -1202,16 +2085,24 @@ const handleImageChange = (event) => {
     try {
       const response = await fetch(
         `${basePath}/items/${encodeURIComponent(savedItem._id)}`,
-        { method: "DELETE" }
+        {
+          method: "DELETE",
+          headers: getAuthHeaders(),
+        }
       );
 
       const result = await response.json();
+
+      if (response.status === 401) {
+        throw new Error("Admin authentication required. Please login again.");
+      }
 
       if (!response.ok || !result.success) {
         throw new Error(result.message || "Unable to delete card.");
       }
 
       await loadSection();
+
       setMessage("Card deleted successfully.");
     } catch (err) {
       setError(err.message || "Unable to delete card.");
@@ -1220,31 +2111,61 @@ const handleImageChange = (event) => {
     }
   };
 
+  // ==========================================
+  // TOGGLE ITEM STATUS
+  // ==========================================
+
   const toggleItem = async (savedItem) => {
+    if (!getAdminToken()) {
+      setError("Admin session not found. Please login again.");
+      return;
+    }
+
+    setError("");
+    setMessage("");
+
     try {
       const formData = new FormData();
-      formData.append("isActive", String(savedItem.isActive === false));
+
+      formData.append(
+        "isActive",
+        String(savedItem.isActive === false)
+      );
 
       const response = await fetch(
         `${basePath}/items/${encodeURIComponent(savedItem._id)}`,
-        { method: "PUT", body: formData }
+        {
+          method: "PUT",
+          headers: getAuthHeaders(),
+          body: formData,
+        }
       );
 
       const result = await response.json();
+
+      if (response.status === 401) {
+        throw new Error("Admin authentication required. Please login again.");
+      }
 
       if (!response.ok || !result.success) {
         throw new Error(result.message || "Unable to change card status.");
       }
 
       await loadSection();
+
       setMessage("Card visibility updated.");
     } catch (err) {
       setError(err.message || "Unable to change card status.");
     }
   };
 
+  // ==========================================
+  // FILTER ITEMS
+  // ==========================================
+
   const filteredItems = items.filter((savedItem) => {
     const query = search.trim().toLowerCase();
+
     return (
       !query ||
       savedItem.title?.toLowerCase().includes(query) ||
@@ -1252,16 +2173,23 @@ const handleImageChange = (event) => {
     );
   });
 
+  // ==========================================
+  // UI
+  // ==========================================
+
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
+
         <header className="mb-8">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-rose-600">
             AIA Website CMS
           </p>
+
           <h1 className="mt-2 text-2xl font-bold text-slate-900 sm:text-3xl">
             {PAGE_LABELS[pageKey] || pageKey} — Why Join CMS
           </h1>
+
           <p className="mt-2 text-sm text-slate-500">
             Manage Why Join content for this page only. Other pages have
             separate content.
@@ -1269,27 +2197,38 @@ const handleImageChange = (event) => {
         </header>
 
         {error && (
-          <div role="alert" className="mb-5 rounded-xl bg-rose-50 p-4 text-sm text-rose-700">
+          <div
+            role="alert"
+            className="mb-5 rounded-xl bg-rose-50 p-4 text-sm text-rose-700"
+          >
             {error}
           </div>
         )}
 
         {message && (
-          <div role="status" className="mb-5 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-700">
+          <div
+            role="status"
+            className="mb-5 rounded-xl bg-emerald-50 p-4 text-sm text-emerald-700"
+          >
             {message}
           </div>
         )}
+
+        {/* PAGE CONTENT SETTINGS */}
 
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="text-lg font-semibold text-slate-900">
             Page Content Settings
           </h2>
+
           <p className="mt-2 text-sm text-slate-600">
             Page: <strong>{PAGE_LABELS[pageKey] || pageKey}</strong>
           </p>
+
           <p className="mt-1 text-sm text-slate-600">
             Section: <strong>{sectionKey}</strong>
           </p>
+
           <button
             type="button"
             onClick={loadSection}
@@ -1300,11 +2239,17 @@ const handleImageChange = (event) => {
           </button>
         </section>
 
+        {/* SECTION SETTINGS */}
+
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-5 text-lg font-semibold">Section Settings</h2>
+          <h2 className="mb-5 text-lg font-semibold">
+            Section Settings
+          </h2>
+
           <form onSubmit={saveSettings} className="space-y-4">
             <label className="block text-sm font-medium">
               Section heading
+
               <input
                 name="heading"
                 value={section.heading}
@@ -1316,6 +2261,7 @@ const handleImageChange = (event) => {
 
             <label className="block text-sm font-medium">
               Subtitle
+
               <textarea
                 name="subtitle"
                 value={section.subtitle}
@@ -1327,6 +2273,7 @@ const handleImageChange = (event) => {
 
             <label className="block text-sm font-medium">
               Line color
+
               <div className="flex gap-3">
                 <input
                   type="color"
@@ -1335,6 +2282,7 @@ const handleImageChange = (event) => {
                   onChange={updateSectionField}
                   className="mt-2 h-11 w-14 rounded border"
                 />
+
                 <input
                   value={section.lineColor}
                   onChange={(event) =>
@@ -1357,6 +2305,7 @@ const handleImageChange = (event) => {
                 checked={section.isActive}
                 onChange={updateSectionField}
               />
+
               Publish entire section
             </label>
 
@@ -1370,14 +2319,18 @@ const handleImageChange = (event) => {
           </form>
         </section>
 
+        {/* CREATE / EDIT CARD */}
+
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="mb-5 text-lg font-semibold">
             {editingId ? "Edit Card" : "Create New Card"}
           </h2>
 
           <form onSubmit={saveItem} className="space-y-4">
+
             <label className="block text-sm font-medium">
               Card title
+
               <input
                 name="title"
                 value={item.title}
@@ -1389,6 +2342,7 @@ const handleImageChange = (event) => {
 
             <label className="block text-sm font-medium">
               Description
+
               <textarea
                 name="description"
                 value={item.description}
@@ -1400,9 +2354,10 @@ const handleImageChange = (event) => {
 
             <label className="block text-sm font-medium">
               Card image {editingId && "(optional — keep existing image)"}
+
               <input
                 type="file"
-                accept="image/*"
+                accept="image/jpeg,image/png,image/webp,image/gif"
                 onChange={handleImageChange}
                 className="mt-2 block w-full text-sm"
                 required={!editingId}
@@ -1410,41 +2365,42 @@ const handleImageChange = (event) => {
             </label>
 
             {(preview || item.imageUrl) && (
-  <div className="mt-3">
-    <p className="mb-2 text-xs font-medium text-slate-500">
-      {image ? "New Image Preview" : "Current Image"}
-    </p>
+              <div className="mt-3">
+                <p className="mb-2 text-xs font-medium text-slate-500">
+                  {image ? "New Image Preview" : "Current Image"}
+                </p>
 
-    <img
-      src={preview || imageSrc(item.imageUrl)}
-      alt={item.imageAlt || item.title || "Why Join preview"}
-      className="aspect-video w-full max-w-md rounded-xl object-cover"
-    />
+                <img
+                  src={preview || imageSrc(item.imageUrl)}
+                  alt={item.imageAlt || item.title || "Why Join preview"}
+                  className="aspect-video w-full max-w-md rounded-xl object-cover"
+                />
 
-    {image && (
-      <button
-        type="button"
-        onClick={() => {
-          setImage(null);
+                {image && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setImage(null);
 
-          setPreview((previous) => {
-            if (previous.startsWith("blob:")) {
-              URL.revokeObjectURL(previous);
-            }
+                      setPreview((previous) => {
+                        if (previous.startsWith("blob:")) {
+                          URL.revokeObjectURL(previous);
+                        }
 
-            return "";
-          });
-        }}
-        className="mt-2 text-xs font-semibold text-rose-600 hover:underline"
-      >
-        Cancel New Image
-      </button>
-    )}
-  </div>
-)}
+                        return "";
+                      });
+                    }}
+                    className="mt-2 text-xs font-semibold text-rose-600 hover:underline"
+                  >
+                    Cancel New Image
+                  </button>
+                )}
+              </div>
+            )}
 
             <label className="block text-sm font-medium">
               Image alt text
+
               <input
                 name="imageAlt"
                 value={item.imageAlt}
@@ -1455,6 +2411,7 @@ const handleImageChange = (event) => {
 
             <label className="block text-sm font-medium">
               Link URL
+
               <input
                 name="link"
                 value={item.link}
@@ -1466,6 +2423,7 @@ const handleImageChange = (event) => {
 
             <label className="block text-sm font-medium">
               Link text
+
               <input
                 name="linkText"
                 value={item.linkText}
@@ -1476,6 +2434,7 @@ const handleImageChange = (event) => {
 
             <label className="block text-sm font-medium">
               Display order
+
               <input
                 name="order"
                 type="number"
@@ -1493,6 +2452,7 @@ const handleImageChange = (event) => {
                 checked={item.isActive !== false}
                 onChange={updateItemField}
               />
+
               Publish this card
             </label>
 
@@ -1522,10 +2482,15 @@ const handleImageChange = (event) => {
           </form>
         </section>
 
+        {/* EXISTING CARDS */}
+
         <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold">Existing Cards</h2>
+              <h2 className="text-lg font-semibold">
+                Existing Cards
+              </h2>
+
               <p className="mt-1 text-sm text-slate-500">
                 {items.length} card(s) for {PAGE_LABELS[pageKey] || pageKey}
               </p>
@@ -1540,7 +2505,9 @@ const handleImageChange = (event) => {
           </div>
 
           {loading ? (
-            <p className="py-8 text-sm text-slate-500">Loading cards...</p>
+            <p className="py-8 text-sm text-slate-500">
+              Loading cards...
+            </p>
           ) : filteredItems.length === 0 ? (
             <div className="mt-5 rounded-xl border border-dashed p-10 text-center">
               No cards in this section yet.
@@ -1561,14 +2528,19 @@ const handleImageChange = (event) => {
                   )}
 
                   <div className="p-4">
-                    <h3 className="font-semibold">{savedItem.title}</h3>
+                    <h3 className="font-semibold">
+                      {savedItem.title}
+                    </h3>
+
                     <p className="mt-2 line-clamp-3 text-sm text-slate-600">
                       {savedItem.description || "No description"}
                     </p>
 
                     <p className="mt-3 text-xs text-slate-500">
                       Order: {savedItem.order ?? 0} ·{" "}
-                      {savedItem.isActive === false ? "Draft" : "Published"}
+                      {savedItem.isActive === false
+                        ? "Draft"
+                        : "Published"}
                     </p>
 
                     <div className="mt-4 flex flex-wrap gap-2">
@@ -1585,7 +2557,9 @@ const handleImageChange = (event) => {
                         onClick={() => toggleItem(savedItem)}
                         className={`${buttonClass} border border-slate-300`}
                       >
-                        {savedItem.isActive === false ? "Publish" : "Hide"}
+                        {savedItem.isActive === false
+                          ? "Publish"
+                          : "Hide"}
                       </button>
 
                       <button
@@ -1594,7 +2568,9 @@ const handleImageChange = (event) => {
                         disabled={deletingId === savedItem._id}
                         className={`${buttonClass} border border-rose-200 text-rose-600`}
                       >
-                        {deletingId === savedItem._id ? "Deleting..." : "Delete"}
+                        {deletingId === savedItem._id
+                          ? "Deleting..."
+                          : "Delete"}
                       </button>
                     </div>
                   </div>

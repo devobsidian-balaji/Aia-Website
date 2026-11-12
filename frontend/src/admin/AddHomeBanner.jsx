@@ -682,6 +682,16 @@ const API_URL = (
 
 const BACKEND_URL = API_URL.replace(/\/api\/?$/, "");
 
+const getAdminAuthHeaders = () => {
+  const token = sessionStorage.getItem("aia_admin_token");
+
+  return token
+    ? {
+        Authorization: `Bearer ${token}`,
+      }
+    : {};
+};
+
 const MAX_VIDEO_SIZE = 100 * 1024 * 1024;
 
 const ALLOWED_VIDEO_TYPES = [
@@ -743,58 +753,61 @@ export default function AddHomeBanner({ onBannerAdded }) {
   // FETCH EXISTING HOME HERO
   // ==========================================
 
-  const fetchSavedBanner = async () => {
-    setFetching(true);
-    setErrorMsg("");
+ const fetchSavedBanner = async () => {
+  setFetching(true);
+  setErrorMsg("");
 
-    try {
-      const response = await fetch(`${API_URL}/banners`);
+  try {
+    const response = await fetch(`${API_URL}/banners`, {
+      method: "GET",
+      headers: {
+        ...getAdminAuthHeaders(),
+      },
+    });
 
-      const result = await response.json();
+    const result = await response.json();
 
-      if (!response.ok || !result.success) {
-        throw new Error(
-          result.message || "Unable to fetch Home Hero."
-        );
-      }
-
-      const banners = Array.isArray(result.data)
-        ? result.data
-        : [];
-
-      const activeBanner = banners.find(
-        (banner) => banner.isActive === true
+    if (!response.ok || !result.success) {
+      throw new Error(
+        result.message || "Unable to fetch Home Hero."
       );
-
-      if (activeBanner) {
-        setSavedBanner(activeBanner);
-
-        setForm({
-          title: activeBanner.title || "",
-          description: activeBanner.description || "",
-          ctaPrimaryText: activeBanner.ctaPrimaryText || "",
-          ctaPrimaryUrl: activeBanner.ctaPrimaryUrl || "",
-          ctaSecondaryText:
-            activeBanner.ctaSecondaryText || "",
-          ctaSecondaryUrl:
-            activeBanner.ctaSecondaryUrl || "",
-        });
-
-        setVideoPreview(
-          getVideoUrl(activeBanner.videoUrl)
-        );
-      } else {
-        setSavedBanner(null);
-        setForm(initialForm);
-        setVideoPreview("");
-      }
-    } catch (error) {
-      console.error("Fetch Home Hero:", error);
-      setErrorMsg(error.message);
-    } finally {
-      setFetching(false);
     }
-  };
+
+    const banners = Array.isArray(result.data)
+      ? result.data
+      : [];
+
+    const activeBanner = banners.find(
+      (banner) => banner.isActive === true
+    );
+
+    if (activeBanner) {
+      setSavedBanner(activeBanner);
+
+      setForm({
+        title: activeBanner.title || "",
+        description: activeBanner.description || "",
+        ctaPrimaryText: activeBanner.ctaPrimaryText || "",
+        ctaPrimaryUrl: activeBanner.ctaPrimaryUrl || "",
+        ctaSecondaryText:
+          activeBanner.ctaSecondaryText || "",
+        ctaSecondaryUrl:
+          activeBanner.ctaSecondaryUrl || "",
+      });
+
+      setVideoPreview(getVideoUrl(activeBanner.videoUrl));
+    } else {
+      setSavedBanner(null);
+      setForm(initialForm);
+      setVideoPreview("");
+    }
+  } catch (error) {
+    console.error("Fetch Home Hero:", error);
+    setErrorMsg(error.message);
+  } finally {
+    setFetching(false);
+  }
+};
 
   useEffect(() => {
     fetchSavedBanner();
@@ -932,10 +945,21 @@ export default function AddHomeBanner({ onBannerAdded }) {
     setLoading(true);
 
     try {
-      const response = await fetch(requestUrl, {
-        method,
-        body: formData,
-      });
+      const token = sessionStorage.getItem("aia_admin_token");
+
+if (!token) {
+  throw new Error(
+    "Admin session expired. Please login again."
+  );
+}
+
+const response = await fetch(requestUrl, {
+  method,
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+  body: formData,
+});
 
       const result = await response.json();
 

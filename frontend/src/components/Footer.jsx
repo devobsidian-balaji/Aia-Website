@@ -198,7 +198,7 @@ const footerLinks = [
     title: "Contact Us",
     links: [
       { label: "Get in Touch", href: "/contact-us" },
-      { label: "Support", href: "/contact-us#support" },
+      // { label: "Support", href: "/contact-us#support" },
       // { label: "General Inquiries", href: "/contact-us#inquiries" },
        {label: "General Inquiries", href: "/learn-more#enquiry-form",}
     ],
@@ -282,7 +282,7 @@ export default function Footer() {
 
             <div className="flex flex-col items-start gap-4 lg:items-start">
               <a
-                href="/membership#join-community"
+                href="/https://www.iafsm.in/"
                 className="text-[14px] font-semibold text-white underline underline-offset-2 transition-opacity hover:opacity-70"
               >
                 Join Samarth Community

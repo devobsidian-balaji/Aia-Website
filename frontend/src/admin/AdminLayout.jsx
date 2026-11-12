@@ -470,7 +470,7 @@ const handleExitAdmin = async () => {
                 <div className="pl-9 pr-2 py-1 space-y-1 border-l border-white/10 ml-5 my-1">
                   <button
                     onClick={() => handleNavigate("membership-why-join-cms")}
-                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${currentTab === "membership-slider-cms" ? "text-[#FF6B55] font-bold bg-white/10" : "text-gray-400 hover:text-[#FF6B55]"}`}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${currentTab === "membership-why-join-cms" ? "text-[#FF6B55] font-bold bg-white/10" : "text-gray-400 hover:text-[#FF6B55]"}`}
                   >
                     Why Join CMS
                   </button>

@@ -709,7 +709,7 @@ export default function Hero({ onBecomeMemberClick }) {
           <div className="mt-5 flex flex-wrap items-center gap-2 sm:mt-6 sm:gap-3">
             {hero.ctaPrimaryText && (
               <Link
-                to="/request-form/membership"
+                to="/membership"
                 className="inline-flex min-h-[34px] items-center justify-center rounded-[4px] bg-[#f15d4e] px-3.5 py-2 text-[10px] font-semibold text-white transition hover:bg-[#dc493b] sm:text-[11px]"
               >
                 {hero.ctaPrimaryText}

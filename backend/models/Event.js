@@ -299,6 +299,11 @@ const eventSchema = new mongoose.Schema(
           title: { type: String, default: "" },
           venue: { type: String, default: "" },
           time: { type: String, default: "" },
+
+          // Calendar fields
+  startDateTime: { type: String, default: "" },
+  endDateTime: { type: String, default: "" },
+  
           saveDateLink: { type: String, default: "" },
           registrationLink: { type: String, default: "" },
           locationLink: { type: String, default: "" },

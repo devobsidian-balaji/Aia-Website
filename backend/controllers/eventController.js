@@ -1668,6 +1668,109 @@ const uploadDetailImages = async (
       )
     );
 
+
+    // Upload Contributing Partners and Supported By logos.
+    const uploadPartnerLogos = async ({
+      items = [],
+      oldItems = [],
+      fieldPrefix,
+      folder,
+    }) => {
+      const usedOldIndexes = new Set();
+
+      const nextItems = await Promise.all(
+        items.map(async (item, index) => {
+          let oldIndex = -1;
+
+          // First match by MongoDB subdocument ID.
+          if (item?._id) {
+            oldIndex = oldItems.findIndex(
+              (oldItem, oldItemIndex) =>
+                !usedOldIndexes.has(oldItemIndex) &&
+                String(oldItem?._id) === String(item._id)
+            );
+          }
+
+          // Fall back to the same array position.
+          if (oldIndex === -1 && oldItems[index] && !usedOldIndexes.has(index)) {
+            oldIndex = index;
+          }
+
+          const oldItem = oldIndex >= 0 ? oldItems[oldIndex] : {};
+
+          if (oldIndex >= 0) {
+            usedOldIndexes.add(oldIndex);
+          }
+
+          const file = files[`${fieldPrefix}_${index}`];
+          const nextItem = { ...item };
+          const oldPublicId = oldItem?.logoPublicId || "";
+
+          if (file) {
+            await uploadAndReplace({
+              file,
+              folder,
+              currentPublicId: oldPublicId,
+              onSuccess: (result) => {
+                nextItem.logo = result.url;
+                nextItem.logoPublicId = result.publicId;
+              },
+            });
+          } else {
+            // Preserve existing logo if the frontend did not send
+            // a logo field. An explicitly empty logo means removal.
+            if (nextItem.logo === undefined) {
+              nextItem.logo = oldItem?.logo || "";
+            }
+
+            if (nextItem.logoPublicId === undefined) {
+              nextItem.logoPublicId = oldPublicId;
+            }
+
+            // Delete the old Cloudinary image if its logo was removed.
+            if (
+              oldPublicId &&
+              nextItem.logoPublicId !== oldPublicId
+            ) {
+              oldImagesToDelete.push(oldPublicId);
+            }
+          }
+
+          return nextItem;
+        })
+      );
+
+      // Delete logos belonging to partner/supporter rows removed
+      // from the updated event.
+      oldItems.forEach((oldItem, index) => {
+        if (
+          !usedOldIndexes.has(index) &&
+          oldItem?.logoPublicId
+        ) {
+          oldImagesToDelete.push(oldItem.logoPublicId);
+        }
+      });
+
+      return nextItems;
+    };
+
+    // Contributing Partners
+    detailPage.introduction.partners = await uploadPartnerLogos({
+      items: detailPage.introduction.partners || [],
+      oldItems: oldDetailPage?.introduction?.partners || [],
+      fieldPrefix: "partnerLogo",
+      folder: `${EVENT_FOLDER}/Partners`,
+    });
+
+    // Supported By
+    detailPage.introduction.supporters = await uploadPartnerLogos({
+      items: detailPage.introduction.supporters || [],
+      oldItems: oldDetailPage?.introduction?.supporters || [],
+      fieldPrefix: "supporterLogo",
+      folder: `${EVENT_FOLDER}/Supporters`,
+    });
+
+
     return { uploaded, oldImagesToDelete };
   } catch (error) {
     await Promise.all(

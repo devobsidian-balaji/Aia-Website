@@ -19,60 +19,60 @@ import RequestModal from "../components/RequestForms/RequestModal.jsx";
 
 export default function HomePage() {
   const [isRequestOpen, setIsRequestOpen] = useState(false);
-  const homeSlides = [
-    {
-      id: 1,
-      type: "intro",
-      eyebrow: "Insights + Events",
-      title:
-        "Here, we’ll highlight the latest policy tracker or report, along with upcoming events and important updates.",
-    },
+  // const homeSlides = [
+  //   {
+  //     id: 1,
+  //     type: "intro",
+  //     eyebrow: "Insights + Events",
+  //     title:
+  //       "Here, we’ll highlight the latest policy tracker or report, along with upcoming events and important updates.",
+  //   },
 
-    {
-      id: 2,
-      type: "content",
-      image: "/images/why-join/collective-voice.jpg",
-      title: "A Collective Voice",
-      description:
-        "Individual companies rarely get a hearing on policy or PL-implementation, standards, incentive schemes. AIA represents the sector as a bloc.",
-    },
+  //   {
+  //     id: 2,
+  //     type: "content",
+  //     image: "/images/why-join/collective-voice.jpg",
+  //     title: "A Collective Voice",
+  //     description:
+  //       "Individual companies rarely get a hearing on policy or PL-implementation, standards, incentive schemes. AIA represents the sector as a bloc.",
+  //   },
 
-    {
-      id: 3,
-      type: "content",
-      image: "/images/why-join/talent.jpg",
-      title: "Talent Pipeline Access.",
-      description:
-        "Priority access to Campus Connect and IAFSM-trained engineers entering the workforce.",
-    },
+  //   {
+  //     id: 3,
+  //     type: "content",
+  //     image: "/images/why-join/talent.jpg",
+  //     title: "Talent Pipeline Access.",
+  //     description:
+  //       "Priority access to Campus Connect and IAFSM-trained engineers entering the workforce.",
+  //   },
 
-    {
-      id: 4,
-      type: "content",
-      image: "/images/why-join/visibility.jpg",
-      title: "Industry Visibility.",
-      description:
-        "Build stronger visibility and connect with the wider industry ecosystem.",
-    },
+  //   {
+  //     id: 4,
+  //     type: "content",
+  //     image: "/images/why-join/visibility.jpg",
+  //     title: "Industry Visibility.",
+  //     description:
+  //       "Build stronger visibility and connect with the wider industry ecosystem.",
+  //   },
 
-    {
-      id: 5,
-      type: "content",
-      image: "/images/why-join/policy.jpg",
-      title: "Policy Representation.",
-      description:
-        "Collective representation gives members a stronger platform for industry conversations.",
-    },
+  //   {
+  //     id: 5,
+  //     type: "content",
+  //     image: "/images/why-join/policy.jpg",
+  //     title: "Policy Representation.",
+  //     description:
+  //       "Collective representation gives members a stronger platform for industry conversations.",
+  //   },
 
-    {
-      id: 6,
-      type: "content",
-      image: "/images/why-join/growth.jpg",
-      title: "Strategic Growth.",
-      description:
-        "Create opportunities for collaboration, partnerships and long-term growth.",
-    },
-  ];
+  //   {
+  //     id: 6,
+  //     type: "content",
+  //     image: "/images/why-join/growth.jpg",
+  //     title: "Strategic Growth.",
+  //     description:
+  //       "Create opportunities for collaboration, partnerships and long-term growth.",
+  //   },
+  // ];
   return (
     <main>
       <Hero onBecomeMemberClick={() => setIsRequestOpen(true)}/>

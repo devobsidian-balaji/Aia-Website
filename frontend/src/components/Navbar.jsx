@@ -388,7 +388,7 @@ const navigation = [
       { label: "Exec Council", to: "/about/executive-council" },
       { label: "Past Presidents", to: "/about/past-presidents" },
       // { label: "Events", to: "/event" },
-      { label: "aims-objectives", to: "/about/aims-objectives" },
+      { label: "Aims & Objectives", to: "/about/aims-objectives" },
     ],
   },
   {
@@ -423,11 +423,11 @@ const navigation = [
   {
     label: "Contact Us",
     to: "/contact-us",
-    children: [
-      { label: "Get in Touch", to: "/contact-us" },
-      { label: "Support", to: "/support" },
-      {label: "General Inquiries", to: "/learn-more#enquiry-form",}
-    ],
+    // children: [
+    //   { label: "Get in Touch", to: "/contact-us" },
+    //   { label: "Support", to: "/support" },
+    //   {label: "General Inquiries", to: "/learn-more#enquiry-form",}
+    // ],
   },
   // {
   //   label: "Manufacturers",

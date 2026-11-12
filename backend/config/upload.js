@@ -260,3 +260,9 @@ export const publicationImageUpload = createImageUpload({
   maxFileSize: 5 * 1024 * 1024,
   maxFieldSize: 20 * 1024 * 1024,
 });
+
+// What AIA image upload
+export const whatAiaImageUpload = createImageUpload({
+  maxFiles: 30,
+  maxFileSize: 5 * 1024 * 1024,
+});
