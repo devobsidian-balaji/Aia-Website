@@ -31,67 +31,67 @@ export const membersData = [
   },
 
   // Additional members
-  {
-    id: "member-6",
-    name: "Member 6",
-    logo: "/industry-insightassets/our-member-slides-image/member-6.png",
-    alt: "Member 6",
-  },
-  {
-    id: "member-7",
-    name: "Member 7",
-    logo: "/industry-insightassets/our-member-slides-image/member-7.png",
-    alt: "Member 7",
-  },
-  {
-    id: "member-8",
-    name: "Member 8",
-    logo: "/industry-insightassets/our-member-slides-image/member-8.png",
-    alt: "Member 8",
-  },
-  {
-    id: "member-9",
-    name: "Member 9",
-    logo: "/industry-insightassets/our-member-slides-image/member-9.png",
-    alt: "Member 9",
-  },
-  {
-    id: "member-10",
-    name: "Member 10",
-    logo: "/industry-insightassets/our-member-slides-image/member-10.png",
-    alt: "Member 10",
-  },
+  // {
+  //   id: "member-6",
+  //   name: "Member 6",
+  //   logo: "/industry-insightassets/our-member-slides-image/member-6.png",
+  //   alt: "Member 6",
+  // },
+  // {
+  //   id: "member-7",
+  //   name: "Member 7",
+  //   logo: "/industry-insightassets/our-member-slides-image/member-7.png",
+  //   alt: "Member 7",
+  // },
+  // {
+  //   id: "member-8",
+  //   name: "Member 8",
+  //   logo: "/industry-insightassets/our-member-slides-image/member-8.png",
+  //   alt: "Member 8",
+  // },
+  // {
+  //   id: "member-9",
+  //   name: "Member 9",
+  //   logo: "/industry-insightassets/our-member-slides-image/member-9.png",
+  //   alt: "Member 9",
+  // },
+  // {
+  //   id: "member-10",
+  //   name: "Member 10",
+  //   logo: "/industry-insightassets/our-member-slides-image/member-10.png",
+  //   alt: "Member 10",
+  // },
 
-  {
-    id: "member-11",
-    name: "Member 11",
-    logo: "/industry-insightassets/our-member-slides-image/member-11.png",
-    alt: "Member 11",
-  },
-  {
-    id: "member-12",
-    name: "Member 12",
-    logo: "/industry-insightassets/our-member-slides-image/member-12.png",
-    alt: "Member 12",
-  },
-  {
-    id: "member-13",
-    name: "Member 13",
-    logo: "/industry-insightassets/our-member-slides-image/member-13.png",
-    alt: "Member 13",
-  },
-  {
-    id: "member-14",
-    name: "Member 14",
-    logo: "/industry-insightassets/our-member-slides-image/member-14.png",
-    alt: "Member 14",
-  },
-  {
-    id: "member-15",
-    name: "Member 15",
-    logo: "/industry-insightassets/our-member-slides-image/member-15.png",
-    alt: "Member 15",
-  },
+  // {
+  //   id: "member-11",
+  //   name: "Member 11",
+  //   logo: "/industry-insightassets/our-member-slides-image/member-11.png",
+  //   alt: "Member 11",
+  // },
+  // {
+  //   id: "member-12",
+  //   name: "Member 12",
+  //   logo: "/industry-insightassets/our-member-slides-image/member-12.png",
+  //   alt: "Member 12",
+  // },
+  // {
+  //   id: "member-13",
+  //   name: "Member 13",
+  //   logo: "/industry-insightassets/our-member-slides-image/member-13.png",
+  //   alt: "Member 13",
+  // },
+  // {
+  //   id: "member-14",
+  //   name: "Member 14",
+  //   logo: "/industry-insightassets/our-member-slides-image/member-14.png",
+  //   alt: "Member 14",
+  // },
+  // {
+  //   id: "member-15",
+  //   name: "Member 15",
+  //   logo: "/industry-insightassets/our-member-slides-image/member-15.png",
+  //   alt: "Member 15",
+  // },
 ];
 
 export const memberShipSlides = [
