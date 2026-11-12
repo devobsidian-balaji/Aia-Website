@@ -9,13 +9,13 @@
 //   return (
 //     <footer id="footer" className="bg-[#294560] text-white pt-16 pb-12 font-sans text-left relative z-10">
 //       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        
+
 //         {/* Top Header Row with Logo and Slogan */}
 //         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-10 border-b border-white/20">
 //           <div className="flex items-center gap-3">
-//             <img 
-//               src="/aia-logo.png" 
-//               alt="Automation Industry Association" 
+//             <img
+//               src="/aia-logo.png"
+//               alt="Automation Industry Association"
 //               className="h-14 sm:h-16 w-auto object-contain brightness-125 contrast-125 filter drop-shadow-md"
 //             />
 //           </div>
@@ -30,7 +30,7 @@
 
 //         {/* 5 Navigation Columns matching Image 2 */}
 //         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 py-12 border-b border-white/20">
-          
+
 //           {/* Column 1: About AIA */}
 //           <div className="space-y-4">
 //             <h4 className="text-base font-bold text-white tracking-wide">
@@ -103,10 +103,10 @@
 //           {/* Circular Social Icons matching Image 2 */}
 //           <div className="flex items-center gap-3">
 //             {/* WhatsApp */}
-//             <a 
-//               href="https://whatsapp.com" 
-//               target="_blank" 
-//               rel="noreferrer" 
+//             <a
+//               href="https://whatsapp.com"
+//               target="_blank"
+//               rel="noreferrer"
 //               aria-label="WhatsApp"
 //               className="w-9 h-9 rounded-full border border-white/60 hover:border-white flex items-center justify-center text-white hover:bg-white/10 transition-colors"
 //             >
@@ -114,10 +114,10 @@
 //             </a>
 
 //             {/* X (Twitter) */}
-//             <a 
-//               href="https://twitter.com" 
-//               target="_blank" 
-//               rel="noreferrer" 
+//             <a
+//               href="https://twitter.com"
+//               target="_blank"
+//               rel="noreferrer"
 //               aria-label="X Twitter"
 //               className="w-9 h-9 rounded-full border border-white/60 hover:border-white flex items-center justify-center text-white hover:bg-white/10 transition-colors"
 //             >
@@ -125,10 +125,10 @@
 //             </a>
 
 //             {/* LinkedIn */}
-//             <a 
-//               href="https://linkedin.com" 
-//               target="_blank" 
-//               rel="noreferrer" 
+//             <a
+//               href="https://linkedin.com"
+//               target="_blank"
+//               rel="noreferrer"
 //               aria-label="LinkedIn"
 //               className="w-9 h-9 rounded-full border border-white/60 hover:border-white flex items-center justify-center text-white hover:bg-white/10 transition-colors text-xs font-bold"
 //             >
@@ -136,10 +136,10 @@
 //             </a>
 
 //             {/* Instagram */}
-//             <a 
-//               href="https://instagram.com" 
-//               target="_blank" 
-//               rel="noreferrer" 
+//             <a
+//               href="https://instagram.com"
+//               target="_blank"
+//               rel="noreferrer"
 //               aria-label="Instagram"
 //               className="w-9 h-9 rounded-full border border-white/60 hover:border-white flex items-center justify-center text-white hover:bg-white/10 transition-colors"
 //             >
@@ -161,9 +161,6 @@
 //     </footer>
 //   )
 // }
-
-
-
 
 import React from "react";
 import { Linkedin, ChevronUp } from "lucide-react";
@@ -200,7 +197,7 @@ const footerLinks = [
       { label: "Get in Touch", href: "/contact-us" },
       // { label: "Support", href: "/contact-us#support" },
       // { label: "General Inquiries", href: "/contact-us#inquiries" },
-       {label: "General Inquiries", href: "/learn-more#enquiry-form",}
+      { label: "General Inquiries", href: "/learn-more#enquiry-form" },
     ],
   },
 ];
@@ -222,16 +219,11 @@ export default function Footer() {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(104,160,211,0.55)_0%,transparent_48%),linear-gradient(115deg,#1C3E60_0%,#234B72_55%,#24496D_100%)]" />
 
       {/* Subtle Grid Texture */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.13]"
-       
-      />
+      <div className="pointer-events-none absolute inset-0 opacity-[0.13]" />
 
       <div className="relative mx-auto max-w-[1240px] px-6 sm:px-8 lg:px-12">
-
         {/* Top Header */}
         <div className="flex flex-col items-start justify-between gap-6 border-b border-white/25 py-9 sm:flex-row sm:items-center sm:py-10">
-
           {/* Logo */}
           <a href="/" className="inline-flex items-center">
             <img
@@ -252,7 +244,6 @@ export default function Footer() {
 
         {/* Navigation Columns */}
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 border-b border-white/25 py-9 sm:grid-cols-3 sm:gap-x-8 lg:grid-cols-5 lg:gap-8 lg:py-10">
-
           {footerLinks.map((column) => (
             <div key={column.title}>
               <h3 className="mb-6 text-lg font-semibold tracking-wide text-white">
@@ -282,7 +273,9 @@ export default function Footer() {
 
             <div className="flex flex-col items-start gap-4 lg:items-start">
               <a
-                href="/https://www.iafsm.in/"
+                href="https://www.iafsm.in/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-[14px] font-semibold text-white underline underline-offset-2 transition-opacity hover:opacity-70"
               >
                 Join Samarth Community
@@ -300,7 +293,6 @@ export default function Footer() {
 
         {/* Bottom Footer */}
         <div className="flex flex-col-reverse items-center justify-between gap-6 py-6 sm:flex-row sm:py-7">
-
           {/* Copyright */}
           <p className="text-center text-xs font-normal tracking-wide text-white/85 sm:text-left">
             © AIA . All Rights Reserved 2026
@@ -308,7 +300,6 @@ export default function Footer() {
 
           {/* Social & Scroll Top */}
           <div className="flex items-center gap-3">
-
             {/* LinkedIn */}
             <a
               href="https://www.linkedin.com/"
@@ -329,7 +320,6 @@ export default function Footer() {
             >
               <ChevronUp size={21} strokeWidth={1.8} />
             </button>
-
           </div>
         </div>
       </div>
