@@ -266,3 +266,10 @@ export const whatAiaImageUpload = createImageUpload({
   maxFiles: 30,
   maxFileSize: 5 * 1024 * 1024,
 });
+
+// Member Directory image upload
+export const memberImageUpload = createImageUpload({
+  maxFiles: 12,
+  maxFileSize: 5 * 1024 * 1024,
+  maxFieldSize: 20 * 1024 * 1024,
+});

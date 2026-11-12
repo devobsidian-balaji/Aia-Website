@@ -1,4 +1,3 @@
-
 import { useMemo } from "react";
 
 /**
@@ -34,12 +33,11 @@ export default function StickyStackCards({
         description: item.description ?? item.paragraph ?? "",
 
         // Paragraph is hidden by default for the reference design
-        showDescription:
-          item.showDescription ?? Boolean(item.description),
+        showDescription: item.showDescription ?? Boolean(item.description),
 
         points: Array.isArray(item.points) ? item.points : [],
 
-       background: item.background ?? "bg-[#202B3B]",
+        background: item.background ?? "bg-[#202B3B]",
 
         textColor: item.textColor ?? "text-white",
         numberColor: item.numberColor ?? "text-white",
@@ -47,14 +45,13 @@ export default function StickyStackCards({
         descriptionClassName: item.descriptionClassName ?? "",
         pointsClassName: item.pointsClassName ?? "",
       })),
-    [items, startNumber]
+    [items, startNumber],
   );
 
   if (!normalizedItems.length) return null;
 
   return (
     <section className={`relative w-full overflow-visible ${className}`}>
-
       {/* Section Heading */}
       {title && (
         <h2 className="text-4xl sm:text-5xl lg:text-[54px] font-black text-[#1F2937] tracking-tight text-center mb-6 font-semibold">
@@ -74,7 +71,6 @@ export default function StickyStackCards({
           className={cardClassName}
         />
       ))}
-
     </section>
   );
 }
@@ -92,20 +88,19 @@ function StickyCard({
   className,
 }) {
   return (
-   <article
-  className={`sticky flex w-full items-center ${cardHeight} ${item.background} ${item.textColor} transition-colors duration-300 hover:!bg-[#355A7D] ${className} py-12
+    <article
+      className={`sticky flex w-full items-center ${cardHeight} ${item.background} ${item.textColor} transition-colors duration-300 hover:!bg-[#355A7D] ${className} py-12
   `}
-  style={{
-    top: stickyOffset,
-    zIndex: index + 1,
-  }}
->
+      style={{
+        top: stickyOffset,
+        zIndex: index + 1,
+      }}
+    >
       <div
         className={`mx-auto grid w-full max-w-[1400px] items-center gap-3 px-5 ${showNumbers ? "grid-cols-[70px_1fr]" : "grid-cols-1"} sm:gap-8 sm:px-8 ${showNumbers ? "sm:grid-cols-[80px_1fr]" : "sm:grid-cols-1"} md:gap-12
           ${showNumbers ? "md:grid-cols-[80px_1fr]" : "md:grid-cols-1"} lg:gap-24 lg:px-12 ${showNumbers ? "lg:grid-cols-[90px_1fr]" : "lg:grid-cols-1"} xl:px-16 ${showNumbers ? "xl:grid-cols-[100px_1fr]" : "xl:grid-cols-1"} py-5 sm:py-6
         `}
       >
-
         {/* NUMBER */}
         {showNumbers && (
           <div className="flex items-center justify-start">
@@ -120,7 +115,6 @@ function StickyCard({
 
         {/* CONTENT */}
         <div className="flex min-w-0 flex-col justify-center py-2">
-
           {/* Title */}
           {item.title && (
             <h2
@@ -133,12 +127,27 @@ function StickyCard({
 
           {/* Description / Paragraph */}
           {item.showDescription && item.description && (
-            <p
-              className={`mb-3 max-w-[850px] text-[11px] leading-relaxed text-white/75 sm:text-xs ${item.descriptionClassName}
-              `}
-            >
-              {item.description}
-            </p>
+            // <p
+            //   className={`mb-3 max-w-[850px] text-[11px] leading-relaxed text-white/75 sm:text-xs ${item.descriptionClassName}
+            //   `}
+            // >
+            //   {item.description}
+            // </p>
+            <ul className={`mt-3 space-y-2 ${item.descriptionClassName}`}>
+              {(item.description || "")
+                .split(/\r?\n/)
+                .map((point) => point.trim())
+                .filter(Boolean)
+                .map((point, index) => (
+                  <li
+                    key={index}
+                    className="flex items-start gap-2 text-sm leading-relaxed"
+                  >
+                    <span className="shrink-0">•</span>
+                    <span>{point.replace(/^[•\-]\s*/, "")}</span>
+                  </li>
+                ))}
+            </ul>
           )}
 
           {/* Bullet Points */}
@@ -148,22 +157,14 @@ function StickyCard({
               `}
             >
               {item.points.map((point, pointIndex) => (
-                <li
-                  key={pointIndex}
-                  className="flex items-start gap-1.5"
-                >
-                  <span className="shrink-0 text-white">
-                    •
-                  </span>
+                <li key={pointIndex} className="flex items-start gap-1.5">
+                  <span className="shrink-0 text-white">•</span>
 
-                  <span>
-                    {typeof point === "string" ? point : point.text}
-                  </span>
+                  <span>{typeof point === "string" ? point : point.text}</span>
                 </li>
               ))}
             </ul>
           )}
-
         </div>
       </div>
     </article>

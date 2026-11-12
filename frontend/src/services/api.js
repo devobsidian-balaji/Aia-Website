@@ -1477,3 +1477,139 @@ export const deleteWhatAiaCard = async (cardId) => {
 
   return data;
 };
+
+
+
+
+
+ 
+// ==========================================
+// MEMBER DIRECTORY CMS APIS
+// ==========================================
+
+// ==========================================
+// ADMIN - GET ALL MEMBERS
+// Includes active and inactive members
+// Protected by adminAuth
+// ==========================================
+
+export const getAdminMembers = async (params = {}) => {
+  const res = await api.get("/members/admin", {
+    params,
+  });
+
+  return res.data.members || res.data.data || [];
+};
+
+// ==========================================
+// PUBLIC - GET ACTIVE MEMBERS
+// ==========================================
+
+export const getMembers = async () => {
+  const res = await api.get("/members", {
+    params: {
+      status: "active",
+    },
+  });
+
+  return (
+    res.data.members ||
+    res.data.data ||
+    []
+  );
+};
+
+// ==========================================
+// GET SINGLE MEMBER BY ID
+// ==========================================
+
+export const getMemberById = async (id) => {
+  const res = await api.get(`/members/${id}`);
+
+  return (
+    res.data.member ||
+    res.data.data ||
+    res.data
+  );
+};
+
+// ==========================================
+// GET MEMBER BY SLUG
+// ==========================================
+
+export const getMemberBySlug = async (slug) => {
+  const res = await api.get(
+    `/members/slug/${encodeURIComponent(slug)}`
+  );
+
+  return (
+    res.data.member ||
+    res.data.data ||
+    null
+  );
+};
+
+// ==========================================
+// ADMIN - CREATE MEMBER
+// Multipart FormData
+// ==========================================
+
+export const createMember = async (formData) => {
+  const res = await api.post(
+    "/members",
+    formData
+  );
+
+  return (
+    res.data.member ||
+    res.data.data ||
+    res.data
+  );
+};
+
+// ==========================================
+// ADMIN - UPDATE MEMBER
+// Multipart FormData
+// ==========================================
+
+export const updateMember = async (id, formData) => {
+  const res = await api.put(
+    `/members/${id}`,
+    formData
+  );
+
+  return (
+    res.data.member ||
+    res.data.data ||
+    res.data
+  );
+};
+
+// ==========================================
+// ADMIN - TOGGLE MEMBER STATUS
+// Active / Inactive
+// ==========================================
+
+export const updateMemberStatus = async (id) => {
+  const res = await api.patch(
+    `/members/${id}/toggle-status`
+  );
+
+  return (
+    res.data.member ||
+    res.data.data ||
+    res.data
+  );
+};
+
+// ==========================================
+// ADMIN - DELETE MEMBER
+// ==========================================
+
+export const deleteMember = async (id) => {
+  const res = await api.delete(
+    `/members/${id}`
+  );
+
+  return res.data;
+};

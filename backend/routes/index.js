@@ -22,6 +22,7 @@ import pageHeroRouter from "./pageHeroRoutes.js";
 import { enquiryRouter } from './enquiryRoutes.js';
 import { formSubmissionRouter } from './formSubmissionRoutes.js';
 import { adminAuthRouter } from './adminAuthRoutes.js';
+import memberRoutes from "./memberRoutes.js";
 
 
 const apiRouter = Router();
@@ -50,5 +51,6 @@ apiRouter.use("/page-heroes", pageHeroRouter);
 apiRouter.use("/enquiries", enquiryRouter);
 apiRouter.use("/form-submissions", formSubmissionRouter);
 apiRouter.use("/admin-auth", adminAuthRouter);
+apiRouter.use("/members", memberRoutes);
 
 export default apiRouter;
