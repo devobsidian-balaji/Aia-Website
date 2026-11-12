@@ -183,8 +183,8 @@ const footerLinks = [
     title: "Membership",
     links: [
       { label: "Member Directory", href: "/membership/member-directory" },
-      { label: "Technology Providers", href: "/membership/technology-providers" },
-      { label: "System Integrators", href: "/membership/system-integrators" },
+      { label: "Technology Providers", href: "/technology-providers-signup" },
+      { label: "System Integrators", href: "/system-integrators-signup" },
     ],
   },
   {
