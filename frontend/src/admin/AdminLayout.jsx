@@ -1396,6 +1396,7 @@ import { logoutAdmin } from "../services/adminAuth.js";
 import FormSubmissionsCMS from "./FormSubmissionsCMS.jsx";
 import AddMember from "./AddMember.jsx";
 import AllMembers from "./AllMembers.jsx";
+import AllEntries from "./AllEntries.jsx";
 
 export default function AdminLayout({ onExitAdmin }) {
   const navigate = useNavigate();
@@ -1459,6 +1460,7 @@ const handleViewWebsite = () => {
         [
           "add-publication",
           "all-publications",
+          "all-entries",
           "add-article",
           "all-articles",
           "add-news",
@@ -2401,6 +2403,17 @@ const handleExitAdmin = async () => {
                     Show All Publications
                   </button>
 
+                  <button
+  onClick={() => handleNavigate("all-entries")}
+  className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs transition ${
+    currentTab === "all-entries"
+      ? "text-[#FF6B55] font-bold bg-white/10"
+      : "text-gray-400 hover:text-[#FF6B55]"
+  }`}
+>
+  All Entries
+</button>
+
                   {/* Articles CMS */}
                   <div className="pt-2 mt-2 border-t border-white/10">
                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider pl-1">
@@ -2722,6 +2735,9 @@ const handleExitAdmin = async () => {
             {currentTab === "all-publications" && (
               <AllPublications onNavigate={handleNavigate} />
             )}
+            {currentTab === "all-entries" && (
+  <AllEntries onNavigate={handleNavigate} />
+)}
             {currentTab === "add-article" && (
               <AddArticle
                 onNavigate={handleNavigate}

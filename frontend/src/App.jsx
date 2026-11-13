@@ -40,6 +40,7 @@ import ProtectedAdminRoute from "./admin/ProtectedAdminRoute.jsx";
 import AdminLoginRoute from "./admin/AdminLoginRoute.jsx";
 import SearchPage from "./pages/SearchPage.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import AllEntriesPage from "./pages/publication/AllEntriesPage.jsx";
 
 // Helper to scroll to top automatically on route changes
 function ScrollToTop() {
@@ -274,6 +275,14 @@ export default function App() {
             </PublicLayout>
           }
         /> */}
+        <Route
+  path="/publication/all-entries"
+  element={
+    <PublicLayout>
+      <AllEntriesPage />
+    </PublicLayout>
+  }
+/>
 
         <Route
           path="/publication/articles"

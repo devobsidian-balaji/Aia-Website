@@ -186,10 +186,11 @@ const footerLinks = [
   },
   {
     title: "Publication",
-    links: [
-      { label: "Articles", href: "/publication/articles" },
-      { label: "News", href: "/publication/news" },
-    ],
+     links: [
+    { label: "All Entries", href: "/publication/all-entries" },
+    { label: "Articles", href: "/publication/articles" },
+    { label: "News", href: "/publication/news" },
+  ],
   },
   {
     title: "Contact Us",
