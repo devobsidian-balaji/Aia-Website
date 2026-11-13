@@ -882,28 +882,23 @@ export const deleteRoadmapItem = async (id) => {
 // =======================
 
 export const getCouncilMembers = async () => {
-  try {
-    const res = await api.get('/council');
-    return res.data.data || [];
-  } catch (err) {
-    console.warn('Fallback council:', err.message);
-    return [];
-  }
+  const response = await api.get("/council");
+  return response.data.data || [];
 };
 
-export const createCouncilMember = async (data) => {
-  const res = await api.post('/council', data);
-  return res.data.data || res.data;
+export const createCouncilMember = async (formData) => {
+  const response = await api.post("/council", formData);
+  return response.data;
 };
 
-export const updateCouncilMember = async (id, data) => {
-  const res = await api.put(`/council/${id}`, data);
-  return res.data.data || res.data;
+export const updateCouncilMember = async (id, formData) => {
+  const response = await api.put(`/council/${id}`, formData);
+  return response.data;
 };
 
 export const deleteCouncilMember = async (id) => {
-  const res = await api.delete(`/council/${id}`);
-  return res.data;
+  const response = await api.delete(`/council/${id}`);
+  return response.data;
 };
 
 // =======================
