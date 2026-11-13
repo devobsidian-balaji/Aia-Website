@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Edit, Trash2, CheckCircle2, Loader2, RefreshCw, Plus, Calendar, Award } from 'lucide-react'
+import { Edit, Trash2, CheckCircle2, Loader2, RefreshCw, Plus, Calendar, Award,  X,Image as ImageIcon,
+ } from 'lucide-react'
 import { getPastPresidents, deletePastPresident, updatePastPresident } from '../services/api'
 
 export default function AllPastPresidents({ onNavigate }) {
@@ -14,6 +15,9 @@ export default function AllPastPresidents({ onNavigate }) {
   const [editTerm, setEditTerm] = useState('')
   const [editDescription, setEditDescription] = useState('')
   const [isSaving, setIsSaving] = useState(false)
+  const [editOrder, setEditOrder] = useState(0);
+const [editImage, setEditImage] = useState(null);
+const [editPreview, setEditPreview] = useState("");
 
   const fetchPresidents = async () => {
     setLoading(true)
@@ -46,33 +50,77 @@ export default function AllPastPresidents({ onNavigate }) {
     }
   }
 
-  const openEditModal = (president) => {
-    setEditingPresident(president)
-    setEditName(president.name)
-    setEditTerm(president.term)
-    setEditDescription(president.description)
+const openEditModal = (president) => {
+  setEditingPresident(president);
+
+  setEditName(president.name || "");
+  setEditTerm(president.term || "");
+  setEditDescription(president.description || "");
+
+  setEditOrder(president.order ?? 0);
+  setEditImage(null);
+  setEditPreview(president.imageUrl || "");
+};
+
+ const handleSaveEdit = async (e) => {
+  e.preventDefault();
+
+  if (!editingPresident) return;
+
+  if (
+    !editName.trim() ||
+    !editTerm.trim() ||
+    !editDescription.trim()
+  ) {
+    return;
   }
 
-  const handleSaveEdit = async (e) => {
-    e.preventDefault()
-    if (!editingPresident) return
-    setIsSaving(true)
-    try {
-      const res = await updatePastPresident(editingPresident._id, {
-        name: editName,
-        term: editTerm,
-        description: editDescription,
-      })
-      setPresidents(presidents.map(p => p._id === editingPresident._id ? res.data : p))
-      setEditingPresident(null)
-      setMsg('Past President updated successfully!')
-      setTimeout(() => setMsg(''), 3000)
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setIsSaving(false)
+  setIsSaving(true);
+
+  try {
+    const formData = new FormData();
+
+    formData.append("name", editName.trim());
+    formData.append("term", editTerm.trim());
+    formData.append("description", editDescription.trim());
+    formData.append("order", String(editOrder));
+
+    // Only append when a replacement image is selected.
+    if (editImage) {
+      formData.append("image", editImage);
     }
+
+    const res = await updatePastPresident(
+      editingPresident._id,
+      formData
+    );
+
+    setPresidents((previous) =>
+      previous
+        .map((president) =>
+          president._id === editingPresident._id
+            ? res.data
+            : president
+        )
+        .sort((a, b) => a.order - b.order)
+    );
+
+    setEditingPresident(null);
+    setEditImage(null);
+    setEditPreview("");
+
+    setMsg("Past President updated successfully!");
+    setTimeout(() => setMsg(""), 3000);
+  } catch (err) {
+    console.error(err);
+    setMsg(
+      err.response?.data?.message ||
+      "Failed to update Past President."
+    );
+  } finally {
+    setIsSaving(false);
   }
+};
 
   return (
     <div className="w-full text-left space-y-6">
@@ -185,69 +233,218 @@ export default function AllPastPresidents({ onNavigate }) {
           ))}
         </div>
       )}
-
-      {/* Edit Modal */}
-      {editingPresident && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-gray-200">
-            <h3 className="text-lg font-black text-[#1E293B] mb-5">
-              Edit Past AIA President
-            </h3>
-
-            <form onSubmit={handleSaveEdit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Name</label>
-                <input 
-                  type="text" 
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  required
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Tenure / Term Range</label>
-                <input 
-                  type="text" 
-                  value={editTerm}
-                  onChange={(e) => setEditTerm(e.target.value)}
-                  required
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Description / Message</label>
-                <textarea 
-                  rows={4}
-                  value={editDescription}
-                  onChange={(e) => setEditDescription(e.target.value)}
-                  required
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-300 outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                ></textarea>
-              </div>
-
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
-                <button
-                  type="button"
-                  onClick={() => setEditingPresident(null)}
-                  className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-sm font-semibold hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSaving}
-                  className="px-6 py-2.5 rounded-xl bg-[#2563EB] text-white text-sm font-bold shadow hover:bg-blue-700 disabled:opacity-50"
-                >
-                  {isSaving ? 'Saving...' : 'Save Changes'}
-                </button>
-              </div>
-            </form>
-          </div>
+     
+{/* Edit Modal */}
+{editingPresident && (
+  <div
+    className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5"
+    onClick={() => !isSaving && setEditingPresident(null)}
+  >
+    <div
+      className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-xl max-h-[92vh] overflow-hidden shadow-2xl border border-gray-200 flex flex-col"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Modal Header */}
+      <div className="px-5 sm:px-7 py-5 border-b border-gray-100 flex items-center justify-between shrink-0">
+        <div>
+          <h3 className="text-lg sm:text-xl font-black text-[#1E293B]">
+            Edit Past AIA President
+          </h3>
+          <p className="text-xs text-gray-500 mt-1">
+            Update leadership details and photograph.
+          </p>
         </div>
-      )}
+
+        <button
+          type="button"
+          onClick={() => !isSaving && setEditingPresident(null)}
+          disabled={isSaving}
+          className="w-9 h-9 flex items-center justify-center rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-800 transition disabled:opacity-50"
+          aria-label="Close modal"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Modal Body */}
+      <form
+        onSubmit={handleSaveEdit}
+        className="flex flex-col min-h-0 flex-1"
+      >
+        <div className="px-5 sm:px-7 py-5 sm:py-6 space-y-5 overflow-y-auto">
+
+          {/* Image Replacement */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-3">
+              President Photograph
+            </label>
+
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/70 p-4 sm:p-5">
+              <div className="flex flex-col sm:flex-row items-center gap-5">
+
+                {/* Image Preview */}
+                <div className="relative shrink-0">
+                  {editPreview ? (
+                    <img
+                      src={editPreview}
+                      alt="President preview"
+                      className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-md"
+                    />
+                  ) : (
+                    <div className="w-28 h-28 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
+                      <ImageIcon className="w-8 h-8" />
+                    </div>
+                  )}
+
+                  {editImage && (
+                    <span className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-green-600 border-2 border-white flex items-center justify-center">
+                      <CheckCircle2 className="w-4 h-4 text-white" />
+                    </span>
+                  )}
+                </div>
+
+                {/* Upload Control */}
+                <div className="flex-1 min-w-0 w-full text-center sm:text-left">
+                  <p className="text-sm font-semibold text-gray-800">
+                    Replace current photograph
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1 mb-3">
+                    JPG, PNG, WebP or GIF. Maximum 5 MB.
+                  </p>
+
+                  <label className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-gray-300 text-gray-700 text-xs font-bold hover:bg-gray-100 transition cursor-pointer">
+                    <ImageIcon className="w-4 h-4" />
+                    Choose New Image
+
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/gif"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+
+                        if (!file) return;
+
+                        if (file.size > 5 * 1024 * 1024) {
+                          setMsg("Image size must be less than 5 MB.");
+                          e.target.value = "";
+                          return;
+                        }
+
+                        setMsg("");
+                        setEditImage(file);
+                        setEditPreview(URL.createObjectURL(file));
+                      }}
+                    />
+                  </label>
+
+                  <p className="text-xs text-gray-400 mt-2">
+                    Leave unchanged to keep the existing photograph.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+           {/* Display Order */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Display Order
+            </label>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={editOrder}
+              onChange={(e) => setEditOrder(e.target.value)}
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-sm text-gray-800 transition"
+            />
+            <p className="text-xs text-gray-400 mt-2">
+              Lower numbers appear first in the Past Presidents section.
+            </p>
+          </div>
+
+          {/* President Name */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              President Name
+            </label>
+            <input
+              type="text"
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              placeholder="Enter president name"
+              required
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-sm text-gray-800 transition"
+            />
+          </div>
+
+          {/* Tenure */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Tenure / Term Range
+            </label>
+            <input
+              type="text"
+              value={editTerm}
+              onChange={(e) => setEditTerm(e.target.value)}
+              placeholder="e.g. 2016–2018"
+              required
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-sm text-gray-800 transition"
+            />
+          </div>
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Description / Leadership Message
+            </label>
+            <textarea
+              rows={4}
+              value={editDescription}
+              onChange={(e) => setEditDescription(e.target.value)}
+              placeholder="Enter president's experience and leadership message..."
+              required
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50/50 outline-none focus:bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 text-sm text-gray-800 resize-y transition"
+            />
+          </div>
+
+         
+
+          
+
+        </div>
+
+        {/* Sticky Footer */}
+        <div className="px-5 sm:px-7 py-4 border-t border-gray-100 bg-white flex flex-col-reverse sm:flex-row justify-end gap-3 shrink-0">
+          <button
+            type="button"
+            onClick={() => setEditingPresident(null)}
+            disabled={isSaving}
+            className="w-full sm:w-auto px-6 py-3 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition disabled:opacity-50"
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            disabled={isSaving}
+            className="w-full sm:w-auto min-w-[150px] px-6 py-3 rounded-xl bg-[#2563EB] text-white text-sm font-bold shadow-sm hover:bg-blue-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Changes"
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
 
     </div>
   )

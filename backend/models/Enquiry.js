@@ -21,6 +21,13 @@ const enquirySchema = new mongoose.Schema(
       trim: true,
     },
 
+    customOption: {
+  type: String,
+  trim: true,
+  default: "",
+  maxlength: 150,
+},
+
     // Legacy fields: existing admin compatibility
     ecosystem: {
       type: String,

@@ -273,3 +273,10 @@ export const memberImageUpload = createImageUpload({
   maxFileSize: 5 * 1024 * 1024,
   maxFieldSize: 20 * 1024 * 1024,
 });
+
+// Past President image upload
+export const pastPresidentImageUpload = createImageUpload({
+  maxFiles: 1,
+  maxFileSize: 5 * 1024 * 1024,
+  maxFieldSize: 1 * 1024 * 1024,
+});

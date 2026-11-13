@@ -1,4 +1,3 @@
-
 // import React, { useEffect, useState } from "react";
 // import {
 //   X,
@@ -599,8 +598,6 @@
 //   );
 // }
 
-
-
 import React, { useEffect, useState } from "react";
 import {
   X,
@@ -728,6 +725,7 @@ const categoryData = {
 const initialForm = {
   category: "Manufacturing Sector",
   selectedOption: "Apparel",
+  customOption: "",
   fullName: "",
   email: "",
   companyName: "",
@@ -745,9 +743,7 @@ const normalizeWebsite = (value) => {
 
   if (!website) return "";
 
-  return /^https?:\/\//i.test(website)
-    ? website
-    : `https://${website}`;
+  return /^https?:\/\//i.test(website) ? website : `https://${website}`;
 };
 
 const isValidWebsite = (value) => {
@@ -786,7 +782,7 @@ function SearchableDropdown({
   const [search, setSearch] = useState("");
 
   const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(search.toLowerCase().trim())
+    option.toLowerCase().includes(search.toLowerCase().trim()),
   );
 
   const handleSelect = (option) => {
@@ -848,10 +844,7 @@ function SearchableDropdown({
             {/* Search */}
             <div className="sticky top-0 border-b border-gray-100 bg-white p-2">
               <div className="flex h-8 items-center gap-2 rounded border border-gray-200 px-2 focus-within:border-[#E37263]">
-                <Search
-                  size={13}
-                  className="shrink-0 text-gray-400"
-                />
+                <Search size={13} className="shrink-0 text-gray-400" />
 
                 <input
                   type="text"
@@ -864,10 +857,7 @@ function SearchableDropdown({
                       setSearch("");
                     }
 
-                    if (
-                      event.key === "Enter" &&
-                      filteredOptions.length > 0
-                    ) {
+                    if (event.key === "Enter" && filteredOptions.length > 0) {
                       event.preventDefault();
                       handleSelect(filteredOptions[0]);
                     }
@@ -895,10 +885,7 @@ function SearchableDropdown({
                     <span>{option}</span>
 
                     {value === option && (
-                      <Check
-                        size={13}
-                        className="shrink-0 text-[#D94F40]"
-                      />
+                      <Check size={13} className="shrink-0 text-[#D94F40]" />
                     )}
                   </button>
                 ))
@@ -916,9 +903,7 @@ function SearchableDropdown({
         </>
       )}
 
-      {error && (
-        <p className="mt-1 text-[13px] text-red-400">{error}</p>
-      )}
+      {error && <p className="mt-1 text-[13px] text-red-400">{error}</p>}
     </div>
   );
 }
@@ -990,11 +975,13 @@ export default function GeneralInquiryPopup({ onSubmit }) {
     setForm((prev) => ({
       ...prev,
       [name]: value,
+      ...(name === "selectedOption" ? { customOption: "" } : {}),
     }));
 
     setErrors((prev) => ({
       ...prev,
       [name]: "",
+      ...(name === "selectedOption" ? { customOption: "" } : {}),
     }));
 
     setSubmitError("");
@@ -1030,15 +1017,23 @@ export default function GeneralInquiryPopup({ onSubmit }) {
       newErrors.selectedOption = "Please select an option.";
     }
 
+    // Custom option validation
+    if (form.selectedOption === "OTHER (Custom)" && !form.customOption.trim()) {
+      newErrors.customOption = "Please enter your custom option.";
+    } else if (
+      form.selectedOption === "OTHER (Custom)" &&
+      form.customOption.trim().length < 2
+    ) {
+      newErrors.customOption =
+        "Custom option must contain at least 2 characters.";
+    }
+
     // Full name
     if (!form.fullName.trim()) {
       newErrors.fullName = "Full name is required.";
     } else if (form.fullName.trim().length < 2) {
-      newErrors.fullName =
-        "Name must contain at least 2 characters.";
-    } else if (
-      !/^[a-zA-ZÀ-ÿ\s.'-]+$/.test(form.fullName.trim())
-    ) {
+      newErrors.fullName = "Name must contain at least 2 characters.";
+    } else if (!/^[a-zA-ZÀ-ÿ\s.'-]+$/.test(form.fullName.trim())) {
       newErrors.fullName = "Please enter a valid name.";
     }
 
@@ -1074,8 +1069,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
     if (!phone) {
       newErrors.phoneNumber = "Phone number is required.";
     } else if (!phoneRegex.test(normalizedPhone)) {
-      newErrors.phoneNumber =
-        "Enter a valid phone number (7–15 digits).";
+      newErrors.phoneNumber = "Enter a valid phone number (7–15 digits).";
     }
 
     // Message
@@ -1101,7 +1095,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
 
     if (typeof onSubmit !== "function") {
       setSubmitError(
-        "Inquiry API is not connected. Please contact the administrator."
+        "Inquiry API is not connected. Please contact the administrator.",
       );
       return;
     }
@@ -1109,13 +1103,15 @@ export default function GeneralInquiryPopup({ onSubmit }) {
     setSubmitting(true);
 
     try {
-      const normalizedPhone = form.phoneNumber
-        .trim()
-        .replace(/[\s()-]/g, "");
+      const normalizedPhone = form.phoneNumber.trim().replace(/[\s()-]/g, "");
 
       const payload = {
         category: form.category,
         selectedOption: form.selectedOption,
+        customOption:
+          form.selectedOption === "OTHER (Custom)"
+            ? form.customOption.trim()
+            : "",
         fullName: form.fullName.trim(),
         email: form.email.trim().toLowerCase(),
         companyName: form.companyName.trim(),
@@ -1133,8 +1129,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
       console.error("Inquiry submission error:", error);
 
       setSubmitError(
-        error?.message ||
-          "Unable to submit your inquiry. Please try again."
+        error?.message || "Unable to submit your inquiry. Please try again.",
       );
     } finally {
       setSubmitting(false);
@@ -1159,12 +1154,9 @@ export default function GeneralInquiryPopup({ onSubmit }) {
       errors[field] ? "border-red-500" : "border-gray-200"
     }`;
 
-  const labelClass =
-    "mb-1 block text-[13px] font-medium text-[#A9A9A9]";
+  const labelClass = "mb-1 block text-[13px] font-medium text-[#A9A9A9]";
 
-  const requiredMark = (
-    <span className="text-red-500"> *</span>
-  );
+  const requiredMark = <span className="text-red-500"> *</span>;
 
   if (!isOpen) return null;
 
@@ -1229,12 +1221,14 @@ export default function GeneralInquiryPopup({ onSubmit }) {
                       ...prev,
                       category: value,
                       selectedOption: "",
+                      customOption: "",
                     }));
 
                     setErrors((prev) => ({
                       ...prev,
                       category: "",
                       selectedOption: "",
+                      customOption: "",
                     }));
 
                     setSubmitError("");
@@ -1248,14 +1242,38 @@ export default function GeneralInquiryPopup({ onSubmit }) {
                   value={form.selectedOption}
                   options={categoryData[form.category] || []}
                   placeholder={
-                    form.category
-                      ? "Select Option"
-                      : "Select category first"
+                    form.category ? "Select Option" : "Select category first"
                   }
                   error={errors.selectedOption}
                   disabled={!form.category}
                   onChange={handleDropdownChange}
                 />
+
+                {form.selectedOption === "OTHER (Custom)" && (
+                  <div className="mt-2 sm:col-span-2">
+                    <label className={labelClass}>
+                      Enter Custom Option
+                      {requiredMark}
+                    </label>
+
+                    <input
+                      type="text"
+                      name="customOption"
+                      value={form.customOption}
+                      onChange={handleChange}
+                      placeholder="Please specify your industry, technology or service"
+                      maxLength={150}
+                      autoComplete="off"
+                      className={inputClass("customOption")}
+                    />
+
+                    {errors.customOption && (
+                      <p className="mt-1 text-[13px] text-red-400">
+                        {errors.customOption}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* =====================================
@@ -1264,9 +1282,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
 
               <div className="mb-2.5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                 <div>
-                  <label className={labelClass}>
-                    Full Name{requiredMark}
-                  </label>
+                  <label className={labelClass}>Full Name{requiredMark}</label>
 
                   <input
                     type="text"
@@ -1339,9 +1355,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
                 </div>
 
                 <div>
-                  <label className={labelClass}>
-                    Website{requiredMark}
-                  </label>
+                  <label className={labelClass}>Website{requiredMark}</label>
 
                   <input
                     type="text"
@@ -1391,9 +1405,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
               ====================================== */}
 
               <div>
-                <label className={labelClass}>
-                  Your Message
-                </label>
+                <label className={labelClass}>Your Message</label>
 
                 <textarea
                   name="message"
@@ -1403,9 +1415,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
                   rows={3}
                   maxLength={2000}
                   className={`w-full resize-y rounded-md border bg-white px-3 py-3 text-[12px] text-[#202938] outline-none transition placeholder:text-[#687386] focus:border-[#E37263] focus:ring-2 focus:ring-[#E37263]/20 ${
-                    errors.message
-                      ? "border-red-500"
-                      : "border-gray-200"
+                    errors.message ? "border-red-500" : "border-gray-200"
                   }`}
                 />
 
@@ -1425,10 +1435,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
               {/* API ERROR */}
               {submitError && (
                 <div className="mt-3 flex items-start gap-2 rounded-md border border-red-400/30 bg-red-500/10 p-2.5 text-xs text-red-300">
-                  <AlertCircle
-                    size={15}
-                    className="mt-0.5 shrink-0"
-                  />
+                  <AlertCircle size={15} className="mt-0.5 shrink-0" />
                   {submitError}
                 </div>
               )}
@@ -1445,10 +1452,7 @@ export default function GeneralInquiryPopup({ onSubmit }) {
                 >
                   {submitting ? (
                     <>
-                      <Loader2
-                        size={14}
-                        className="animate-spin"
-                      />
+                      <Loader2 size={14} className="animate-spin" />
                       Submitting
                     </>
                   ) : (
@@ -1473,18 +1477,13 @@ export default function GeneralInquiryPopup({ onSubmit }) {
           // =========================================
 
           <div className="flex min-h-[260px] flex-col items-center justify-center py-8 text-center">
-            <CheckCircle2
-              size={48}
-              className="mb-4 text-[#70D6A0]"
-            />
+            <CheckCircle2 size={48} className="mb-4 text-[#70D6A0]" />
 
-            <h2 className="text-xl font-bold text-white">
-              Thank You!
-            </h2>
+            <h2 className="text-xl font-bold text-white">Thank You!</h2>
 
             <p className="mt-2 max-w-xs text-sm leading-relaxed text-white/65">
-              Your inquiry has been submitted successfully.
-              Our team will get back to you soon.
+              Your inquiry has been submitted successfully. Our team will get
+              back to you soon.
             </p>
 
             <button

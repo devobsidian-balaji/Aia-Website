@@ -910,29 +910,52 @@ export const deleteCouncilMember = async (id) => {
 // PAST PRESIDENTS APIS
 // =======================
 
+// export const getPastPresidents = async () => {
+//   try {
+//     const res = await api.get('/past-presidents');
+//     return res.data.data || [];
+//   } catch (err) {
+//     console.warn('Fallback past presidents:', err.message);
+//     return [];
+//   }
+// };
+
+// export const createPastPresident = async (data) => {
+//   const res = await api.post('/past-presidents', data);
+//   return res.data.data || res.data;
+// };
+
+// export const updatePastPresident = async (id, data) => {
+//   const res = await api.put(`/past-presidents/${id}`, data);
+//   return res.data.data || res.data;
+// };
+
+// export const deletePastPresident = async (id) => {
+//   const res = await api.delete(`/past-presidents/${id}`);
+//   return res.data;
+// };
+
 export const getPastPresidents = async () => {
-  try {
-    const res = await api.get('/past-presidents');
-    return res.data.data || [];
-  } catch (err) {
-    console.warn('Fallback past presidents:', err.message);
-    return [];
-  }
+  const response = await api.get("/past-presidents");
+  return response.data.data || [];
 };
 
-export const createPastPresident = async (data) => {
-  const res = await api.post('/past-presidents', data);
-  return res.data.data || res.data;
+export const createPastPresident = async (formData) => {
+  const response = await api.post("/past-presidents", formData);
+  return response.data;
 };
 
-export const updatePastPresident = async (id, data) => {
-  const res = await api.put(`/past-presidents/${id}`, data);
-  return res.data.data || res.data;
+export const updatePastPresident = async (id, formData) => {
+  const response = await api.put(
+    `/past-presidents/${id}`,
+    formData
+  );
+  return response.data;
 };
 
 export const deletePastPresident = async (id) => {
-  const res = await api.delete(`/past-presidents/${id}`);
-  return res.data;
+  const response = await api.delete(`/past-presidents/${id}`);
+  return response.data;
 };
 
 // =======================

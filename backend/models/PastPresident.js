@@ -1,39 +1,99 @@
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 
-const pastPresidentSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
+// const pastPresidentSchema = new mongoose.Schema({
+//   name: {
+//     type: String,
+//     required: true,
+//     trim: true,
+//   },
+//   term: {
+//     type: String,
+//     required: true,
+//     trim: true,
+//   },
+//   role: {
+//     type: String,
+//     default: 'Past President',
+//     trim: true,
+//   },
+//   description: {
+//     type: String,
+//     required: true,
+//   },
+//   imageUrl: {
+//     type: String,
+//     required: true,
+//   },
+//   order: {
+//     type: Number,
+//     default: 0,
+//   },
+//   isActive: {
+//     type: Boolean,
+//     default: true,
+//   }
+// }, {
+//   timestamps: true,
+// });
+
+// export const PastPresident = mongoose.models.PastPresident || mongoose.model('PastPresident', pastPresidentSchema);
+
+
+import mongoose from "mongoose";
+
+const pastPresidentSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    term: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    role: {
+      type: String,
+      default: "Past President",
+      trim: true,
+    },
+
+    description: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    imageUrl: {
+      type: String,
+      required: true,
+    },
+
+    // Cloudinary public ID — required for replace/delete.
+    imagePublicId: {
+      type: String,
+      default: "",
+    },
+
+    order: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
-  term: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  role: {
-    type: String,
-    default: 'Past President',
-    trim: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  imageUrl: {
-    type: String,
-    required: true,
-  },
-  order: {
-    type: Number,
-    default: 0,
-  },
-  isActive: {
-    type: Boolean,
-    default: true,
+  {
+    timestamps: true,
   }
-}, {
-  timestamps: true,
-});
+);
 
-export const PastPresident = mongoose.models.PastPresident || mongoose.model('PastPresident', pastPresidentSchema);
+export const PastPresident =
+  mongoose.models.PastPresident ||
+  mongoose.model("PastPresident", pastPresidentSchema);

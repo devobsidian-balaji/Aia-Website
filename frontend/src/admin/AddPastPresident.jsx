@@ -13,6 +13,7 @@ export default function AddPastPresident({ onPresidentAdded, onNavigate }) {
   const [successMsg, setSuccessMsg] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
   const fileInputRef = useRef(null)
+  const [order, setOrder] = useState(0);
 
   const handleFileChange = (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -33,58 +34,66 @@ export default function AddPastPresident({ onPresidentAdded, onNavigate }) {
     }
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!name.trim() || !term.trim() || !description.trim()) {
-      setErrorMsg('Please enter Name, Tenure/Term, and Career Message/Description.')
-      return
-    }
-    if (!selectedFile && !previewUrl) {
-      setErrorMsg('Please upload a president portrait photo.')
-      return
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setLoading(true)
-    setErrorMsg('')
-    setSuccessMsg('')
-
-    try {
-      let base64Image = previewUrl
-      if (selectedFile) {
-        base64Image = await new Promise((resolve, reject) => {
-          const reader = new FileReader()
-          reader.readAsDataURL(selectedFile)
-          reader.onload = () => resolve(reader.result)
-          reader.onerror = err => reject(err)
-        })
-      }
-
-      const payload = {
-        name: name.trim(),
-        term: term.trim(),
-        role: role.trim(),
-        description: description.trim(),
-        imageUrl: base64Image,
-        isActive: true
-      }
-
-      await createPastPresident(payload)
-      setSuccessMsg('AIA Past President added successfully to database!')
-      setName('')
-      setTerm('Past President 2016-2018')
-      setDescription('')
-      setSelectedFile(null)
-      setPreviewUrl('')
-
-      if (onPresidentAdded) onPresidentAdded()
-    } catch (err) {
-      console.error(err)
-      setErrorMsg(err.response?.data?.message || 'Failed to add past president.')
-    } finally {
-      setLoading(false)
-    }
+  if (!name.trim() || !term.trim() || !description.trim()) {
+    setErrorMsg(
+      "Please enter Name, Tenure/Term, and Career Message/Description."
+    );
+    return;
   }
 
+  if (!selectedFile) {
+    setErrorMsg("Please upload a president portrait photo.");
+    return;
+  }
+
+  setLoading(true);
+  setErrorMsg("");
+  setSuccessMsg("");
+
+  try {
+    const formData = new FormData();
+
+    formData.append("name", name.trim());
+    formData.append("term", term.trim());
+    formData.append("role", role.trim());
+    formData.append("description", description.trim());
+    formData.append("order", String(order));
+    formData.append("isActive", "true");
+    formData.append("image", selectedFile);
+
+    await createPastPresident(formData);
+
+    setSuccessMsg("AIA Past President added successfully!");
+
+    setName("");
+    setTerm("Past President 2016-2018");
+    setRole("Past President");
+    setDescription("");
+    setOrder(0);
+    setSelectedFile(null);
+    setPreviewUrl("");
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+
+    if (onPresidentAdded) {
+      onPresidentAdded();
+    }
+  } catch (err) {
+    console.error(err);
+
+    setErrorMsg(
+      err.response?.data?.message ||
+      "Failed to add past president."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="w-full text-left space-y-6">
       
@@ -191,6 +200,26 @@ export default function AddPastPresident({ onPresidentAdded, onNavigate }) {
                 className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800"
               />
             </div>
+            {/* Order */}
+            <div>
+  <label className="block text-xs font-bold text-gray-800 mb-1.5">
+    Display Order
+  </label>
+
+  <input
+    type="number"
+    min="0"
+    step="1"
+    value={order}
+    onChange={(e) => setOrder(e.target.value)}
+    placeholder="e.g. 0"
+    className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 outline-none text-sm text-gray-800"
+  />
+
+  <p className="text-xs text-gray-400 mt-1">
+    Lower numbers appear first. Existing records will shift automatically.
+  </p>
+</div>
 
             {/* Message / Bio Description */}
             <div>
